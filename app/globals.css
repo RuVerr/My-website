@@ -1,26 +1,89 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+* {
+  box-sizing: border-box;
+  /* outline: 1px solid red; */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  scrollbar-width: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+@layer components {
+  .test {
+    background-color: gray;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@font-face {
+  font-family: "Quicksand-Light";
+  src: url("/Fonts/Quicksand/static/Quicksand-Light.ttf");
+}
+
+@font-face {
+  font-family: "Orbitron-Regular";
+  src: url("/Fonts/Orbitron/Static/Orbitron-Regular.ttf");
+}
+
+:root {
+  --font: "Orbitron-Regular";
+}
+
+@layer components {
+  .global-links-fonts,
+  .global-main-title {
+    font-family: var(--font);
+    font-size: 15px;
+    text-transform: uppercase;
+    font-weight: 100;
+    text-align: center;
+  }
+
+  .global-base-button-font {
+    font-family: var(--font);
+    font-size: 15px;
+    text-transform: uppercase;
+    font-weight: 100;
+    text-align: center;
+  }
+
+  .base-button-combining-classes {
+    @apply cursor-pointer text-amber-50 border-amber-50 pr-[50px] pl-[50px] h-[50px] border rounded-2xl;
+  }
+
+  .global-user-no-select {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+@layer utilities {
+  @keyframes link-glow-active {
+    0%,
+    100% {
+      text-shadow: 0 0 0px rgba(255, 255, 255, 0.7);
+    }
+    50% {
+      text-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  .link-glow-active {
+    animation: link-glow-active 2s infinite ease-in-out;
+  }
+
+  .global-text-shadow-hover {
+    transition: text-shadow 0.3s ease-in;
+    &:hover {
+      text-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+    }
+  }
 }
