@@ -1,5 +1,9 @@
-import React from "react";
+"use client";
+import React, { useRef } from "react";
+import * as THREE from "three";
 
-export default function aboutme() {
-  return <div>about me</div>;
+import TemplatesAboutMe from "@/app/Components/UI/Templates/TemplatesAboutMe/TemplatesAboutMe";
+
+export default function AboutMe() {
+  return <TemplatesAboutMe />;
 }

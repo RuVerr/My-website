@@ -8,6 +8,7 @@ import NavigationMenuDesk from "./Components/Navigation/NavigationMenuDesk/Navig
 import Footer from "./Components/Footer/Footer";
 import { Provider } from "react-redux";
 import { store } from "./Redux/Store/Store";
+import TemplateCustomCursor from "./Components/UI/Templates/TemplateCustomCursor/TemplateCustomCursor";
 
 export default function RootLayout({
   children
@@ -16,8 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="test">
+      <body>
         <Provider store={store}>
+          <TemplateCustomCursor />
           <StartPage />
           <AudioBackground />
           <NavigationMenuDesk />

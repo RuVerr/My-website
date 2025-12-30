@@ -5,6 +5,11 @@
   /* outline: 1px solid red; */
 }
 
+.container {
+  padding: 0 10px;
+  scroll-behavior: smooth;
+}
+
 html {
   scrollbar-width: none;
 }
@@ -35,6 +40,7 @@ html::-webkit-scrollbar {
 }
 
 @layer components {
+  /* Глобальные стили шрифта для ссылок и для главного заголовка в Home */
   .global-links-fonts,
   .global-main-title {
     font-family: var(--font);
@@ -44,6 +50,7 @@ html::-webkit-scrollbar {
     text-align: center;
   }
 
+  /* Глобальные стили шрифта для кнопок */
   .global-base-button-font {
     font-family: var(--font);
     font-size: 15px;
@@ -52,10 +59,47 @@ html::-webkit-scrollbar {
     text-align: center;
   }
 
+  /* Коллекция классов для кнопок */
   .base-button-combining-classes {
     @apply cursor-pointer text-amber-50 border-amber-50 pr-[50px] pl-[50px] h-[50px] border rounded-2xl;
   }
 
+  /* Коллекция классов для заголовков */
+  .base-heading-combining-classes {
+    font-family: var(--font);
+    @apply text-amber-50 text-[30px] md:text-[50px] lg:text-[100px] uppercase;
+  }
+
+  /* Коллекция классов для мини заголовков */
+  .base-mini-heading-combining-classes {
+    font-family: var(--font);
+    @apply text-amber-50 text-[20px] py-[10px] uppercase;
+  }
+
+  /* Коллекция классов для параграфов */
+  .base-paragraph-combining-classes {
+    font-family: var(--font);
+    @apply text-amber-50 text-[14px] lg:text-[20px] uppercase;
+  }
+
+  /* Коллекция классов для списка */
+  .base-li-combining-classes {
+    font-family: var(--font);
+    @apply text-amber-50 text-[14px] uppercase;
+  }
+
+  /* Отступы главных блоков*/
+
+  .global-space-main-elements {
+    padding: clamp(20px, 3vw, 40px) 0;
+  }
+
+  /* Коллекция классов для отступов элементов */
+  .global-combining-classes-space-elements {
+    @apply py-7 max-lg:py-5 max-md:py-4 max-sm:py-3;
+  }
+
+  /* Стили для отключения копирования текста */
   .global-user-no-select {
     user-select: none;
     -webkit-user-select: none;

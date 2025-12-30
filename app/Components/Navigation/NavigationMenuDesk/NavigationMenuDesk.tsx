@@ -27,6 +27,7 @@ export default function NavigationMenuDesk() {
   //Получаем текущий путь для проверки и изменения стилей
   const location = usePathname();
   const isHome = location === "/";
+  const isPortfolio = location === "/portfolio";
 
   //Функция которая перешивает буквы (в будущем он может стать хуком)
   function shuffArray(arr: string[]) {
@@ -140,16 +141,16 @@ export default function NavigationMenuDesk() {
                 ref={(el: HTMLLIElement | null) => {
                   if (el) gsapLiRef.current[index] = el;
                 }}
-                className="list_item"
+                className="list_item will-change-transform"
               >
                 <Link
                   href={href}
                   onClick={(e) => handleNavLinkActive(e, index)}
-                  className={`global-links-fonts inline-block min-w-[10ch] global-text-shadow-hover transition duration-200 ease-in ${
+                  className={`global-links-fonts inline-block min-w-[10ch] global-text-shadow-hover transition duration-200 ease-in will-change-transform ${
                     activeLink === index ? "link-glow-active" : ""
                   } ${
                     disableUppercase.index === index && disableUppercase.active === false ? "normal-case" : "uppercase"
-                  } ${isHome ? "text-gray-600" : "text-white"}`}
+                  } ${isHome ? "text-gray-600" : isPortfolio ? "text-gray-600" : "text-white"}`}
                 >
                   {linkTexts[index]}
                 </Link>

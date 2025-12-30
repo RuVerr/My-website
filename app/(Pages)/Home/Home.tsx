@@ -94,7 +94,7 @@ export default function Home() {
       if (activeLetter?.element && scrollDivRef.current && mainTitleBoxRef.current) {
         const letterLeft = activeLetter.letterLeft;
         const windowCenter = window.innerWidth / 2;
-        const offsetLeftX = windowCenter - letterLeft - 7;
+        const offsetLeftX = windowCenter - letterLeft - 4
         if (!isAnimateRef.current && mainTitleBoxRef.current) {
           isAnimateRef.current = true;
           gsap.fromTo(
@@ -145,7 +145,7 @@ export default function Home() {
     };
   }, [activeStartPage]);
   return (
-    <div className="homeContent">
+    <header className="homeContent">
       <HiddenScreen active={scrollHidden} />;
       <div className="home fixed inset-0 z-[1] overflow-hidden">
         <video
@@ -179,6 +179,6 @@ export default function Home() {
         </div>
       </div>
       <div ref={scrollDivRef} className={`scroll h-[1000vh] relative z-[-1]`}></div>
-    </div>
+    </header>
   );
 }

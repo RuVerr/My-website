@@ -15,7 +15,7 @@ export const StartSlice = createSlice({
   initialState,
   reducers: {
     deactivateStartPage: (state) => {
-      state.active = false;
+      state.active = !state.active;
     },
     activateSound: (state) => {
       state.activeSound = !state.activeSound;

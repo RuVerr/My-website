@@ -1,14 +1,12 @@
 "use client";
 
 import gsap from "gsap";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAppSelector, useAppDispatch } from "@/app/Redux/Store/hooks";
-import { useDispatch } from "react-redux";
 import { deactivateStartPage, activateSound } from "@/app/Redux/Store/StartPageSlice/StartPageSlice";
 
 export default function StartPage() {
   const soundRef = useRef<HTMLSpanElement | null>(null);
-
   const activeStartPage = useAppSelector((state) => state.StartPage.active);
   const activeSound = useAppSelector((state) => state.StartPage.activeSound);
   const dispatch = useAppDispatch();
@@ -35,6 +33,7 @@ export default function StartPage() {
           <button
             className="global-base-button-font base-button-combining-classes rounded-l-[0] p-[5px] text-red-600"
             onClick={() => {
+              sessionStorage.setItem("start-page-visited", "true");
               handleSoundRefColor();
               dispatch(activateSound());
             }}

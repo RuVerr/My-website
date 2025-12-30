@@ -1,5 +1,6 @@
-import React from 'react'
+import TemplatePortfolio from "@/app/Components/UI/Templates/TemplatePortfolio/TemplatePortfolio";
+import React from "react";
 
 export default function portfolio() {
-  return <div>portfolio</div>;
+  return <TemplatePortfolio />;
 }
