@@ -3,5 +3,5 @@ interface AtomBackgroundCanvasProp {
   canvasRef: React.Ref<HTMLCanvasElement>;
 }
 export default function AtomBackgroundCanvas({ canvasRef }: AtomBackgroundCanvasProp) {
-  return <canvas ref={canvasRef}></canvas>;
+  return <canvas className=" bg-black fixed inset-0 w-full h-full" ref={canvasRef}></canvas>;
 }
