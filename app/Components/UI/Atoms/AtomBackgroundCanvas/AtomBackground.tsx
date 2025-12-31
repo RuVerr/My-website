@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 interface AtomBackgroundCanvasProp {
-  canvasRef: React.Ref<HTMLDivElement>;
+  backgroundRef: React.Ref<HTMLDivElement>;
 }
-export default function AtomBackground({ canvasRef }: AtomBackgroundCanvasProp) {
-  return <div className=" bg-black fixed inset-0 w-full h-full" ref={canvasRef}></div>;
+export default function AtomBackground({ backgroundRef }: AtomBackgroundCanvasProp) {
+  return <div className=" bg-black fixed inset-0 w-full h-full" ref={backgroundRef}></div>;
 }
