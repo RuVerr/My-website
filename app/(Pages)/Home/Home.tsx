@@ -94,7 +94,7 @@ export default function Home() {
       if (activeLetter?.element && scrollDivRef.current && mainTitleBoxRef.current) {
         const letterLeft = activeLetter.letterLeft;
         const windowCenter = window.innerWidth / 2;
-        const offsetLeftX = windowCenter - letterLeft - 4
+        const offsetLeftX = windowCenter - letterLeft - 4;
         if (!isAnimateRef.current && mainTitleBoxRef.current) {
           isAnimateRef.current = true;
           gsap.fromTo(

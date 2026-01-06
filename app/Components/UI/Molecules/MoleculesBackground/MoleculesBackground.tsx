@@ -1,16 +1,17 @@
+"use client";
 import React, { useLayoutEffect, useRef, useState } from "react";
 import AtomBackground from "../../Atoms/AtomBackground/AtomBackground";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import HiddenScreen from "@/app/Components/Hooks/HiddenScreen/HiddenScreen";
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface MoleculesBackgroundProp {
   scrollRef?: React.RefObject<HTMLDivElement>;
+  backgroundSRC: string
 }
 
-export default function MoleculesBackground({ scrollRef }: MoleculesBackgroundProp) {
+export default function MoleculesBackground({ scrollRef, backgroundSRC }: MoleculesBackgroundProp) {
   const backgroundVideoRef = useRef<HTMLVideoElement | null>(null);
   const backgroundVideoDivRef = useRef<HTMLDivElement | null>(null);
 
@@ -83,7 +84,7 @@ export default function MoleculesBackground({ scrollRef }: MoleculesBackgroundPr
       <AtomBackground
         backgroundVideoRef={backgroundVideoRef}
         backgroundVideoDivRef={backgroundVideoDivRef}
-        videoSrc="/Images-and-video/Background/Video/rotating-riangles.mp4"
+        videoSrc={`${backgroundSRC}`}
       />
     </>
   );

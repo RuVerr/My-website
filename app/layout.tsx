@@ -1,6 +1,5 @@
 "use client";
 import "./globals.css";
-
 import type { Metadata } from "next";
 import StartPage from "./Components/StartPage/StartPage";
 import AudioBackground from "./Components/AudioBackground/AudioBackground";

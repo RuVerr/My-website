@@ -44,28 +44,19 @@ export default function MoleculesAboutMe() {
       // Создаем timeline GSAP, чтобы управлять анимациями и их последовательностью
       // Ставим defaults: каждая анимация длится 2 секунды, ease плавная, stagger для последовательного появления элементов
       const tl = gsap.timeline({
-        defaults: { duration: 5, ease: "power2.out", stagger: 0.25 },
-        scrollTrigger: {
-          trigger: scrollEl,
-          start: "top 0%",
-          end: "bottom 100%",
-          scrub: true,
-          onLeave: () => {
-            tl.progress(1);
-          }
-        }
+        defaults: { duration: 2, ease: "power2.out", stagger: 0.1 }
       });
-
-      // ======= Анимация заголовков =======
-      if (headingRefs.current.length) {
-        // Все заголовки выезжают слева и появляются
-        tl.fromTo(headingRefs.current, { x: -200, opacity: 0 }, { x: 0, opacity: 1, visibility: "visible" });
-      }
 
       // ======= Анимация аватара =======
       if (avatarRef.current) {
         // Изначально аватар скрыт и поднят вверх, затем плавно появляется и опускается на место
-        tl.fromTo(avatarRef.current, { y: -200, opacity: 0 }, { y: 0, opacity: 1, visibility: "visible" });
+        tl.fromTo(avatarRef.current, { y: -400, opacity: 0 }, { y: 0, opacity: 1, duration: 2, visibility: "visible" });
+      }
+
+      // ======= Анимация заголовков =======
+      if (headingRefs.current.length) {
+        // Все заголовки выезжают слева и появляются
+        tl.fromTo(headingRefs.current, { x: -500, opacity: 0 }, { x: 0, opacity: 1, visibility: "visible" });
       }
 
       // ======= Создаем label для синхронизации анимации параграфа и списка li =======
@@ -99,31 +90,35 @@ export default function MoleculesAboutMe() {
 
         // Анимация слов: выезжают слева и постепенно появляются
         // "<startLiAndParagraph" = начинаем одновременно с li
+        tl.addLabel("AtTheSameTime");
         tl.fromTo(
           spans,
-          { x: -500, opacity: 0 },
+          { x: -400, opacity: 0 },
           {
             x: 0,
             opacity: 1,
-            visibility: "visible",
-            stagger: 0.03
-          }
-        );
-
-        //REVIEW - этот кусок может удалится так как нужна анимация при скролле сло
-        // // После анимации span объединяем текст обратно в параграф
-        // .call(() => {
-        //   if (paragraphRef.current) {
-        //     const finalText = spans.map((el) => el.textContent).join("");
-        //     // paragraphRef.current!.textContent = finalText;
-        //   }
-        // });
+            visibility: "visible"
+          },
+          "AtTheSameTime"
+        )
+          // После анимации span объединяем текст обратно в параграф
+          .call(() => {
+            if (paragraphRef.current) {
+              const finalText = spans.map((el) => el.textContent).join("");
+              paragraphRef.current!.textContent = finalText;
+            }
+          });
       }
 
       // ======= Анимация списка li =======
       if (liRefs.current.length) {
         // Элементы li появляются одновременно с параграфом (используем label)
-        tl.fromTo(liRefs.current, { x: -200, opacity: 0 }, { x: 0, opacity: 1, visibility: "visible" });
+        tl.fromTo(
+          liRefs.current,
+          { x: -400, opacity: 0 },
+          { x: 0, opacity: 1, visibility: "visible" },
+          "AtTheSameTime"
+        );
       }
 
       // ======= Анимация процентов навыков =======
@@ -132,13 +127,18 @@ export default function MoleculesAboutMe() {
         percentagesRefs.current.forEach((el, index) => {
           const endValue = endValues ? endValues[index] : 0;
           const obj = { val: 0 }; // объект для анимации числа
-          tl.to(obj, {
-            val: endValue, // конечное значение числа
-            onUpdate() {
-              // Обновляем текст элемента на лету
-              el.textContent = `  (${Math.floor(obj.val)}%)`;
-            }
-          });
+          tl.to(
+            obj,
+            {
+              val: endValue, // конечное значение числа
+              duration: 0.5,
+              onUpdate() {
+                // Обновляем текст элемента на лету
+                el.textContent = `  (${Math.floor(obj.val)}%)`;
+              }
+            },
+            ">"
+          );
         });
       }
     });

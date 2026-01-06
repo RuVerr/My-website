@@ -1,12 +1,13 @@
+""
 import React from "react";
-import BackgroundVanta from "../../Atoms/BackgroundVanta/BackroundVanta";
 import MoleculesPortfolio from "../../Molecules/MoleculesPortfolio/MoleculesPortfolio";
+import MoleculesBackground from "../../Molecules/MoleculesBackground/MoleculesBackground";
 
 export default function OrganismsPortfolio() {
   return (
     <>
       <section className="portfolio bg-gray-500">
-        <BackgroundVanta effect="waves" />
+        <MoleculesBackground backgroundSRC="/Images-and-video/Background/Video/white-lines.mp4" />
         <div className="container mx-auto">
           <div className="portfolio_content relative z-[2]">
             <MoleculesPortfolio />
