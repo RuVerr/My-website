@@ -1,0 +1,30 @@
+import React from "react";
+interface AtomBackgroundCanvasProp {
+  backgroundRef?: React.Ref<HTMLDivElement>;
+  backgroundVideoRef?: React.Ref<HTMLVideoElement>;
+  videoSrc: string;
+  backgroundVideoDivRef?: React.Ref<HTMLDivElement>;
+}
+export default function AtomBackground({
+  backgroundRef,
+  backgroundVideoRef,
+  backgroundVideoDivRef,
+  videoSrc
+}: AtomBackgroundCanvasProp) {
+  return (
+    <div ref={backgroundRef} className="fixed inset-0 w-full h-full block bg-black perspective-[1000px]">
+      <div ref={backgroundVideoDivRef} className="backdropFilter blur-[30px] transform-3d">
+        <video
+          ref={backgroundVideoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          src={videoSrc}
+          preload="auto"
+          className="w-full h-full object-cover block"
+        ></video>
+      </div>
+    </div>
+  );
+}

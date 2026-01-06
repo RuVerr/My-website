@@ -1,10 +1,13 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import gsap from "gsap";
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 import AtomParagraph from "../../Atoms/AtomParagraph/AtomParagraph";
 import AtomAvatar from "../../Atoms/AtomAvatar/AtomAvatar";
 import AtomSkillsList from "../../Atoms/AtomInfoList/AtomSkillsList";
 import { aboutMe } from "@/Data/aboutMeDB";
+
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesAboutMe() {
   // Храним данные о разработчике, которые придут с API
@@ -32,19 +35,26 @@ export default function MoleculesAboutMe() {
   });
 
   useLayoutEffect(() => {
-    // Если данных нет, ничего не делаем
+    // Если данных нет, ничего не делаем точнее вылетаем
     if (!aboutMeDB) return;
 
     const ctx = gsap.context(() => {
+      //REVIEW - Временное решение
+      const scrollEl = document.querySelector(".about_me");
       // Создаем timeline GSAP, чтобы управлять анимациями и их последовательностью
       // Ставим defaults: каждая анимация длится 2 секунды, ease плавная, stagger для последовательного появления элементов
-      const tl = gsap.timeline({ defaults: { duration: 1, visibility: "hidden", ease: "power4.out", stagger: 0.2 } });
-
-      // ======= Анимация аватара =======
-      if (avatarRef.current) {
-        // Изначально аватар скрыт и поднят вверх, затем плавно появляется и опускается на место
-        tl.fromTo(avatarRef.current, { y: -200, opacity: 0 }, { y: 0, opacity: 1, visibility: "visible" });
-      }
+      const tl = gsap.timeline({
+        defaults: { duration: 5, ease: "power2.out", stagger: 0.25 },
+        scrollTrigger: {
+          trigger: scrollEl,
+          start: "top 0%",
+          end: "bottom 100%",
+          scrub: true,
+          onLeave: () => {
+            tl.progress(1);
+          }
+        }
+      });
 
       // ======= Анимация заголовков =======
       if (headingRefs.current.length) {
@@ -52,9 +62,15 @@ export default function MoleculesAboutMe() {
         tl.fromTo(headingRefs.current, { x: -200, opacity: 0 }, { x: 0, opacity: 1, visibility: "visible" });
       }
 
+      // ======= Анимация аватара =======
+      if (avatarRef.current) {
+        // Изначально аватар скрыт и поднят вверх, затем плавно появляется и опускается на место
+        tl.fromTo(avatarRef.current, { y: -200, opacity: 0 }, { y: 0, opacity: 1, visibility: "visible" });
+      }
+
       // ======= Создаем label для синхронизации анимации параграфа и списка li =======
       // Это метка в timeline, чтобы можно было запускать разные анимации одновременно
-      tl.addLabel("startLiAndParagraph");
+      // tl.addLabel("startLiAndParagraph");
 
       const words = aboutMeDB?.developerInfo[0].description
         .join("")
@@ -91,27 +107,23 @@ export default function MoleculesAboutMe() {
             opacity: 1,
             visibility: "visible",
             stagger: 0.03
-          },
-          "startLiAndParagraph"
-        )
-          // После анимации span объединяем текст обратно в параграф
-          .call(() => {
-            if (paragraphRef.current) {
-              const finalText = spans.map((el) => el.textContent).join("");
-              paragraphRef.current!.textContent = finalText;
-            }
-          });
+          }
+        );
+
+        //REVIEW - этот кусок может удалится так как нужна анимация при скролле сло
+        // // После анимации span объединяем текст обратно в параграф
+        // .call(() => {
+        //   if (paragraphRef.current) {
+        //     const finalText = spans.map((el) => el.textContent).join("");
+        //     // paragraphRef.current!.textContent = finalText;
+        //   }
+        // });
       }
 
       // ======= Анимация списка li =======
       if (liRefs.current.length) {
         // Элементы li появляются одновременно с параграфом (используем label)
-        tl.fromTo(
-          liRefs.current,
-          { x: -200, opacity: 0 },
-          { x: 0, opacity: 1, visibility: "visible" },
-          "startLiAndParagraph"
-        );
+        tl.fromTo(liRefs.current, { x: -200, opacity: 0 }, { x: 0, opacity: 1, visibility: "visible" });
       }
 
       // ======= Анимация процентов навыков =======
@@ -120,18 +132,13 @@ export default function MoleculesAboutMe() {
         percentagesRefs.current.forEach((el, index) => {
           const endValue = endValues ? endValues[index] : 0;
           const obj = { val: 0 }; // объект для анимации числа
-          tl.to(
-            obj,
-            {
-              val: endValue, // конечное значение числа
-              duration: 1, // длительность анимации числа
-              onUpdate() {
-                // Обновляем текст элемента на лету
-                el.textContent = `  (${Math.floor(obj.val)}%)`;
-              }
-            },
-            ">" // начинаем после li
-          );
+          tl.to(obj, {
+            val: endValue, // конечное значение числа
+            onUpdate() {
+              // Обновляем текст элемента на лету
+              el.textContent = `  (${Math.floor(obj.val)}%)`;
+            }
+          });
         });
       }
     });
@@ -200,7 +207,7 @@ export default function MoleculesAboutMe() {
             </div>
 
             {/* Категории навыков */}
-            <div className="title_and_info flex flex-col border-t border-amber-50 max-lg:flex-row justify-center max-sm:flex-col">
+            <div className="title_and_info flex flex-col max-lg:flex-row justify-center max-sm:flex-col">
               {aboutMeDB.categories.map((cat, catIndex) => (
                 <div key={catIndex} className="title_and_list">
                   <AtomHeading
@@ -227,10 +234,7 @@ export default function MoleculesAboutMe() {
         </div>
 
         {/* Основной параграф */}
-        <AtomParagraph
-          paragraphRef={paragraphRef}
-          className="global-combining-classes-space-elements max-lg: border-t border-amber-50"
-        />
+        <AtomParagraph paragraphRef={paragraphRef} className="global-combining-classes-space-elements" />
       </div>
     </>
   );
