@@ -4,16 +4,19 @@ interface AtomBackgroundCanvasProp {
   backgroundVideoRef?: React.Ref<HTMLVideoElement>;
   videoSrc: string;
   backgroundVideoDivRef?: React.Ref<HTMLDivElement>;
+  className: string
 }
 export default function AtomBackground({
   backgroundRef,
   backgroundVideoRef,
   backgroundVideoDivRef,
-  videoSrc
+  videoSrc,
+  className
+  
 }: AtomBackgroundCanvasProp) {
   return (
     <div ref={backgroundRef} className="fixed inset-0 w-full h-full block bg-black perspective-[1000px]">
-      <div ref={backgroundVideoDivRef} className="backdropFilter blur-[30px] transform-3d">
+      <div ref={backgroundVideoDivRef} className={`transform-3d ${className}`}>
         <video
           ref={backgroundVideoRef}
           autoPlay

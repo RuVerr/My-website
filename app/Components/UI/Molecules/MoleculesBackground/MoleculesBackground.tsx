@@ -8,10 +8,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface MoleculesBackgroundProp {
   scrollRef?: React.RefObject<HTMLDivElement>;
-  backgroundSRC: string
+  backgroundSRC: string;
+  className: string;
 }
 
-export default function MoleculesBackground({ scrollRef, backgroundSRC }: MoleculesBackgroundProp) {
+export default function MoleculesBackground({ scrollRef, backgroundSRC, className }: MoleculesBackgroundProp) {
   const backgroundVideoRef = useRef<HTMLVideoElement | null>(null);
   const backgroundVideoDivRef = useRef<HTMLDivElement | null>(null);
 
@@ -82,6 +83,7 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC }: Molecu
   return (
     <>
       <AtomBackground
+        className={`${className}`}
         backgroundVideoRef={backgroundVideoRef}
         backgroundVideoDivRef={backgroundVideoDivRef}
         videoSrc={`${backgroundSRC}`}

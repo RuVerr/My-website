@@ -31,16 +31,16 @@ export default function AtomPortfolioCard({
         </div>
         <div ref={cardRef} className="paragraph_and_pre flex-1 pl-[20px] flex-col">
           {heading}
-            {technologies.map((techText, techIndex) => (
-              <pre key={techIndex} className="inline-block text-[14px] text-black">
-                {techText}
-                {techIndex !== technologies.length - 1 ? " | " : ""}
-              </pre>
-            ))}
+          {technologies.map((techText, techIndex) => (
+            <pre key={techIndex} className="inline-block text-[14px] text-black">
+              {techText}
+              {techIndex !== technologies.length - 1 ? " | " : ""}
+            </pre>
+          ))}
           {paragraph}
+          {onlineLink}
         </div>
       </div>
-      {onlineLink}
     </div>
   );
 }

@@ -21,7 +21,9 @@ export default function OrganismsAboutMe() {
     <section ref={scrollAboutMeRef} className="about_me mt-[100vh]">
       <HiddenScreen active={activeHidden} />
       <MoleculesBackground
+        className="backdrop: blur-[30px]"
         backgroundSRC="/Images-and-video/Background/Video/rotating-riangles.mp4"
+        //@ts-ignore
         scrollRef={scrollAboutMeRef}
       />
       <div className="container mx-auto">

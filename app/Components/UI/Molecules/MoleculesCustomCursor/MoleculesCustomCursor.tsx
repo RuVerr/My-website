@@ -11,7 +11,13 @@ export default function MoleculesCustomCursor() {
     if (!cursorRef.current) return;
     const cursor = cursorRef.current;
 
-    location === "/" ? (cursor.style.borderColor = "black") : (cursor.style.borderColor = "white");
+    location === "/"
+      ? (cursor.style.borderColor = "black")
+      : location === "/aboutme"
+      ? (cursor.style.borderColor = "white")
+      : location === "/portfolio"
+      ? (cursor.style.borderColor = "black")
+      : (cursor.style.borderColor = "white");
 
     const moveCursor = (e: MouseEvent) => {
       cursor.style.transform = `translate3d(${e.clientX - 20}px, ${e.clientY - 20}px,0)`;
