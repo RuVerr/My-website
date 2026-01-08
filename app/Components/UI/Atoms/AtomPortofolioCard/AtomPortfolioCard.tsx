@@ -6,7 +6,7 @@ interface AtomPortfolioCardProp {
   paragraph: React.ReactNode;
   technologies?: string[];
   cardRef: React.Ref<HTMLDivElement>;
-  technologiesRef: React.Ref<HTMLDivElement>;
+  technologiesRef?: React.Ref<HTMLDivElement>;
   onlineLink?: React.ReactNode;
   cardImgRef: React.Ref<HTMLDivElement>;
   className?: string;
@@ -25,7 +25,7 @@ export default function AtomPortfolioCard({
 }: AtomPortfolioCardProp) {
   return (
     <div className={`card ${className}`}>
-      <div ref={cardRef} className="card_and_paragraph flex max-md:flex-col items-center">
+      <div ref={cardRef} className="card_and_paragraph flex max-lg:flex-col items-start">
         <div ref={cardImgRef} className="card_img rounded-4xl overflow-hidden">
           <img src={src} alt="Projects" className="w-[600px]" />
         </div>

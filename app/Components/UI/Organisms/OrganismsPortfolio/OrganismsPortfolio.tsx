@@ -6,7 +6,7 @@ import MoleculesBackground from "../../Molecules/MoleculesBackground/MoleculesBa
 export default function OrganismsPortfolio() {
   return (
     <>
-      <section className="portfolio bg-gray-500">
+      <section className="portfolio bg-gray-500 ">
         <MoleculesBackground
           className=" backdrop: blur-[3px] bg-amber-50 "
           backgroundSRC="/Images-and-video/Background/Video/white-lines.mp4"
