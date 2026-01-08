@@ -58,6 +58,7 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC, classNam
   }, []);
 
   useLayoutEffect(() => {
+    const scale = window.innerWidth < 768 ? 7 : 1;
     const background = backgroundVideoDivRef.current;
     const scrollEl = scrollRef?.current;
     if (!background) return;
@@ -66,7 +67,7 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC, classNam
         background,
         { scale: 20 },
         {
-          scale: 1,
+          scale: scale,
           ease: "power4.inOut",
           scrollTrigger: {
             trigger: scrollEl,
