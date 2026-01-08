@@ -15,12 +15,7 @@ export default function MoleculesPortfolio() {
   const [portfolioDB, setPortfolioDB] = useState<portfolioDBProp[]>([]);
   const cardRefs = useRef<HTMLElement[]>([]);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  // const paragraphRefs = useRef<HTMLParagraphElement[]>([]);
-  // const technologiesRefs = useRef<HTMLDivElement[]>([]);
   const cardImgRefs = useRef<HTMLDivElement[]>([]);
-  // const containerRef = useRef<HTMLDivElement | null>(null);
-
-  console.log(headingRef.current);
 
   useEffect(() => {
     fetch("/api/portfolio")
@@ -64,8 +59,7 @@ export default function MoleculesPortfolio() {
         });
 
         tl.from(card.children, {
-          autoAlpha: 0,
-          visibility: "visible"
+          autoAlpha: 0
         });
       });
     });
@@ -76,13 +70,6 @@ export default function MoleculesPortfolio() {
   const setCard = (el: HTMLElement | null) => {
     if (el && !cardRefs.current.includes(el)) cardRefs.current.push(el);
   };
-  // const setParagraph = (el: HTMLParagraphElement | null) => {
-  //   if (el && !paragraphRefs.current.includes(el)) paragraphRefs.current.push(el);
-  // };
-
-  // const setTechnologiesRef = (el: HTMLParagraphElement | null) => {
-  //   if (el && !technologiesRefs.current.includes(el)) technologiesRefs.current.push(el);
-  // };
 
   const setCardImg = (el: HTMLParagraphElement | null) => {
     if (el && !cardImgRefs.current.includes(el)) cardImgRefs.current.push(el);
