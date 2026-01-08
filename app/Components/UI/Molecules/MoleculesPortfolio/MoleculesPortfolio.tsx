@@ -52,8 +52,8 @@ export default function MoleculesPortfolio() {
           defaults: { x: 200, duration: 2, ease: "back.out(1.2)", stagger: 0.25 },
           scrollTrigger: {
             trigger: card,
-            start: "top 80%",
-            end: "bottom +=500",
+            start: "top 90%",
+            end: "bottom +=560",
             scrub: 1
           }
         });
