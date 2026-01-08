@@ -15,7 +15,7 @@ export default function AtomBackground({
   
 }: AtomBackgroundCanvasProp) {
   return (
-    <div ref={backgroundRef} className="fixed inset-0 w-full h-full block perspective-[1000px]">
+    <div ref={backgroundRef} className="fixed inset-0 w-full h-full block perspective-[1000px] bg-black">
       <div ref={backgroundVideoDivRef} className={`transform-3d ${className}`}>
         <video
           ref={backgroundVideoRef}

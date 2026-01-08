@@ -8,7 +8,7 @@ export default function OrganismsPortfolio() {
     <>
       <section className="portfolio w-full h-screen-[100dvh] bg-gray-500 ">
         <MoleculesBackground
-          className=" backdrop: blur-[3px] bg-amber-50 "
+          className="bg-amber-50 "
           backgroundSRC="/Images-and-video/Background/Video/white-lines.mp4"
         />
         <div className="container mx-auto">
