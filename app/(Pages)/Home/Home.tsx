@@ -11,8 +11,7 @@ import R from "../../../public/Images-and-video/Home-letters-svg/Home-letter-svg
 import U from "../../../public/Images-and-video/Home-letters-svg/Home-letter-svg-u.svg";
 import B from "../../../public/Images-and-video/Home-letters-svg/Home-letter-svg-b.svg";
 import O from "../../../public/Images-and-video/Home-letters-svg/Home-letter-svg-o.svg";
-import { log } from "console";
-import { useAppDispatch, useAppSelector } from "@/app/Redux/Store/hooks";
+import { useAppSelector } from "@/app/Redux/Store/hooks";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {

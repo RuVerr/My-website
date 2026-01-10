@@ -3,6 +3,7 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 import AtomBackground from "../../Atoms/AtomBackground/AtomBackground";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRouter } from "next/navigation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,6 +16,7 @@ interface MoleculesBackgroundProp {
 export default function MoleculesBackground({ scrollRef, backgroundSRC, className }: MoleculesBackgroundProp) {
   const backgroundVideoRef = useRef<HTMLVideoElement | null>(null);
   const backgroundVideoDivRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   useLayoutEffect(() => {
     const video = backgroundVideoRef.current;
@@ -62,25 +64,29 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC, classNam
     const background = backgroundVideoDivRef.current;
     const scrollEl = scrollRef?.current;
     if (!background) return;
+
     const ctx = gsap.context(() => {
       gsap.fromTo(
         background,
-        { scale: 20 },
+        { scale: 10 },
         {
           scale: scale,
           ease: "power4.inOut",
           scrollTrigger: {
             trigger: scrollEl,
-            scrub: true,
+            scrub: 1,
             markers: true,
             start: "top bottom",
-            end: "bottom top"
+            end: "bottom top",
+            onLeaveBack: () => {
+              router.push("/");
+            }
           }
         }
       );
     });
     return () => ctx.revert();
-  }, []);
+  }, [router, scrollRef?.current]);
   return (
     <>
       <AtomBackground
