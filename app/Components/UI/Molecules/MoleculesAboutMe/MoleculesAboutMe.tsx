@@ -39,8 +39,6 @@ export default function MoleculesAboutMe() {
     if (!aboutMeDB) return;
 
     const ctx = gsap.context(() => {
-      //REVIEW - Временное решение
-      const scrollEl = document.querySelector(".about_me");
       // Создаем timeline GSAP, чтобы управлять анимациями и их последовательностью
       // Ставим defaults: каждая анимация длится 2 секунды, ease плавная, stagger для последовательного появления элементов
       const tl = gsap.timeline({
