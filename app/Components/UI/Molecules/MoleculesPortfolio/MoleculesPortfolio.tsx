@@ -53,7 +53,7 @@ export default function MoleculesPortfolio() {
           scrollTrigger: {
             trigger: card,
             start: "top 90%",
-            end: "bottom +=560",
+            end: "bottom top+=660",
             scrub: 1
           }
         });
@@ -63,7 +63,6 @@ export default function MoleculesPortfolio() {
         });
       });
     });
-
     return () => ctx.revert();
   }, [portfolioDB]);
 

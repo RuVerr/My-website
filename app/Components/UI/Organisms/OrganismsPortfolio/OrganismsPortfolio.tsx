@@ -15,7 +15,7 @@ export default function OrganismsPortfolio() {
   }, []);
   return (
     <>
-      <section className="portfolio w-full h-full bg-gray-500 overflow-hidden">
+      <section className="portfolio w-full h-screen-[100dvh] bg-gray-500 overflow-hidden">
         <HiddenScreen active={activeHidden} />
         <MoleculesBackground
           className="bg-amber-50 "
