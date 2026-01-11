@@ -74,7 +74,7 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC, classNam
           ease: "power4.inOut",
           scrollTrigger: {
             trigger: scrollEl,
-            scrub: 1,
+            scrub: true,
             markers: true,
             start: "top bottom",
             end: "bottom top",
