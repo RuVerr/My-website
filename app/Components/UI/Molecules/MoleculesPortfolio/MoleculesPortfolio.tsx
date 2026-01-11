@@ -24,7 +24,7 @@ export default function MoleculesPortfolio() {
   }, []);
 
   useLayoutEffect(() => {
-    if (!cardRefs.current.length) return;
+    if (!cardRefs.current.length && !portfolioDB) return;
     const mainHeading = headingRef.current;
     const everyCards = cardRefs.current.slice(2);
     const firstCard = cardRefs.current.at(0);

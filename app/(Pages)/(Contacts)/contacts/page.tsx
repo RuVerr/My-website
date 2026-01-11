@@ -1,5 +1,6 @@
+import TemplateContacts from "@/app/Components/UI/Templates/TemplateContacts/TemplateContacts";
 import React from "react";
 
 export default function contacts() {
-  return <div>Contacts</div>;
+  return <TemplateContacts />;
 }
