@@ -6,10 +6,9 @@ interface AtomContactCardsProp {
   heading: React.ReactNode;
   imgSRC: string;
   link: string;
-  paragraph: React.ReactNode;
 }
 
-export default function AtomContactCards({ heading, imgSRC, link, paragraph }: AtomContactCardsProp) {
+export default function AtomContactCards({ heading, imgSRC, link }: AtomContactCardsProp) {
   return (
     <a href={link} target="_blank" className="group block">
       <article className="contacts_card relative overflow-hidden backdrop-blur-2xl rounded-4xl px-[40px]">
