@@ -29,7 +29,7 @@ export default function MoleculesContacts() {
         className="global-combining-classes-space-elements text-white"
       />
       <div className="contacts_cards">
-        <AtomContactCards heading="Telegram" imgSRC="/Images-and-video/icon/soc-icon/telegram.svg" link="google.com" paragraph={"test"} />
+        <AtomContactCards heading={<AtomHeading children="Telegram" level={3} className="w-full text-center"/>} imgSRC="/Images-and-video/icon/soc-icon/telegram.svg" link="google.com" paragraph={"test"} />
       </div>
     </>
   );
