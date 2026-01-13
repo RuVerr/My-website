@@ -1,22 +1,25 @@
-import contacts from "@/app/(Pages)/(Contacts)/contacts/page";
 import React from "react";
-import { string } from "three/tsl";
 
 interface AtomContactCardsProp {
   heading: React.ReactNode;
   imgSRC: string;
   link: string;
+  cardRef: React.Ref<HTMLAnchorElement | null>;
 }
 
-export default function AtomContactCards({ heading, imgSRC, link }: AtomContactCardsProp) {
+export default function AtomContactCards({ heading, imgSRC, link, cardRef }: AtomContactCardsProp) {
   return (
-    <a href={link} target="_blank" className="group block">
-      <article className="contacts_card relative overflow-hidden backdrop-blur-2xl rounded-4xl px-[40px]">
+    <a href={link} ref={cardRef} target="_blank" className="group block">
+      <article className="contacts_card relative overflow-hidden border-2 border-amber-50 rounded-4xl px-[40px] py-[20px]">
         <div className="imgAndHeading flex items-center">
-          <img src={imgSRC} alt={typeof heading === "string" ? heading + "icon" : "contacts icon"} />
+          <img
+            src={imgSRC}
+            className="w-[120px]"
+            alt={typeof heading === "string" ? heading + "icon" : "contacts icon"}
+          />
           {heading}
         </div>
-        <div className="link_svg absolute inset-0 flex items-center justify-center -translate-y-full group-hover:translate-y-0 transition-transform pointer-events-none duration-300 bg-amber-50">
+        <div className="link_svg absolute inset-0 flex items-center justify-center -translate-y-full group-hover:translate-y-0 transition-transform pointer-events-none duration-300 rounded-3xl bg-amber-50">
           <img src="/Images-and-video/Icon/soc-icon/link.svg" alt="link icon" />
         </div>
       </article>
