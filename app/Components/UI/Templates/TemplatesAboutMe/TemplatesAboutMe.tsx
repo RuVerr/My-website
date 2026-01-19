@@ -3,8 +3,8 @@ import OrganismsAboutMe from "../../Organisms/OrganismsAboutMe/OrganismsAboutMe"
 
 export default function TemplatesAboutMe() {
   return (
-    <div>
+    <main className="bg-black">
       <OrganismsAboutMe />
-    </div>
+    </main>
   );
 }

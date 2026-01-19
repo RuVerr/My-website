@@ -18,7 +18,7 @@ export default function OrganismsAboutMe() {
   }, []);
 
   return (
-    <section ref={scrollAboutMeRef} className="about_me mt-[100vh]">
+    <section ref={scrollAboutMeRef} className="about_me global-space-main-elements mt-[100vh]">
       <HiddenScreen active={activeHidden} />
       <MoleculesBackground
         className="backdrop: blur-[30px] max-lg:blur-[5px]"

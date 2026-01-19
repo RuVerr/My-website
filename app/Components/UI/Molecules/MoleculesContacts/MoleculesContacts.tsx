@@ -23,19 +23,31 @@ export default function MoleculesContacts() {
     if ((!headingRef.current || !cardRefs.current.length) && !contactsDB) return;
     const heading = headingRef.current;
     const card = cardRefs.current.slice(2);
+    const firstTwoElements = cardRefs.current.slice(0, 2);
+
+    console.log(firstTwoElements);
 
     const ctx = gsap.context(() => {
+      gsap.from(heading, { x: -400, scale: 0.5, duration: 2, delay: 0.2, autoAlpha: 0, ease: "power4.inOut" });
+
       const tl = gsap.timeline({
-        defaults: { duration: 2, autoAlpha: 0, ease: "power4.inOut" },
+        defaults: { duration: 2, ease: "power4.inOut" },
         scrollTrigger: {
           trigger: card,
-          start: "top bottom+=900",
-          scrub: 1.2
+          start: "top bottom",
+          scrub: true
         }
       });
+      tl.fromTo(card, { x: -900, autoAlpha: 0 }, { x: 0, autoAlpha: 1, stagger: 0.2 });
 
-      tl.from(heading, { x: -400, scale: 0.5 });
-      tl.from(card, { x: -500, stagger: 0.2 });
+      gsap.from(firstTwoElements, {
+        x: -500,
+        scale: 0.1,
+        autoAlpha: 0,
+        duration: 2,
+        stagger: 0.2,
+        ease: "power4.inOut"
+      });
     });
 
     return () => ctx.revert();
@@ -48,12 +60,7 @@ export default function MoleculesContacts() {
   }
   return (
     <>
-      <AtomHeading
-        children="Contacts"
-        level={1}
-        headingRef={headingRef}
-        className="global-combining-classes-space-elements text-white"
-      />
+      <AtomHeading children="Contacts" level={1} headingRef={headingRef} className="text-white" />
       <div className="contacts_cards global-space-main-elements flex flex-col gap-[30px]">
         {contactsDB.map((contact, contIndex) => (
           <AtomContactCards

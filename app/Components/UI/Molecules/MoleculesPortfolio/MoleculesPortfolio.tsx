@@ -79,7 +79,7 @@ export default function MoleculesPortfolio() {
       <AtomHeading
         children={"Portfolio"}
         level={1}
-        className="global-combining-classes-space-elements text-black"
+        className="text-black"
         headingRef={headingRef}
       />
       <div className="portfolio_card global-space-main-elements">

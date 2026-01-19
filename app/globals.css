@@ -91,7 +91,7 @@ html::-webkit-scrollbar {
   /* Отступы главных блоков*/
 
   .global-space-main-elements {
-    padding: clamp(20px, 3vw, 40px) 0;
+    @apply py-[95px]
   }
 
   /* Коллекция классов для отступов элементов */

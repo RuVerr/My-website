@@ -68,7 +68,7 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC, classNam
     const ctx = gsap.context(() => {
       gsap.fromTo(
         background,
-        { scale: 10 },
+        { scale: 4 },
         {
           scale: scale,
           ease: "power4.inOut",
