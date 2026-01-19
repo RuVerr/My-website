@@ -4,8 +4,8 @@ import OrganismsPortfolio from "../../Organisms/OrganismsPortfolio/OrganismsPort
 
 export default function TemplatePortfolio() {
   return (
-    <main>
+    <>
       <OrganismsPortfolio />
-    </main>
+    </>
   );
 }

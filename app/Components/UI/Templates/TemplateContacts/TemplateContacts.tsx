@@ -3,8 +3,8 @@ import OrganismsContacts from "../../Organisms/OrganismsContacts/OrganismsContac
 
 export default function TemplateContacts() {
   return (
-    <main>
+    <>
       <OrganismsContacts />
-    </main>
+    </>
   );
 }
