@@ -17,6 +17,7 @@ export default function MoleculesHome() {
   // Ссылки на все элементы <span> с буквами
   const letterRefs = useRef<HTMLSpanElement[]>([]);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const blackTransitionRef = useRef<HTMLDivElement | null>(null);
   // Флаг для перехода на другую страницу после скролла
   const navigationFlag = useRef<boolean | null>(false);
 
@@ -26,6 +27,7 @@ export default function MoleculesHome() {
   useLayoutEffect(() => {
     const letters = letterRefs.current;
     const heading = headingRef.current;
+    const transition = blackTransitionRef.current;
 
     // Контекст GSAP для изоляции анимаций (очень удобно с React)
     const ctx = gsap.context(() => {
@@ -71,7 +73,6 @@ export default function MoleculesHome() {
           }
         }
       });
-
       // Анимация движения букв при скролле
       tl.fromTo(
         letters,
@@ -91,6 +92,14 @@ export default function MoleculesHome() {
           stagger: { each: 0.2, from: "random" } // Рандомное смещение букв
         }
       );
+
+      //Анимация перехода
+      tl.fromTo(
+        transition,
+        { scale: 0, autoAlpha: 0 },
+        { scale: 20, duration: 1, autoAlpha: 1, delay: 1, ease: "sine.inOut" },
+        "<"
+      );
     });
 
     // Очищаем все анимации при размонтировании компонента
@@ -99,6 +108,11 @@ export default function MoleculesHome() {
 
   return (
     <>
+      {/* Div для перехода */}
+      <div
+        ref={blackTransitionRef}
+        className="black-transition w-[200px] h-[200px] bg-black fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-100 rounded-[50%]"
+      ></div>
       <AtomHeading
         className="perspective-[1000px]" // Перспектива для 3D эффекта
         headingRef={(el) => setRefs(el, undefined, headingRef)}
