@@ -1,6 +1,6 @@
 import { MutableRefObject } from "react";
 
-export function setRefs<T>(
+export function setRefs<T extends HTMLElement>(
   el: T | null,
   arrayRefs?: React.MutableRefObject<T[]>,
   singleRef?: React.MutableRefObject<T | null>

@@ -75,7 +75,7 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC, classNam
           scrollTrigger: {
             trigger: scrollEl,
             scrub: true,
-            markers: true,
+            // markers: true,
             start: "top bottom",
             end: "bottom top",
             onLeaveBack: () => {

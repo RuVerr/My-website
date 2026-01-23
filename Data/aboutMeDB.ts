@@ -22,11 +22,15 @@ export const aboutMeDB: aboutMe = {
       rank: "Frontend / Junior+",
       location: "Georgia, Armenia",
       description: [
-        `I build complex projects from scratch, maintaining scalability and easily adding new features. I like experimenting with modern tools and approaches to ensure that interfaces are not only visually appealing but also highly functional.
+        `I build complex projects from scratch, maintaining scalability and easily adding new features. 
         
+        I like experimenting with modern tools and approaches to ensure that interfaces are not only visually appealing but also highly functional.
+
         I pay attention to details so that every part of the interface looks neat and harmonious.
 
-        I focus on creating responsive designs that work seamlessly across all devices and screen sizes. User experience is a priority, and I aim to make applications intuitive and enjoyable for end-users.
+        I focus on creating responsive designs that work seamlessly across all devices and screen sizes. 
+        
+        User experience is a priority, and I aim to make applications intuitive and enjoyable for end-users.
 
         Collaboration is important to me—I actively communicate with designers, developers, and stakeholders to deliver polished and efficient projects.
 

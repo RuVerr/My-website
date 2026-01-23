@@ -15,13 +15,17 @@ gsap.registerPlugin(ScrollTrigger);
 export default function MoleculesAboutMe() {
   // Храним данные о разработчике, которые придут с API
   const [aboutMeDB, setAboutMeDB] = useState<aboutMe | null>(null);
-
+  const aboutMeMainHeading = "About me".split("");
   // Рефы для работы с DOM напрямую и анимациями через GSAP
-  const avatarRef = useRef<HTMLImageElement | null>(null); // реф аватара
+  // const avatarRef = useRef<HTMLImageElement | null>(null); // реф аватара
   const paragraphRef = useRef<HTMLParagraphElement | null>(null); // параграф с описанием
-  const headingRefs = useRef<HTMLHeadingElement[]>([]); // все заголовки
+  const mainHeadingRef = useRef<HTMLHeadingElement | null>(null); // Главный заголовок страницы
+  const spanRefs = useRef<HTMLSpanElement[]>([]);
   const percentagesRefs = useRef<HTMLSpanElement[]>([]); // span для процентов навыков
-  const liRefs = useRef<HTMLLIElement[]>([]); // li для списка навыков
+  let animationFlagRef = useRef<boolean>(false);
+  // const liRefs = useRef<HTMLLIElement[]>([]); // li для списка навыков
+
+  const everyRefs = useRef<HTMLElement[]>([]);
 
   // ========== Извлекаем числа процентов навыков ==========
   // Например: "JavaScript (80%)" -> 80
@@ -44,8 +48,10 @@ export default function MoleculesAboutMe() {
 
   // ======= GSAP анимации =======
   useLayoutEffect(() => {
+    const every = everyRefs.current;
+    const mainHeading = mainHeadingRef.current
     // Если данных нет, ничего не делаем точнее вылетаем
-    if (!aboutMeDB) return;
+    if (!every.length || !aboutMeDB) return;
 
     const ctx = gsap.context(() => {
       //FIXME - Временно
@@ -53,30 +59,42 @@ export default function MoleculesAboutMe() {
       // Создаем timeline GSAP, чтобы управлять анимациями и их последовательностью
       // Ставим defaults: каждая анимация длится 2 секунды, ease плавная, stagger для последовательного появления элементов
       const tl = gsap.timeline({
-        defaults: { duration: 100, ease: "power4.inOut" },
+        defaults: { duration: 2, ease: "sine.inOut" },
         scrollTrigger: {
           trigger: scrollEl,
-          start: "top center",
-          end: "bottom top+=1000",
-          scrub: 1.2
+          start: "top bottom-=2000",
+          end: "+=1500",
+          scrub: 1,
+          anticipatePin: 1,
+          markers: true,
+          onUpdate: (self) => {
+            if (self.progress >= 0.51 && self.progress <= 0.61 && animationFlagRef.current === false) {
+              animationFlagRef.current = true;
+              startCounter();
+            }
+          }
         }
       });
 
-      // ======= Анимация заголовков =======
-      if (headingRefs.current.length) {
-        // Все заголовки выезжают слева и появляются
-        tl.from(headingRefs.current, { x: -200, autoAlpha: 0, stagger: 4 });
-      }
+      const headingTimeline = gsap.timeline({
+        defaults: { duration: 2, ease: "sine.inOut" },
+        scrollTrigger: {
+          trigger: scrollEl,
+          start: "top top",
+          pin: mainHeading,
+          scrub: true,
+          onLeave: () => {
+            gsap.to(mainHeading, { xPercent: -25, ease: "sine.inOut" });
+          },
+          onEnterBack: () => {
+            gsap.to(mainHeading, { xPercent: 25, ease: "sine.inOut" });
+          }
+        }
+      });
 
-      // ======= Анимация аватара =======
-      if (avatarRef.current) {
-        // Изначально аватар скрыт и поднят вверх, затем плавно появляется и опускается на место
-        tl.from(avatarRef.current, { y: -180, autoAlpha: 0 });
-      }
-
-      // ======= Создаем label для синхронизации анимации параграфа и списка li =======
-      // Это метка в timeline, чтобы можно было запускать разные анимации одновременно
-      // tl.addLabel("startLiAndParagraph");
+      tl.addLabel("oneTime");
+      headingTimeline.from(spanRefs.current, { scale: 0.1, stagger: { each: 0.2, from: "center" }, autoAlpha: 0 });
+      tl.from(every, { x: -200, duration: 7, delay: 5, autoAlpha: 0, stagger: 0.2 }, "oneTime");
 
       const words = aboutMeDB?.developerInfo[0].description
         .join("")
@@ -94,41 +112,30 @@ export default function MoleculesAboutMe() {
           // Создаем span для каждого слова
           const span = document.createElement("span");
           // Добавляем слово и перенос строки после точки
-          span.textContent += word + (word.endsWith(".") ? "\n\n" : " ");
+          span.textContent += word;
           // Класс для стилей
-          span.className = "word_span mr-1 base-paragraph-combining-classes will-change-transform";
+          span.className = "inline-block word_span mr-1 base-paragraph-combining-classes will-change-transform";
           // Вставляем span в параграф
           paragraphRef.current?.appendChild(span);
           // Добавляем span в массив для анимации
           spans.push(span);
+
+          if (word.endsWith(".")) {
+            paragraphRef.current?.appendChild(document.createElement("br"));
+            paragraphRef.current?.appendChild(document.createElement("br"));
+          }
         });
 
-        tl.addLabel("startSpansAndLi");
-        // tl.addLabel("x");
-        // Анимация слов: выезжают слева и постепенно появляются
-        // "<startLiAndParagraph" = начинаем одновременно с li
         tl.from(
           spans,
           {
+            scale: () => gsap.utils.random(0.1, 1),
+            duration: 4,
             autoAlpha: 0,
-            stagger: 1
+            stagger: 0.1
           },
-          "startSpansAndLi"
+          "oneTime"
         );
-      }
-
-      // ======= Анимация списка li =======
-      if (liRefs.current.length) {
-        //REVIEW -  Элементы li появляются одновременно с параграфом (используем label)
-        tl.from(
-          liRefs.current,
-          {
-            x: -400,
-            stagger: 2,
-            delay: 100
-          },
-          "startSpansAndLi"
-        ).add(() => startCounter());
       }
 
       // ======= Анимация процентов навыков =======
@@ -141,6 +148,7 @@ export default function MoleculesAboutMe() {
             gsap.to(obj, {
               val: endValue, // конечное значение числа
               duration: 2,
+              delay: index * 0.2,
               onUpdate() {
                 // Обновляем текст элемента на лету
                 el.textContent = `  (${Math.floor(obj.val)}%)`;
@@ -161,10 +169,14 @@ export default function MoleculesAboutMe() {
     <>
       {/* Заголовок секции */}
       <AtomHeading
-        headingRef={(el) => setRefs(el, headingRefs)}
-        children={"About Me"}
+        headingRef={(el) => setRefs(el, undefined, mainHeadingRef)}
+        children={aboutMeMainHeading.map((letter, letterIndex) => (
+          <span key={letterIndex} ref={(el) => setRefs(el, spanRefs)} className="inline-block whitespace-break-spaces">
+            {letter}
+          </span>
+        ))}
         level={1}
-        className="global-combining-classes-space-elements text-red-800 "
+        className="global-combining-classes-space-elements text-center text-white "
       />
 
       <div className="avatar_and_paragraph global-space-elements flex gap-5 max-lg:flex-col">
@@ -172,26 +184,17 @@ export default function MoleculesAboutMe() {
           <div className="avatar_and_skill">
             <div className="avatar_and_info grid gap-2 pb-[20px] md: place-content-center">
               {/* Аватар */}
-              <AtomAvatar imgSRC="/Images-and-video/Avatar/Ruben.png" avatarRef={avatarRef} />
+              <AtomAvatar imgSRC="/Images-and-video/Avatar/Ruben.png" avatarRef={(el) => setRefs(el, everyRefs)} />
               {/* Имя, ранг и локация */}
-              <AtomHeading
-                headingRef={(el) => setRefs(el, headingRefs)}
-                children={dev.developerName}
-                level={2}
-                className="base-mini-heading-combining-classes max-lg:text-center"
-              />
-              <AtomHeading
-                headingRef={(el) => setRefs(el, headingRefs)}
-                children={dev.rank}
-                level={3}
-                className="base-mini-heading-combining-classes max-lg:text-center"
-              />
-              <AtomHeading
-                headingRef={(el) => setRefs(el, headingRefs)}
-                children={dev.location}
-                level={4}
-                className="base-mini-heading-combining-classes max-lg:text-center"
-              />
+              {[dev.developerName, dev.rank, dev.location].map((devEl, devElIndex) => (
+                <AtomHeading
+                  key={devElIndex}
+                  headingRef={(el) => setRefs(el, everyRefs)}
+                  children={devEl}
+                  level={(devElIndex + 2) as 3 | 4}
+                  className="base-mini-heading-combining-classes max-lg:text-center"
+                />
+              ))}
             </div>
 
             {/* Категории навыков */}
@@ -199,7 +202,7 @@ export default function MoleculesAboutMe() {
               {aboutMeDB.categories.map((cat, catIndex) => (
                 <div key={catIndex} className="title_and_list">
                   <AtomHeading
-                    headingRef={(el) => setRefs(el, headingRefs)}
+                    headingRef={(el) => setRefs(el, everyRefs)}
                     children={cat.miniTitle}
                     level={2}
                     className="base-mini-heading-combining-classes global-combining-classes-space-elements text-start max-lg:text-center max-sm:text-start"
@@ -209,7 +212,7 @@ export default function MoleculesAboutMe() {
                       <AtomSkillsList
                         key={skillIndex}
                         refPercentages={(el) => setRefs(el, percentagesRefs)}
-                        refLi={(el) => setRefs(el, liRefs)}
+                        refLi={(el) => setRefs(el, everyRefs)}
                         children={skill.replace(/\s*\(\d+%\)/, "")} // убираем процент для текста li
                         classNameLI="max-lg:text-center max-sm:text-start"
                       />

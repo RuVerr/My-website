@@ -13,7 +13,7 @@ export default function AtomHeading({ children, level = 1, className, headingRef
   return (
     <>
       {/* @ts-ignore */}
-      <Tag ref={headingRef} className={`base-heading-combining-classes global-user-no-select will-change-transform pt-[30px] ${className}`}>
+      <Tag ref={headingRef} className={`base-heading-combining-classes global-user-no-select will-change-transform pt-[10px] ${className}`}>
         {children}
       </Tag>
     </>

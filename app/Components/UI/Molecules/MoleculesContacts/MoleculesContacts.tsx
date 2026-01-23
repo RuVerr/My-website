@@ -28,7 +28,7 @@ export default function MoleculesContacts() {
   // ======= GSAP анимации =======
   useLayoutEffect(() => {
     // Если заголовок или карточки ещё не загружены или данных нет — выходим
-    if ((!headingRef.current || !cardRefs.current.length) && !contactsDB) return;
+    if ((!headingRef.current || !cardRefs.current.length) && !contactsDB.length) return;
 
     const heading = headingRef.current;
     const card = cardRefs.current.slice(2); // все карточки, кроме первых двух
