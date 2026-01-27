@@ -10,22 +10,26 @@ import { setRefs } from "@/app/utils/setRefs";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { fakeBaseQuery } from "@reduxjs/toolkit/query";
+import { context } from "@react-three/fiber";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesAboutMe() {
   // Храним данные о разработчике, которые придут с API
   const [aboutMeDB, setAboutMeDB] = useState<aboutMe | null>(null);
+  //Заголовок
   const aboutMeMainHeading = "About me".split("");
-  // Рефы для работы с DOM напрямую и анимациями через GSAP
-  // const avatarRef = useRef<HTMLImageElement | null>(null); // реф аватара
-  const paragraphRef = useRef<HTMLParagraphElement | null>(null); // параграф с описанием
-  const mainHeadingRef = useRef<HTMLHeadingElement | null>(null); // Главный заголовок страницы
-  const spanRefs = useRef<HTMLSpanElement[]>([]);
-  const percentagesRefs = useRef<HTMLSpanElement[]>([]); // span для процентов навыков
-  let animationFlagRef = useRef<boolean>(false);
-  // const liRefs = useRef<HTMLLIElement[]>([]); // li для списка навыков
 
-  const everyRefs = useRef<HTMLElement[]>([]);
+  // ========== Для работы с DOM напрямую и анимациями через GSAP ==========
+  const paragraphRef = useRef<HTMLParagraphElement | null>(null);
+  const mainHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const spanRefs = useRef<HTMLSpanElement[]>([]);
+  const percentagesRefs = useRef<HTMLSpanElement[]>([]);
+  const fakeScrollRef = useRef<HTMLDivElement | null>(null);
+  const avatarAndSkillsRef = useRef<HTMLDivElement | null>(null);
+  const everyAvatarHeadingLiRefs = useRef<HTMLElement[]>([]);
+
+  let animationFlagRef = useRef<boolean>(false);
 
   // ========== Извлекаем числа процентов навыков ==========
   // Например: "JavaScript (80%)" -> 80
@@ -46,97 +50,142 @@ export default function MoleculesAboutMe() {
       .then((data) => setAboutMeDB(data)); // сохраняем в state
   }, []);
 
-  // ======= GSAP анимации =======
+  // ======= useLayoutEffect GSAP анимации =======
   useLayoutEffect(() => {
-    const every = everyRefs.current;
-    const mainHeading = mainHeadingRef.current
+    const every = everyAvatarHeadingLiRefs.current;
+    const mainHeading = mainHeadingRef.current;
+    const spans = spanRefs.current;
     // Если данных нет, ничего не делаем точнее вылетаем
-    if (!every.length || !aboutMeDB) return;
+    if (!aboutMeDB) return;
 
+    const words = aboutMeDB?.developerInfo[0].description
+      .join("")
+      .replace(/\n+/g, " ") // заменяем переносы строк на пробелы
+      .replace(/\s+/g, " ") // убираем лишние пробелы
+      .split(" "); // разбиваем на отдельные слова
+
+    if (paragraphRef.current && words) {
+      // Очищаем параграф перед вставкой span
+      paragraphRef.current.innerHTML = "";
+
+      words.forEach((word) => {
+        // Создаем span для каждого слова
+        const span = document.createElement("span");
+        // Добавляем слово и перенос строки после точки
+        span.textContent += word;
+        // Класс для стилей
+        span.className = "inline-block word_span mr-1 base-paragraph-combining-classes will-change-transform";
+        // Вставляем span в параграф
+        paragraphRef.current?.appendChild(span);
+        // Добавляем span в массив для анимации
+        spanRefs.current.push(span);
+
+        if (word.endsWith(".")) {
+          paragraphRef.current?.appendChild(document.createElement("br"));
+          paragraphRef.current?.appendChild(document.createElement("br"));
+        }
+      });
+    }
+
+    // ==============
+    // GSAP context
+    // ==============
     const ctx = gsap.context(() => {
-      //FIXME - Временно
-      const scrollEl = document.querySelector(".about_me");
-      // Создаем timeline GSAP, чтобы управлять анимациями и их последовательностью
-      // Ставим defaults: каждая анимация длится 2 секунды, ease плавная, stagger для последовательного появления элементов
-      const tl = gsap.timeline({
-        defaults: { duration: 2, ease: "sine.inOut" },
-        scrollTrigger: {
-          trigger: scrollEl,
-          start: "top bottom-=2000",
-          end: "+=1500",
-          scrub: 1,
-          anticipatePin: 1,
-          markers: true,
-          onUpdate: (self) => {
-            if (self.progress >= 0.51 && self.progress <= 0.61 && animationFlagRef.current === false) {
-              animationFlagRef.current = true;
-              startCounter();
+      const scrollEl = fakeScrollRef.current;
+      const paragraphRefHeight = paragraphRef.current?.offsetHeight;
+      const avatarAndSkillsRefHeight = avatarAndSkillsRef.current?.offsetHeight;
+      if (!paragraphRefHeight || !avatarAndSkillsRefHeight) return;
+      //gsap MatchMedia
+      const mm = gsap.matchMedia();
+      mm.add(
+        {
+          // Определяем медиа-запросы для разных устройств
+          desktop: "(min-width: 1024px)",
+          tablet: "(min-width: 768px) and (max-width: 1023px)",
+          mobile: "(max-width: 767px)"
+        },
+        (context) => {
+          if (!context.conditions) return; // если условия медиа-запроса не определены, выходим
+          const { desktop, tablet, mobile } = context.conditions; // достаем булевы значения текущего устройства
+
+          ScrollTrigger.refresh(); // обновляем ScrollTrigger, чтобы корректно учитывалась высота элементов и скролл
+
+          // ===================================
+          // Создаем GSAP timeline для анимаций
+          // ===================================
+          const tl = gsap.timeline({
+            defaults: { ease: "sine.inOut" }, // плавное easing для всех анимаций в timeline по умолчанию
+            scrollTrigger: {
+              trigger: scrollEl, // элемент, относительно которого будет запускаться анимация при скролле
+              start: `top 10%`, // когда верхняя граница триггера достигнет 10% от высоты viewport, анимация стартует
+              end: () =>
+                // вычисляем конец анимации в зависимости от устройства
+                desktop
+                  ? paragraphRefHeight // на десктопе — высота параграфа
+                  : tablet
+                    ? paragraphRefHeight + avatarAndSkillsRefHeight // на планшете — параграф + аватар с навыками
+                    : mobile
+                      ? paragraphRefHeight + avatarAndSkillsRefHeight // на мобильных аналогично
+                      : paragraphRefHeight + avatarAndSkillsRefHeight + 2 * window.innerHeight, // запас на прочие случаи
+              scrub: 1.2, // синхронизируем timeline с прокруткой, 1.2 = плавная синхронизация
+              anticipatePin: 1, // чуть раньше учитывает пины, чтобы скролл был более плавным
+              markers: true, // включаем визуальные маркеры start/end для отладки
+              onUpdate: (self) => {
+                // вызываем функцию только один раз при прогрессе скролла между 0.51 и 0.61
+                if (self.progress >= 0.51 && self.progress <= 0.61 && animationFlagRef.current === false) {
+                  animationFlagRef.current = true; // ставим флаг, чтобы не запускать повторно
+                  startCounter(); // запускаем анимацию процентов навыков
+                }
+              }
             }
+          });
+          // ===========================
+          // Desktop Desktop Desktop Desktop
+          // ===========================
+          if (desktop) {
+            tl.addLabel("oneTime");
+            tl.from(every, { x: -900, autoAlpha: 0, duration: 6, stagger: 0.3 }, "oneTime");
+            tl.from(
+              spans,
+              {
+                scale: () => gsap.utils.random(-4, 1),
+                autoAlpha: 0,
+                stagger: 0.1,
+                ease: "sine.inOut"
+              },
+              "oneTime"
+            );
+          }
+          // ===========================
+          // Tablet Tablet Tablet Tablet
+          // ===========================
+          if (tablet) {
+            tl.from(every, { x: -200, duration: 20, delay: 2, autoAlpha: 0, stagger: 2 }).from(spans, {
+              scale: () => gsap.utils.random(-4, 1),
+              duration: 10,
+              autoAlpha: 0,
+              stagger: 0.3,
+              ease: "sine.inOut"
+            });
+          }
+          // ===========================
+          // Mobile Mobile Mobile Mobile
+          // ===========================
+          if (mobile) {
+            tl.from(every, { x: -500, duration: 1.5, autoAlpha: 0, stagger: 0.5 }).from(
+              spans,
+              {
+                scale: () => gsap.utils.random(-4, 1),
+                duration: 2,
+                autoAlpha: 0,
+                stagger: 0.1,
+                ease: "sine.inOut"
+              },
+              ">"
+            );
           }
         }
-      });
-
-      const headingTimeline = gsap.timeline({
-        defaults: { duration: 2, ease: "sine.inOut" },
-        scrollTrigger: {
-          trigger: scrollEl,
-          start: "top top",
-          pin: mainHeading,
-          scrub: true,
-          onLeave: () => {
-            gsap.to(mainHeading, { xPercent: -25, ease: "sine.inOut" });
-          },
-          onEnterBack: () => {
-            gsap.to(mainHeading, { xPercent: 25, ease: "sine.inOut" });
-          }
-        }
-      });
-
-      tl.addLabel("oneTime");
-      headingTimeline.from(spanRefs.current, { scale: 0.1, stagger: { each: 0.2, from: "center" }, autoAlpha: 0 });
-      tl.from(every, { x: -200, duration: 7, delay: 5, autoAlpha: 0, stagger: 0.2 }, "oneTime");
-
-      const words = aboutMeDB?.developerInfo[0].description
-        .join("")
-        .replace(/\n+/g, " ") // заменяем переносы строк на пробелы
-        .replace(/\s+/g, " ") // убираем лишние пробелы
-        .split(" "); // разбиваем на отдельные слова
-
-      if (paragraphRef.current && words) {
-        // Очищаем параграф перед вставкой span
-        paragraphRef.current.innerHTML = "";
-
-        const spans: HTMLSpanElement[] = []; // массив span, чтобы анимировать слова отдельно
-
-        words.forEach((word) => {
-          // Создаем span для каждого слова
-          const span = document.createElement("span");
-          // Добавляем слово и перенос строки после точки
-          span.textContent += word;
-          // Класс для стилей
-          span.className = "inline-block word_span mr-1 base-paragraph-combining-classes will-change-transform";
-          // Вставляем span в параграф
-          paragraphRef.current?.appendChild(span);
-          // Добавляем span в массив для анимации
-          spans.push(span);
-
-          if (word.endsWith(".")) {
-            paragraphRef.current?.appendChild(document.createElement("br"));
-            paragraphRef.current?.appendChild(document.createElement("br"));
-          }
-        });
-
-        tl.from(
-          spans,
-          {
-            scale: () => gsap.utils.random(0.1, 1),
-            duration: 4,
-            autoAlpha: 0,
-            stagger: 0.1
-          },
-          "oneTime"
-        );
-      }
+      );
 
       // ======= Анимация процентов навыков =======
       const endValues = percentagesOfExperience?.flat(); // упрощаем массив в один уровень
@@ -179,17 +228,22 @@ export default function MoleculesAboutMe() {
         className="global-combining-classes-space-elements text-center text-white "
       />
 
+      <div ref={fakeScrollRef} className="fakeScroll absolute inset-0 h-[200vh]"></div>
+
       <div className="avatar_and_paragraph global-space-elements flex gap-5 max-lg:flex-col">
-        <div className="avatar_and_skills_info">
+        <div ref={avatarAndSkillsRef} className="avatar_and_skills_info">
           <div className="avatar_and_skill">
             <div className="avatar_and_info grid gap-2 pb-[20px] md: place-content-center">
               {/* Аватар */}
-              <AtomAvatar imgSRC="/Images-and-video/Avatar/Ruben.png" avatarRef={(el) => setRefs(el, everyRefs)} />
+              <AtomAvatar
+                imgSRC="/Images-and-video/Avatar/Ruben.png"
+                avatarRef={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
+              />
               {/* Имя, ранг и локация */}
               {[dev.developerName, dev.rank, dev.location].map((devEl, devElIndex) => (
                 <AtomHeading
                   key={devElIndex}
-                  headingRef={(el) => setRefs(el, everyRefs)}
+                  headingRef={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
                   children={devEl}
                   level={(devElIndex + 2) as 3 | 4}
                   className="base-mini-heading-combining-classes max-lg:text-center"
@@ -202,7 +256,7 @@ export default function MoleculesAboutMe() {
               {aboutMeDB.categories.map((cat, catIndex) => (
                 <div key={catIndex} className="title_and_list">
                   <AtomHeading
-                    headingRef={(el) => setRefs(el, everyRefs)}
+                    headingRef={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
                     children={cat.miniTitle}
                     level={2}
                     className="base-mini-heading-combining-classes global-combining-classes-space-elements text-start max-lg:text-center max-sm:text-start"
@@ -212,7 +266,7 @@ export default function MoleculesAboutMe() {
                       <AtomSkillsList
                         key={skillIndex}
                         refPercentages={(el) => setRefs(el, percentagesRefs)}
-                        refLi={(el) => setRefs(el, everyRefs)}
+                        refLi={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
                         children={skill.replace(/\s*\(\d+%\)/, "")} // убираем процент для текста li
                         classNameLI="max-lg:text-center max-sm:text-start"
                       />
@@ -223,7 +277,6 @@ export default function MoleculesAboutMe() {
             </div>
           </div>
         </div>
-
         {/* Основной параграф */}
         <AtomParagraph
           paragraphRef={(el) => setRefs(el, undefined, paragraphRef)}
