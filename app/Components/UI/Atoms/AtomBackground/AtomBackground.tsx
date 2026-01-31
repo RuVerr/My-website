@@ -4,7 +4,7 @@ interface AtomBackgroundCanvasProp {
   backgroundVideoRef?: React.Ref<HTMLVideoElement>;
   videoSrc: string;
   backgroundVideoDivRef?: React.Ref<HTMLDivElement>;
-  className: string
+  className: string;
 }
 export default function AtomBackground({
   backgroundRef,
@@ -12,7 +12,6 @@ export default function AtomBackground({
   backgroundVideoDivRef,
   videoSrc,
   className
-  
 }: AtomBackgroundCanvasProp) {
   return (
     <div ref={backgroundRef} className="fixed inset-0 w-full h-full block perspective-[1000px] bg-black">

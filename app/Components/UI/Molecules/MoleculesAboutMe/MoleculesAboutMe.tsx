@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState, MutableRefObject } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 import AtomParagraph from "../../Atoms/AtomParagraph/AtomParagraph";
 import AtomAvatar from "../../Atoms/AtomAvatar/AtomAvatar";
@@ -10,8 +10,6 @@ import { setRefs } from "@/app/utils/setRefs";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { fakeBaseQuery } from "@reduxjs/toolkit/query";
-import { context } from "@react-three/fiber";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesAboutMe() {
@@ -23,6 +21,7 @@ export default function MoleculesAboutMe() {
   // ========== Для работы с DOM напрямую и анимациями через GSAP ==========
   const paragraphRef = useRef<HTMLParagraphElement | null>(null);
   const mainHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const mainHeadingSpans = useRef<HTMLSpanElement[]>([]);
   const spanRefs = useRef<HTMLSpanElement[]>([]);
   const percentagesRefs = useRef<HTMLSpanElement[]>([]);
   const fakeScrollRef = useRef<HTMLDivElement | null>(null);
@@ -121,7 +120,7 @@ export default function MoleculesAboutMe() {
               end: () =>
                 // вычисляем конец анимации в зависимости от устройства
                 desktop
-                  ? paragraphRefHeight // на десктопе — высота параграфа
+                  ? paragraphRefHeight + 600 // на десктопе — высота параграфа
                   : tablet
                     ? paragraphRefHeight + avatarAndSkillsRefHeight // на планшете — параграф + аватар с навыками
                     : mobile
@@ -139,16 +138,40 @@ export default function MoleculesAboutMe() {
               }
             }
           });
-          // ===========================
+          const mainHeadingTL = gsap.timeline({
+            defaults: { duration: 5, ease: "sine.inOut" },
+            scrollTrigger: {
+              trigger: mainHeading,
+              start: "top top",
+              pin: true,
+              scrub: 1.2,
+              anticipatePin: 1,
+              onLeave: () => {
+                gsap.to(mainHeading, { x: -350 });
+              },
+              onLeaveBack: () => {
+                gsap.to(mainHeading, { x: 0 });
+              }
+            }
+          });
+
+          // =================================
           // Desktop Desktop Desktop Desktop
-          // ===========================
+          // =================================
           if (desktop) {
+            gsap.from(mainHeadingSpans.current, {
+              scale: () => gsap.utils.random(0.2, 1),
+              y: () => gsap.utils.random(-200, 200),
+              autoAlpha: 0,
+              stagger: { each: 0.3, from: "random" }
+            });
             tl.addLabel("oneTime");
-            tl.from(every, { x: -900, autoAlpha: 0, duration: 6, stagger: 0.3 }, "oneTime");
+            tl.from(every, { x: -500, duration: 5, autoAlpha: 0, stagger: 0.3 }, "oneTime");
             tl.from(
               spans,
               {
                 scale: () => gsap.utils.random(-4, 1),
+                duration: 2,
                 autoAlpha: 0,
                 stagger: 0.1,
                 ease: "sine.inOut"
@@ -220,7 +243,11 @@ export default function MoleculesAboutMe() {
       <AtomHeading
         headingRef={(el) => setRefs(el, undefined, mainHeadingRef)}
         children={aboutMeMainHeading.map((letter, letterIndex) => (
-          <span key={letterIndex} ref={(el) => setRefs(el, spanRefs)} className="inline-block whitespace-break-spaces">
+          <span
+            key={letterIndex}
+            ref={(el) => setRefs(el, mainHeadingSpans)}
+            className="inline-block whitespace-break-spaces pt-[5%]"
+          >
             {letter}
           </span>
         ))}
@@ -228,7 +255,7 @@ export default function MoleculesAboutMe() {
         className="global-combining-classes-space-elements text-center text-white "
       />
 
-      <div ref={fakeScrollRef} className="fakeScroll absolute inset-0 h-[200vh]"></div>
+      <div ref={fakeScrollRef} className="fakeScroll absolute inset-0 h-[300vh]"></div>
 
       <div className="avatar_and_paragraph global-space-elements flex gap-5 max-lg:flex-col">
         <div ref={avatarAndSkillsRef} className="avatar_and_skills_info">
