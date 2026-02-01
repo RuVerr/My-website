@@ -2,11 +2,12 @@
 import React, { useLayoutEffect, useRef } from "react";
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 
-import { setRefs } from "@/app/utils/setRefs";
+import { setRefs } from "@/app/utils/SetElements/setRefs";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from "next/navigation";
+import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 
 // Регистрируем плагин ScrollTrigger для GSAP
 gsap.registerPlugin(ScrollTrigger);
@@ -32,26 +33,21 @@ export default function MoleculesHome() {
     // Контекст GSAP для изоляции анимаций (очень удобно с React)
     const ctx = gsap.context(() => {
       if (!letters?.length || !heading) return; // Если нет элементов, выходим
-      // ========================== Интро анимация букв ==========================
-      // Буквы стартуют случайно разбросанными по Y и Z с поворотом, затем собираются в центр
-      gsap.fromTo(
-        letters,
-        {
-          z: () => gsap.utils.random(0, 100), // Случайная глубина при старте
-          y: () => gsap.utils.random(-300, 300), // Случайное вертикальное смещение
-          autoAlpha: 0, // Прозрачные в начале
-          rotation: () => gsap.utils.random(-30, 30) // Случайный угол поворота
+      gsap.from(letters, {
+        z: () => gsap.utils.random(-50, 100), // Случайная глубина при старте
+        y: () => gsap.utils.random(-300, 300), // Случайное вертикальное смещение
+        rotation: () => gsap.utils.random(-100, 30), // Случайный угол поворота
+        autoAlpha: 0, // Прозрачные в начале
+        duration: 3,
+        // Блок документа при анимации
+        onStart: () => {
+          animationActiveOverflowHidden(true);
         },
-        {
-          z: 0, // Все буквы на нулевой глубине
-          y: 0, // Выравниваем по вертикали
-          rotation: 0, // Убираем поворот
-          duration: 2, // Длительность интро
-          autoAlpha: 1, // Делаем видимыми
-          ease: "sine.inOut",
-          stagger: { each: 0.2, from: "random" } // Рандомное появление букв
+        // Разблок документа после анимации
+        onComplete: () => {
+          animationActiveOverflowHidden(false);
         }
-      );
+      });
 
       // ========================== Анимация букв при скролле ==========================
       // Используем ScrollTrigger: буквы двигаются, увеличиваются и вращаются по мере скролла
@@ -120,7 +116,7 @@ export default function MoleculesHome() {
           <span
             ref={(el) => setRefs(el, letterRefs)}
             key={letterIndex}
-            className="inline-block transform-3d text-black global-main-heading-classes mx-[20px]"
+            className="inline-block transform-3d text-black global-main-heading-classes"
           >
             {letter}
           </span>

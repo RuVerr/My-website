@@ -4,10 +4,11 @@ import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 import AtomContactCards from "../../Atoms/AtomContactCards/AtomContactCards";
 
 import { contactsDBProp } from "@/Data/contactsDB";
-import { setRefs } from "@/app/utils/setRefs";
+import { setRefs } from "@/app/utils/SetElements/setRefs";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesContacts() {
@@ -61,7 +62,14 @@ export default function MoleculesContacts() {
         autoAlpha: 0,
         duration: 2,
         stagger: 0.2,
-        ease: "power4.inOut"
+        ease: "power4.inOut",
+        onStart: () => {
+          animationActiveOverflowHidden(true);
+        },
+        // Разблок документа после анимации
+        onComplete: () => {
+          animationActiveOverflowHidden(false);
+        }
       });
     });
 

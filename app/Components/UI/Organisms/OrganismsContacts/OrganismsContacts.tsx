@@ -1,6 +1,8 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import MoleculesContacts from "../../Molecules/MoleculesContacts/MoleculesContacts";
 import MoleculesBackground from "../../Molecules/MoleculesBackground/MoleculesBackground";
+import HiddenScreen from "@/app/Components/Hooks/HiddenScreen/HiddenScreen";
 
 export default function OrganismsContacts() {
   return (

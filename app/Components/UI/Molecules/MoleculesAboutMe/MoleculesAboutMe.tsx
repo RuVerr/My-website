@@ -6,10 +6,11 @@ import AtomSkillsList from "../../Atoms/AtomInfoList/AtomSkillsList";
 import { aboutMe } from "@/Data/aboutMeDB";
 
 // ======= Функция для добавления рефов в массив =
-import { setRefs } from "@/app/utils/setRefs";
+import { setRefs } from "@/app/utils/SetElements/setRefs";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesAboutMe() {
@@ -42,6 +43,12 @@ export default function MoleculesAboutMe() {
     });
   });
 
+  const words = aboutMeDB?.developerInfo[0].description
+    .join("")
+    .replace(/\n+/g, " ") // заменяем переносы строк на пробелы
+    .replace(/\s+/g, " ") // убираем лишние пробелы
+    .split(" "); // разбиваем на отдельные слова
+
   // ======= Fetch данных =======
   useEffect(() => {
     fetch("/api/aboutMe")
@@ -53,38 +60,10 @@ export default function MoleculesAboutMe() {
   useLayoutEffect(() => {
     const every = everyAvatarHeadingLiRefs.current;
     const mainHeading = mainHeadingRef.current;
+    const mainSpans = mainHeadingSpans.current;
     const spans = spanRefs.current;
     // Если данных нет, ничего не делаем точнее вылетаем
     if (!aboutMeDB) return;
-
-    const words = aboutMeDB?.developerInfo[0].description
-      .join("")
-      .replace(/\n+/g, " ") // заменяем переносы строк на пробелы
-      .replace(/\s+/g, " ") // убираем лишние пробелы
-      .split(" "); // разбиваем на отдельные слова
-
-    if (paragraphRef.current && words) {
-      // Очищаем параграф перед вставкой span
-      paragraphRef.current.innerHTML = "";
-
-      words.forEach((word) => {
-        // Создаем span для каждого слова
-        const span = document.createElement("span");
-        // Добавляем слово и перенос строки после точки
-        span.textContent += word;
-        // Класс для стилей
-        span.className = "inline-block word_span mr-1 base-paragraph-combining-classes will-change-transform";
-        // Вставляем span в параграф
-        paragraphRef.current?.appendChild(span);
-        // Добавляем span в массив для анимации
-        spanRefs.current.push(span);
-
-        if (word.endsWith(".")) {
-          paragraphRef.current?.appendChild(document.createElement("br"));
-          paragraphRef.current?.appendChild(document.createElement("br"));
-        }
-      });
-    }
 
     // ==============
     // GSAP context
@@ -93,7 +72,7 @@ export default function MoleculesAboutMe() {
       const scrollEl = fakeScrollRef.current;
       const paragraphRefHeight = paragraphRef.current?.offsetHeight;
       const avatarAndSkillsRefHeight = avatarAndSkillsRef.current?.offsetHeight;
-      if (!paragraphRefHeight || !avatarAndSkillsRefHeight) return;
+      if (!paragraphRefHeight || !avatarAndSkillsRefHeight || !spans) return;
       //gsap MatchMedia
       const mm = gsap.matchMedia();
       mm.add(
@@ -120,13 +99,13 @@ export default function MoleculesAboutMe() {
               end: () =>
                 // вычисляем конец анимации в зависимости от устройства
                 desktop
-                  ? paragraphRefHeight + 600 // на десктопе — высота параграфа
+                  ? paragraphRefHeight // на десктопе — высота параграфа
                   : tablet
                     ? paragraphRefHeight + avatarAndSkillsRefHeight // на планшете — параграф + аватар с навыками
                     : mobile
-                      ? paragraphRefHeight + avatarAndSkillsRefHeight // на мобильных аналогично
+                      ? avatarAndSkillsRefHeight + paragraphRefHeight // на мобильных аналогично
                       : paragraphRefHeight + avatarAndSkillsRefHeight + 2 * window.innerHeight, // запас на прочие случаи
-              scrub: 1.2, // синхронизируем timeline с прокруткой, 1.2 = плавная синхронизация
+              scrub: 1, // синхронизируем timeline с прокруткой, 1.2 = плавная синхронизация
               anticipatePin: 1, // чуть раньше учитывает пины, чтобы скролл был более плавным
               markers: true, // включаем визуальные маркеры start/end для отладки
               onUpdate: (self) => {
@@ -159,14 +138,22 @@ export default function MoleculesAboutMe() {
           // Desktop Desktop Desktop Desktop
           // =================================
           if (desktop) {
-            gsap.from(mainHeadingSpans.current, {
+            gsap.from(mainSpans, {
               scale: () => gsap.utils.random(0.2, 1),
               y: () => gsap.utils.random(-200, 200),
               autoAlpha: 0,
-              stagger: { each: 0.3, from: "random" }
+              stagger: { each: 0.3, from: "random" },
+              // Блок документа при анимации
+              onStart: () => {
+                animationActiveOverflowHidden(true);
+              },
+              // Разблок документа после анимации
+              onComplete: () => {
+                animationActiveOverflowHidden(false);
+              }
             });
             tl.addLabel("oneTime");
-            tl.from(every, { x: -500, duration: 5, autoAlpha: 0, stagger: 0.3 }, "oneTime");
+            tl.from(every, { x: -500, duration: 10, autoAlpha: 0, stagger: 0.3 }, "oneTime");
             tl.from(
               spans,
               {
@@ -199,7 +186,7 @@ export default function MoleculesAboutMe() {
               spans,
               {
                 scale: () => gsap.utils.random(-4, 1),
-                duration: 2,
+                duration: 1,
                 autoAlpha: 0,
                 stagger: 0.1,
                 ease: "sine.inOut"
@@ -230,7 +217,9 @@ export default function MoleculesAboutMe() {
         }
       }
     });
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+    };
   }, [aboutMeDB]);
 
   if (!aboutMeDB) return; // пока данных нет — ничего не рендерим
@@ -239,6 +228,8 @@ export default function MoleculesAboutMe() {
 
   return (
     <>
+      {/* Фейк скролл для gsap crub */}
+      <div ref={fakeScrollRef} className="fakeScroll absolute inset-0 h-[400vh]"></div>
       {/* Заголовок секции */}
       <AtomHeading
         headingRef={(el) => setRefs(el, undefined, mainHeadingRef)}
@@ -254,8 +245,6 @@ export default function MoleculesAboutMe() {
         level={1}
         className="global-combining-classes-space-elements text-center text-white "
       />
-
-      <div ref={fakeScrollRef} className="fakeScroll absolute inset-0 h-[300vh]"></div>
 
       <div className="avatar_and_paragraph global-space-elements flex gap-5 max-lg:flex-col">
         <div ref={avatarAndSkillsRef} className="avatar_and_skills_info">
@@ -308,6 +297,23 @@ export default function MoleculesAboutMe() {
         <AtomParagraph
           paragraphRef={(el) => setRefs(el, undefined, paragraphRef)}
           className="global-combining-classes-space-elements"
+          children={words?.map((word, wordIndex) => (
+            <React.Fragment key={wordIndex}>
+              <span
+                ref={(el) => setRefs(el, spanRefs)}
+                key={wordIndex}
+                className="inline-block word_span will-change-transform mr-3"
+              >
+                {word}
+              </span>
+              {word.endsWith(".") && (
+                <>
+                  <br />
+                  <br />
+                </>
+              )}
+            </React.Fragment>
+          ))}
         />
       </div>
     </>

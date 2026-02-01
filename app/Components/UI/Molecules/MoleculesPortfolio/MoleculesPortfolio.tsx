@@ -7,10 +7,11 @@ import AtomParagraph from "../../Atoms/AtomParagraph/AtomParagraph";
 
 import { portfolioDBProp } from "@/Data/portfolioDB";
 // ============== Функция соберальщик Ref ==============
-import { setRefs } from "@/app/utils/setRefs";
+import { setRefs } from "@/app/utils/SetElements/setRefs";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 
 // Регистрируем плагин ScrollTrigger, иначе GSAP его просто не увидит
 gsap.registerPlugin(ScrollTrigger);
@@ -56,7 +57,7 @@ export default function MoleculesPortfolio() {
       if (mainHeading) {
         // Заголовок появляется с сильным смещением и масштабом
         gsap.from(mainHeading, {
-          x: -900,
+          x: -1200,
           y: -400,
           scale: 2,
           autoAlpha: 1,
@@ -73,14 +74,17 @@ export default function MoleculesPortfolio() {
           duration: 2,
           autoAlpha: 0,
           stagger: 0.3,
-          ease: "circ.out"
+          delay: 1,
+          ease: "circ.out",
+          onStart: () => animationActiveOverflowHidden(true),
+          onComplete: () => animationActiveOverflowHidden(false)
         });
 
         // Картинка первой карточки:
         // огромная + далеко слева → плавно на место
         gsap.from(firstCardImg, {
           scale: 4,
-          x: -1100,
+          x: -2000,
           duration: 2,
           ease: "expo.out"
         });
