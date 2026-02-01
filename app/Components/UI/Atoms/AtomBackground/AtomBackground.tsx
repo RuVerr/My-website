@@ -14,8 +14,11 @@ export default function AtomBackground({
   className
 }: AtomBackgroundCanvasProp) {
   return (
-    <div ref={backgroundRef} className="fixed inset-0 w-full h-full block perspective-[1000px] bg-black">
-      <div ref={backgroundVideoDivRef} className={`transform-3d ${className}`}>
+    <div ref={backgroundRef} className="fixed inset-0 w-full h-full block perspective-[2000px] bg-black">
+      <div
+        ref={backgroundVideoDivRef}
+        className={` absolute top-1/2 left-1/2 transform translate-x-[-50%] translate-y-[-50%] w-full h-full origin-center ${className}`}
+      >
         <video
           ref={backgroundVideoRef}
           autoPlay
@@ -24,7 +27,7 @@ export default function AtomBackground({
           playsInline
           src={videoSrc}
           preload="auto"
-          className="w-full h-full object-cover block"
+          className="w-full h-full object-contain block"
         ></video>
       </div>
     </div>

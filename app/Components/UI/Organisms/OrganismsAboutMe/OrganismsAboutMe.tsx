@@ -38,7 +38,7 @@ export default function OrganismsAboutMe() {
     const scrollEl = scrollAboutMeRef.current;
     const transitionEl = transitionDivRef.current;
     const scrollHeight = window.innerHeight;
-    if ((!scrollEl || !transitionEl) && !scrollHeight) return;
+    if (!scrollEl || !transitionEl || !scrollHeight) return;
     // ===== начальное состояние transition-элемента =====
     gsap.set(transitionEl, {
       autoAlpha: 0,

@@ -11,8 +11,6 @@ import { setRefs } from "@/app/utils/SetElements/setRefs";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
-
 // Регистрируем плагин ScrollTrigger, иначе GSAP его просто не увидит
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,6 +25,9 @@ export default function MoleculesPortfolio() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const cardImgRefs = useRef<HTMLDivElement[]>([]);
 
+  const fakeScrollRef = useRef<HTMLDivElement | null>(null);
+  const portfolioCardsHeightRef = useRef<HTMLDivElement | null>(null);
+
   // ======= Загрузка данных =======
   useEffect(() => {
     // Получаем данные портфолио с сервера
@@ -37,89 +38,163 @@ export default function MoleculesPortfolio() {
 
   // ======= GSAP анимации =======
   useLayoutEffect(() => {
-    // Если карточки ещё не отрендерились или данных нет — выходим
-    if (!cardRefs.current.length || !portfolioDB) return;
-
-    // Главный заголовок
+    // ============ Ссылки на Ref-ы ============
+    const scrollEl = fakeScrollRef.current;
     const mainHeading = headingRef.current;
-
-    // Все карточки, кроме первых двух
-    // (первая — особенная, остальные анимируются по скроллу)
-    const everyCards = cardRefs.current.slice(2);
-
-    // Первая карточка портфолио и картинка
+    // ============ Все карты и картинки кроме первой ============
+    const everyCards = cardRefs.current.slice(1);
+    const everyCardsImg = cardImgRefs.current.slice(1);
+    //==============Первая карта и его картинка===================
     const firstCard = cardRefs.current.at(0);
     const firstCardImg = cardImgRefs.current.at(0);
+    //==============Расчет высоты секции карт===================
+    const cardsSectionHeight = portfolioCardsHeightRef.current?.offsetHeight;
 
+    //==============Если чего-то нет не продолжаем===================
+    if (!scrollEl || !everyCards.length || !cardsSectionHeight || !everyCardsImg.length || !firstCard || !firstCardImg)
+      return;
+    //==============Медиа настройки для gsap===================
+    const mm = gsap.matchMedia();
     // GSAP context — нужен, чтобы корректно чистить анимации при размонтировании
     const ctx = gsap.context(() => {
-      // ======= Анимация главного заголовка =======
-      if (mainHeading) {
-        // Заголовок появляется с сильным смещением и масштабом
-        gsap.from(mainHeading, {
-          x: -1200,
-          y: -400,
-          scale: 2,
-          autoAlpha: 1,
-          duration: 2,
-          ease: "back.out"
-        });
-      }
+      mm.add(
+        {
+          desktop: "(min-width: 1024px)",
+          tablet: "(min-width: 768px) and (max-width: 1023px)",
+          mobile: "(max-width: 767px)"
+        },
+        (context) => {
+          if (!context.conditions) return;
+          const { desktop, tablet, mobile } = context.conditions;
 
-      // ======= Анимация первой карточки =======
-      if (firstCard && firstCardImg) {
-        // Все элементы карточки выезжают справа по очереди
-        gsap.from(firstCard.children, {
-          x: 200,
-          duration: 2,
-          autoAlpha: 0,
-          stagger: 0.3,
-          delay: 1,
-          ease: "circ.out",
-          onStart: () => animationActiveOverflowHidden(true),
-          onComplete: () => animationActiveOverflowHidden(false)
-        });
+          // ======= Анимация главного заголовка =======
+          if (mainHeading) {
+            // Заголовок появляется с сильным смещением и масштабом
+            gsap.from(mainHeading, {
+              x: -1200,
+              y: -400,
+              scale: 2,
+              autoAlpha: 1,
+              duration: 2,
+              ease: "back.out"
+            });
+          }
 
-        // Картинка первой карточки:
-        // огромная + далеко слева → плавно на место
-        gsap.from(firstCardImg, {
-          scale: 4,
-          x: -2000,
-          duration: 2,
-          ease: "expo.out"
-        });
-      }
+          // ======= Анимация первой карточки =======
 
-      // ======= Анимация остальных карточек по скроллу =======
-      everyCards.forEach((card) => {
-        // Для каждой карточки создаём отдельный timeline
-        const tl = gsap.timeline({
-          defaults: {
+          // Все элементы карточки выезжают справа по очереди
+          gsap.from(firstCard.children, {
             x: 200,
             duration: 2,
-            ease: "back.out(1.2)",
-            stagger: 0.25
-          },
-          scrollTrigger: {
-            // Каждая карточка сама является триггером
-            trigger: card,
+            autoAlpha: 0,
+            stagger: 0.3,
+            delay: 1,
+            ease: "circ.out"
+            // onStart: () => animationActiveOverflowHidden(true),
+            // onComplete: () => animationActiveOverflowHidden(false)
+          });
 
-            // Анимация начинается, когда карточка почти вошла во viewport
-            start: "top 90%",
+          //==============Картинка первой карточки===================
+          gsap.from(firstCardImg, {
+            scale: 4,
+            x: -2000,
+            duration: 2,
+            ease: "expo.out"
+          });
 
-            // Заканчивается, когда карточка уходит вверх
-            end: "bottom top+=660",
+          //==============Таймлайны картинок и текст в карточках===================
+          const imagesTL = gsap.timeline({
+            scrollTrigger: {
+              trigger: scrollEl,
+              start: "top 20%",
+              end: () =>
+                desktop
+                  ? cardsSectionHeight * 0.7
+                  : tablet
+                    ? cardsSectionHeight * 1.1
+                    : mobile
+                      ? cardsSectionHeight * 0.8
+                      : window.innerHeight * 2,
+              scrub: 1
+            }
+          });
 
-            // scrub — привязывает анимацию к скроллу
-            scrub: 1
+          const cardTextTL = gsap.timeline({
+            scrollTrigger: {
+              trigger: scrollEl,
+              start: "top 20%",
+              end: () =>
+                desktop
+                  ? cardsSectionHeight * 0.7
+                  : tablet
+                    ? cardsSectionHeight * 1.1
+                    : mobile
+                      ? cardsSectionHeight * 0.8
+                      : window.innerHeight * 2,
+              scrub: 1
+            }
+          });
+
+          // =======================
+          //Desktop Desktop esktop
+          // =======================
+          if (desktop) {
+            //==============Анимация картинок===================
+            imagesTL.from(everyCardsImg, {
+              x: -600,
+              stagger: 0.3
+            });
+            //==============Анимация текста===================
+            everyCards.forEach((card) => {
+              cardTextTL.from(card.children, { x: 600, duration: 10, stagger: 0.3 });
+            });
           }
-        });
+          // =======================
+          //Tablet Tablet Tablet
+          // =======================
+          if (tablet) {
+            //==============Анимация картинок===================
+            everyCardsImg.forEach((img) => {
+              imagesTL.from(img, {
+                x: gsap.utils.random([-1900, 1900], true),
+                scale: gsap.utils.random([0.1, 2], true),
+                rotate: gsap.utils.random([-80, 80], true),
+                stagger: 0.3
+              });
+            });
+            //==============Анимация текста===================
+            everyCards.forEach((card) => {
+              cardTextTL.from(card.children, { x: 600, duration: 2, stagger: 0.1, autoAlpha: 0 });
+            });
+          }
 
-        // Дети карточки появляются с прозрачности
-        tl.from(card.children, {
-          autoAlpha: 0
-        });
-      });
+          // =======================
+          //Mobile Mobile Mobile
+          // =======================
+          if (mobile) {
+            //==============Анимация картинок===================
+            everyCardsImg.forEach((img) => {
+              imagesTL.from(img, {
+                x: gsap.utils.random([-900, 900], true),
+                scale: gsap.utils.random(0.1, 2, true),
+                stagger: 0.2,
+                autoAlpha: 0
+              });
+            });
+            //==============Анимация текста===================
+            everyCards.forEach((card) => {
+              cardTextTL.from(card.children, {
+                x: gsap.utils.random([-900, 900], true),
+                scale: gsap.utils.random(0.1, 2, true),
+                autoAlpha: 0,
+                duration: 2,
+                delay: 0.2,
+                stagger: 0.1
+              });
+            });
+          }
+        }
+      );
     });
 
     // При размонтировании компонента чистим все GSAP-анимации
@@ -127,9 +202,10 @@ export default function MoleculesPortfolio() {
   }, [portfolioDB]);
   return (
     <>
+      <div ref={fakeScrollRef} className="fakeScroll fixed inset-0 h-[400vh]"></div>
       <AtomHeading children={"Portfolio"} level={1} className="text-black" headingRef={headingRef} />
 
-      <div className="portfolio_card global-space-main-elements">
+      <div ref={portfolioCardsHeightRef} className="portfolio_card global-space-main-elements">
         {portfolioDB.map((portfolioElement) => (
           <AtomPortfolioCard
             className="will-change-transform global-combining-classes-space-elements"

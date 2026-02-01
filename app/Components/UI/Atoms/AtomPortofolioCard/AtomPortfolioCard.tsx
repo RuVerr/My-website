@@ -20,12 +20,11 @@ export default function AtomPortfolioCard({
   technologies = [],
   cardRef,
   cardImgRef,
-  technologiesRef,
   className = ""
 }: AtomPortfolioCardProp) {
   return (
     <div className={`card ${className}`}>
-      <div ref={cardRef} className="card_and_paragraph flex max-lg:flex-col items-start">
+      <div className="card_and_paragraph flex max-lg:flex-col items-start">
         <div ref={cardImgRef} className="card_img rounded-4xl overflow-hidden">
           <img src={src} alt="Projects" className="w-[600px]" />
         </div>
