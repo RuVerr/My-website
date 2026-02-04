@@ -126,10 +126,10 @@ export default function MoleculesAboutMe() {
               scrub: 1.2,
               anticipatePin: 1,
               onLeave: () => {
-                gsap.to(mainHeading, { x: -350 });
+                gsap.to(mainHeading, { xPercent: -15 });
               },
               onLeaveBack: () => {
-                gsap.to(mainHeading, { x: 0 });
+                gsap.to(mainHeading, { xPercent: 15 });
               }
             }
           });
@@ -170,6 +170,20 @@ export default function MoleculesAboutMe() {
           // Tablet Tablet Tablet Tablet
           // ===========================
           if (tablet) {
+            gsap.from(mainSpans, {
+              scale: () => gsap.utils.random(0.2, 1),
+              y: () => gsap.utils.random(-200, 200),
+              autoAlpha: 0,
+              stagger: { each: 0.3, from: "random" },
+              // Блок документа при анимации
+              onStart: () => {
+                animationActiveOverflowHidden(true);
+              },
+              // Разблок документа после анимации
+              onComplete: () => {
+                animationActiveOverflowHidden(false);
+              }
+            });
             tl.from(every, { x: -200, duration: 20, delay: 2, autoAlpha: 0, stagger: 2 }).from(spans, {
               scale: () => gsap.utils.random(-4, 1),
               duration: 10,
@@ -182,6 +196,20 @@ export default function MoleculesAboutMe() {
           // Mobile Mobile Mobile Mobile
           // ===========================
           if (mobile) {
+            gsap.from(mainSpans, {
+              scale: () => gsap.utils.random(0.2, 1),
+              y: () => gsap.utils.random(-200, 200),
+              autoAlpha: 0,
+              stagger: { each: 0.3, from: "random" },
+              // Блок документа при анимации
+              onStart: () => {
+                animationActiveOverflowHidden(true);
+              },
+              // Разблок документа после анимации
+              onComplete: () => {
+                animationActiveOverflowHidden(false);
+              }
+            });
             tl.from(every, { x: -500, duration: 1.5, autoAlpha: 0, stagger: 0.5 }).from(
               spans,
               {
@@ -237,7 +265,7 @@ export default function MoleculesAboutMe() {
           <span
             key={letterIndex}
             ref={(el) => setRefs(el, mainHeadingSpans)}
-            className="inline-block whitespace-break-spaces pt-[5%]"
+            className="inline-block base-heading-combining-classes whitespace-break-spaces pt-[5%]"
           >
             {letter}
           </span>

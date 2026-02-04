@@ -73,7 +73,7 @@ html::-webkit-scrollbar {
   /* Коллекция классов для заголовков */
   .base-heading-combining-classes {
     font-family: var(--font);
-    @apply text-amber-50 text-[30px] md:text-[50px] lg:text-[100px] uppercase;
+    @apply text-amber-50 text-[50px] md:text-[100px] lg:text-[150px] uppercase;
   }
 
   /* Коллекция классов для мини заголовков */
@@ -97,7 +97,7 @@ html::-webkit-scrollbar {
   /* Отступы главных блоков*/
 
   .global-space-main-elements {
-    @apply py-[95px];
+    @apply py-[20px];
   }
 
   /* Коллекция классов для отступов элементов */

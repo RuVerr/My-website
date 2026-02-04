@@ -1,6 +1,7 @@
 "use client";
 import React, { useLayoutEffect, useRef, useState } from "react";
 import AtomBackground from "../../Atoms/AtomBackground/AtomBackground";
+
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from "next/navigation";
@@ -60,27 +61,42 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC, classNam
   }, []);
 
   useLayoutEffect(() => {
-    const scale = window.innerWidth < 768 ? 7 : 1;
     const background = backgroundVideoDivRef.current;
     const scrollEl = scrollRef?.current;
     if (!background) return;
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        background,
-        { scale: 4 },
+      const mm = gsap.matchMedia();
+      mm.add(
         {
-          scale: scale,
-          ease: "power4.inOut",
-          scrollTrigger: {
-            trigger: scrollEl,
-            scrub: true,
-            // markers: true,
-            start: "top bottom",
-            end: "bottom top",
-            onLeaveBack: () => {
-              router.push("/");
+          desktop: "(min-width: 1024px)",
+          tablet: "(min-width: 768px) and (max-width: 1023px)",
+          mobile: "(max-width: 767px)"
+        },
+        (context) => {
+          if (!context.conditions) return;
+          const { desktop, tablet, mobile } = context.conditions;
+          const tl = gsap.timeline({
+            defaults: { duration: 2, ease: "power4.inOut" },
+            scrollTrigger: {
+              trigger: scrollEl,
+              scrub: true,
+              start: "top bottom",
+              end: "bottom top",
+              onLeaveBack: () => {
+                router.push("/");
+              }
             }
+          });
+
+          if (desktop) {
+            tl.fromTo(background, { scale: 10 }, { scale: 1 });
+          }
+          if (tablet) {
+            tl.fromTo(background, { scale: 3.5 }, { scale: 3 });
+          }
+          if (mobile) {
+            tl.fromTo(background, { scale: 6 }, { scale: 3.5 });
           }
         }
       );

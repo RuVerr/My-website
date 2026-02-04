@@ -11,6 +11,7 @@ import { setRefs } from "@/app/utils/SetElements/setRefs";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 // Регистрируем плагин ScrollTrigger, иначе GSAP его просто не увидит
 gsap.registerPlugin(ScrollTrigger);
 
@@ -53,10 +54,10 @@ export default function MoleculesPortfolio() {
     //==============Если чего-то нет не продолжаем===================
     if (!scrollEl || !everyCards.length || !cardsSectionHeight || !everyCardsImg.length || !firstCard || !firstCardImg)
       return;
-    //==============Медиа настройки для gsap===================
-    const mm = gsap.matchMedia();
     // GSAP context — нужен, чтобы корректно чистить анимации при размонтировании
     const ctx = gsap.context(() => {
+      //==============Медиа настройки для gsap===================
+      const mm = gsap.matchMedia();
       mm.add(
         {
           desktop: "(min-width: 1024px)",
@@ -79,9 +80,7 @@ export default function MoleculesPortfolio() {
               ease: "back.out"
             });
           }
-
           // ======= Анимация первой карточки =======
-
           // Все элементы карточки выезжают справа по очереди
           gsap.from(firstCard.children, {
             x: 200,
@@ -89,9 +88,9 @@ export default function MoleculesPortfolio() {
             autoAlpha: 0,
             stagger: 0.3,
             delay: 1,
-            ease: "circ.out"
-            // onStart: () => animationActiveOverflowHidden(true),
-            // onComplete: () => animationActiveOverflowHidden(false)
+            ease: "circ.out",
+            onStart: () => animationActiveOverflowHidden(true),
+            onComplete: () => animationActiveOverflowHidden(false)
           });
 
           //==============Картинка первой карточки===================
@@ -109,7 +108,7 @@ export default function MoleculesPortfolio() {
               start: "top 20%",
               end: () =>
                 desktop
-                  ? cardsSectionHeight * 0.7
+                  ? cardsSectionHeight * 0.6
                   : tablet
                     ? cardsSectionHeight * 1.1
                     : mobile
@@ -125,7 +124,7 @@ export default function MoleculesPortfolio() {
               start: "top 20%",
               end: () =>
                 desktop
-                  ? cardsSectionHeight * 0.7
+                  ? cardsSectionHeight * 0.6
                   : tablet
                     ? cardsSectionHeight * 1.1
                     : mobile
