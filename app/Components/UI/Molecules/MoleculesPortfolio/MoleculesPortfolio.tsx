@@ -52,7 +52,15 @@ export default function MoleculesPortfolio() {
     const cardsSectionHeight = portfolioCardsHeightRef.current?.offsetHeight;
 
     //==============Если чего-то нет не продолжаем===================
-    if (!scrollEl || !everyCards.length || !cardsSectionHeight || !everyCardsImg.length || !firstCard || !firstCardImg)
+    if (
+      !scrollEl ||
+      !everyCards.length ||
+      !cardsSectionHeight ||
+      !everyCardsImg.length ||
+      !firstCard ||
+      !firstCardImg ||
+      !mainHeading
+    )
       return;
     // GSAP context — нужен, чтобы корректно чистить анимации при размонтировании
     const ctx = gsap.context(() => {
@@ -69,17 +77,23 @@ export default function MoleculesPortfolio() {
           const { desktop, tablet, mobile } = context.conditions;
 
           // ======= Анимация главного заголовка =======
-          if (mainHeading) {
-            // Заголовок появляется с сильным смещением и масштабом
-            gsap.from(mainHeading, {
+          // Заголовок появляется с сильным смещением и масштабом
+          gsap.fromTo(
+            mainHeading,
+            {
               x: -1200,
               y: -400,
-              scale: 2,
+              autoAlpha: 0
+            },
+            {
+              x: 0,
+              y: 0,
               autoAlpha: 1,
               duration: 2,
               ease: "back.out"
-            });
-          }
+            }
+          );
+
           // ======= Анимация первой карточки =======
           // Все элементы карточки выезжают справа по очереди
           gsap.from(firstCard.children, {
@@ -202,7 +216,7 @@ export default function MoleculesPortfolio() {
   return (
     <>
       <div ref={fakeScrollRef} className="fakeScroll fixed inset-0 h-[400vh]"></div>
-      <AtomHeading children={"Portfolio"} level={1} className="text-black" headingRef={headingRef} />
+      <AtomHeading children={"Portfolio"} level={1} className="text-black opacity-0" headingRef={headingRef} />
 
       <div ref={portfolioCardsHeightRef} className="portfolio_card global-space-main-elements">
         {portfolioDB.map((portfolioElement) => (

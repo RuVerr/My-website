@@ -9,12 +9,12 @@ interface AtomContactCardsProp {
 
 export default function AtomContactCards({ heading, imgSRC, link, cardRef }: AtomContactCardsProp) {
   return (
-    <a href={link} ref={cardRef} target="_blank" className="group block">
+    <a href={link} ref={cardRef} target="_blank" className="group block w-full">
       <article className="contacts_card relative overflow-hidden border-2 border-amber-50 rounded-4xl px-[40px] py-[20px]">
         <div className="imgAndHeading flex items-center max-sm:justify-center">
           <img
             src={imgSRC}
-            className="w-[120px]"
+            className="w-[120px] max-lg:w-[80px]"
             alt={typeof heading === "string" ? heading + "icon" : "contacts icon"}
           />
           <div className="w-full max-sm:hidden">{heading}</div>
