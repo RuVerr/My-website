@@ -25,7 +25,6 @@ export default function MoleculesPortfolio() {
   const cardRefs = useRef<HTMLElement[]>([]);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const cardImgRefs = useRef<HTMLDivElement[]>([]);
-
   const fakeScrollRef = useRef<HTMLDivElement | null>(null);
   const portfolioCardsHeightRef = useRef<HTMLDivElement | null>(null);
 

@@ -26,18 +26,24 @@ export const contactsDB: contactsDBProp[] = [
   },
   {
     id: 4,
+    socTitle: "Gmail",
+    socHref: "mailto:ruben.vermishyan1331@gmail.com",
+    socIcon: "/Images-and-video/Icon/soc-icon/gmailcom.svg"
+  },
+  {
+    id: 5,
     socTitle: "Telegram",
     socHref: "https://t.me/ruver13",
     socIcon: "/Images-and-video/Icon/soc-icon/telegram.svg"
   },
   {
-    id: 5,
+    id: 6,
     socTitle: "Instagram",
     socHref: "https://www.instagram.com/ruver._/",
     socIcon: "/Images-and-video/Icon/soc-icon/instagram.svg"
   },
   {
-    id: 6,
+    id: 7,
     socTitle: "Facebook",
     socHref: "https://www.facebook.com/ruverrrrr/",
     socIcon: "/Images-and-video/Icon/soc-icon/facebook.svg"

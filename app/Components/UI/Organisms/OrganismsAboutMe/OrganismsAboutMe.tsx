@@ -5,6 +5,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import MoleculesAboutMe from "../../Molecules/MoleculesAboutMe/MoleculesAboutMe";
 import MoleculesBackground from "../../Molecules/MoleculesBackground/MoleculesBackground";
 import HiddenScreen from "@/app/Components/Hooks/HiddenScreen/HiddenScreen";
+import { transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -38,68 +39,22 @@ export default function OrganismsAboutMe() {
     const scrollEl = scrollAboutMeRef.current;
     const transitionEl = transitionDivRef.current;
     const scrollHeight = window.innerHeight;
+
+    console.log(scrollHeight);
+
     if (!scrollEl || !transitionEl || !scrollHeight) return;
     // ===== начальное состояние transition-элемента =====
-    gsap.set(transitionEl, {
-      autoAlpha: 0,
-      scale: 0.1,
-      ease: "expo.inOut"
-    });
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-      mm.add(
-        {
-          desktop: "(min-width: 1024px)",
-          tablet: "(min-width: 768px) and (max-width: 1023px)",
-          mobile: "(max-width: 767px)"
-        },
-        (context) => {
-          if (!context.conditions) return;
-          const { desktop, tablet, mobile } = context.conditions;
-
-          // ===== ScrollTrigger =====
-          const st = ScrollTrigger.create({
-            trigger: scrollEl,
-            start: "top 10%",
-            end: () =>
-              desktop
-                ? scrollHeight * 2.5
-                : tablet
-                  ? "+=" + scrollHeight * 1.5
-                  : mobile
-                    ? "+=" + scrollHeight * 3
-                    : scrollHeight,
-            scrub: 1,
-
-            // ===== отслеживаем прогресс скролла =====
-            onUpdate: (self) => {
-              if (self.direction > 0 && self.progress >= 0.98 && transitionFlag.current) {
-                transitionFlag.current = false;
-                // ===== финальная transition-анимация =====
-                handleTransitionEl("/portfolio");
-              }
-              if (self.direction < 0 && self.progress < 0.05 && transitionFlag.current) {
-                // ===== Обратный transition-анимация =====
-
-                transitionFlag.current = false;
-                handleTransitionEl("/");
-              }
-            }
-          });
-
-          function handleTransitionEl(routerPush?: string) {
-            gsap.to(transitionEl, {
-              scale: 16,
-              autoAlpha: 1,
-              duration: 1,
-              onComplete: () => {
-                router.push(`${routerPush}`); // переход на страницу
-                st.disable(); // убиваем только этот ScrollTrigger
-              }
-            });
-          }
-        }
-      );
+      transitionPagesInPage({
+        scrollEl,
+        transitionEl,
+        transitionFlag,
+        scrollHeight,
+        scrollProgress: 98,
+        router,
+        routerPushNext: "/portfolio",
+        routerPushBack: "/"
+      });
     });
 
     return () => ctx.revert(); // чистим gsap context

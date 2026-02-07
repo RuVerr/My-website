@@ -18,7 +18,7 @@ export default function MoleculesHome() {
   // Ссылки на все элементы <span> с буквами
   const letterRefs = useRef<HTMLSpanElement[]>([]);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
-  const blackTransitionRef = useRef<HTMLDivElement | null>(null);
+  // const blackTransitionRef = useRef<HTMLDivElement | null>(null);
   // Флаг для перехода на другую страницу после скролла
   const navigationFlag = useRef<boolean | null>(false);
 
@@ -28,7 +28,7 @@ export default function MoleculesHome() {
   useLayoutEffect(() => {
     const letters = letterRefs.current;
     const heading = headingRef.current;
-    const transition = blackTransitionRef.current;
+    // const transition = blackTransitionRef.current;
 
     // Контекст GSAP для изоляции анимаций (очень удобно с React)
     const ctx = gsap.context(() => {
@@ -57,16 +57,16 @@ export default function MoleculesHome() {
           trigger: heading, // Элемент, за которым следим
           start: "top top+=200", // Начало триггера (через 200px после верха)
           end: "+=1200", // Длина триггера (на сколько прокрутки)
-          scrub: true, // Анимация синхронизирована с прокруткой
-          pin: true, // Фиксируем заголовок на месте
-          anticipatePin: 1, // Немного предугадываем пин для плавности
-          onUpdate: (self) => {
-            // Когда прогресс ScrollTrigger между 0.81 и 0.91 — навигация на другую страницу
-            if (self.progress >= 0.81 && self.progress < 0.91) {
-              navigationFlag.current = true;
-              router.push("/aboutme");
-            }
-          }
+          pin: true,
+          anticipatePin: 1,
+          scrub: true // Анимация синхронизирована с прокруткой // Фиксируем заголовок на месте
+          // onUpdate: (self) => {
+          //   // Когда прогресс ScrollTrigger между 0.81 и 0.91 — навигация на другую страницу
+          //   if (self.progress >= 0.81 && self.progress < 0.91) {
+          //     navigationFlag.current = true;
+          //     router.push("/aboutme");
+          //   }
+          // }
         }
       });
       // Анимация движения букв при скролле
@@ -89,13 +89,13 @@ export default function MoleculesHome() {
         }
       );
 
-      //Анимация перехода
-      tl.fromTo(
-        transition,
-        { scale: 0, autoAlpha: 0 },
-        { scale: 20, duration: 1, autoAlpha: 1, delay: 1, ease: "sine.inOut" },
-        "<"
-      );
+      // //Анимация перехода
+      // tl.fromTo(
+      //   transition,
+      //   { scale: 0, autoAlpha: 0 },
+      //   { scale: 20, duration: 1, autoAlpha: 1, delay: 1, ease: "sine.inOut" },
+      //   "<"
+      // );
     });
 
     // Очищаем все анимации при размонтировании компонента
@@ -105,10 +105,10 @@ export default function MoleculesHome() {
   return (
     <>
       {/* Div для перехода */}
-      <div
+      {/* <div
         ref={blackTransitionRef}
         className="black-transition w-[200px] h-[200px] bg-black fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-100 rounded-[50%]"
-      ></div>
+      ></div> */}
       <AtomHeading
         className="perspective-[1000px]" // Перспектива для 3D эффекта
         headingRef={(el) => setRefs(el, undefined, headingRef)}

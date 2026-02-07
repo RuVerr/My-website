@@ -40,6 +40,19 @@ html::-webkit-scrollbar {
 }
 
 @layer components {
+  /* тест бэка */
+  .aboutMeTransition {
+    background: linear-gradient(
+      90deg,
+      #ffdb8c 0%,
+      #ffb762 16.667%,
+      #ff712d 33.333%,
+      #c22200 50%,
+      #610000 66.667%,
+      #040000 83.333%,
+      #000000 100%
+    );
+  }
   /* Глобальные стили шрифта для ссылок и для главного заголовка в Home */
   .global-links-fonts,
   .global-main-title {
@@ -124,6 +137,34 @@ html::-webkit-scrollbar {
     50% {
       text-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
     }
+  }
+
+  @keyframes transitionDivPortfolio {
+    0% {
+      border-radius: 40% 60% 50% 70%;
+    }
+    25% {
+      border-radius: 30% 50% 70% 80%;
+    }
+    50% {
+      border-radius: 20% 30% 40% 50%;
+    }
+    70% {
+      border-radius: 40% 50% 80% 70%;
+    }
+    80% {
+      border-radius: 20% 40% 90% 30%;
+    }
+    90% {
+      border-radius: 30% 50% 70% 40%;
+    }
+    100% {
+      border-radius: 40% 60% 50% 70%;
+    }
+  }
+
+  .transitionDivPortfolio {
+    animation: transitionDivPortfolio 10s infinite alternate ease-in-out;
   }
 
   .link-glow-active {
