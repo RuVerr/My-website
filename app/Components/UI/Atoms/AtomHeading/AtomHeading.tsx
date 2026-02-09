@@ -1,5 +1,6 @@
 import React from "react";
-import { JSX } from "react/jsx-runtime";
+
+type HeadingTag = "h1" | "h2" | "h3" | "h4";
 
 interface AtomHeadingProp {
   children?: React.ReactNode;
@@ -9,11 +10,13 @@ interface AtomHeadingProp {
 }
 
 export default function AtomHeading({ children, level = 1, className, headingRef }: AtomHeadingProp) {
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  const Tag = `h${level}` as HeadingTag;
   return (
     <>
-      {/* @ts-ignore */}
-      <Tag ref={headingRef} className={`base-heading-combining-classes global-user-no-select will-change-transform pt-[10px] ${className}`}>
+      <Tag
+        ref={headingRef}
+        className={`base-heading-combining-classes global-user-no-select will-change-transform pt-[10px] ${className}`}
+      >
         {children}
       </Tag>
     </>

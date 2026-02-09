@@ -1,6 +1,4 @@
-"use client";
-import React, { useRef } from "react";
-import * as THREE from "three";
+import React from "react";
 
 import TemplatesAboutMe from "@/app/Components/UI/Templates/TemplatesAboutMe/TemplatesAboutMe";
 

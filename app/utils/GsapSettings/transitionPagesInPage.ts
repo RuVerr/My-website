@@ -62,7 +62,7 @@ export function transitionPagesInPage({
             // ===== финальная transition-анимация =====
             handleTransitionEl(`${routerPushNext}`);
           }
-          if (self.direction < 0 && self.progress < 0.05 && transitionFlag.current && routerPushBack) {
+          if (self.direction < 0 && self.progress < 0.5 && transitionFlag.current && routerPushBack) {
             // ===== Обратный transition-анимация =====
             transitionFlag.current = false;
             handleTransitionEl(`${routerPushBack}`);

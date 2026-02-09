@@ -1,5 +1,4 @@
 import React from "react";
-import AtomHeading from "../AtomHeading/AtomHeading";
 
 interface AtomInfoListProp {
   children: string;

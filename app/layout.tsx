@@ -1,12 +1,9 @@
-"use client";
 import "./globals.css";
-import type { Metadata } from "next";
 import StartPage from "./Components/StartPage/StartPage";
 import AudioBackground from "./Components/AudioBackground/AudioBackground";
 import NavigationMenuDesk from "./Components/Navigation/NavigationMenuDesk/NavigationMenuDesk";
 import Footer from "./Components/Footer/Footer";
-import { Provider } from "react-redux";
-import { store } from "./Redux/Store/Store";
+import Provider from "./Redux/Providers/provider";
 import TemplateCustomCursor from "./Components/UI/Templates/TemplateCustomCursor/TemplateCustomCursor";
 
 export default function RootLayout({
@@ -17,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Provider store={store}>
+        <Provider>
           <TemplateCustomCursor />
           <StartPage />
           <AudioBackground />

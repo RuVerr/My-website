@@ -26,7 +26,7 @@ export default function OrganismsHome() {
         transitionEl,
         transitionFlag,
         scrollHeight,
-        scrollProgress: 20,
+        scrollProgress: 10,
         router,
         routerPushNext: "/aboutme"
       });

@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 import AtomParagraph from "../../Atoms/AtomParagraph/AtomParagraph";
