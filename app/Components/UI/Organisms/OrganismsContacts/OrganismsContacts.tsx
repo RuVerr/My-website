@@ -15,18 +15,18 @@ export default function OrganismsContacts() {
   useLayoutEffect(() => {
     const scrollEl = scrollContactsRef.current;
     const transitionEl = transitionDivRef.current;
-    const scrollHeight = window.innerHeight;
+    const scrollHeight = scrollEl?.offsetHeight;
 
     if (!scrollEl || !transitionFlag || !transitionEl || !scrollHeight) return;
     const ctx = gsap.context(() => {
-      transitionPagesInPage({
-        scrollEl,
-        transitionEl,
-        transitionFlag,
-        scrollHeight,
-        router,
-        routerPushBack: "/portfolio"
-      });
+      // transitionPagesInPage({
+      //   scrollEl,
+      //   transitionEl,
+      //   transitionFlag,
+      //   scrollHeight,
+      //   router,
+      //   routerPushBack: "/portfolio"
+      // });
     });
 
     return () => ctx.revert();
@@ -42,12 +42,12 @@ export default function OrganismsContacts() {
           <MoleculesContacts />
         </div>
       </div>
-      <div
+      {/* <div
         ref={transitionDivRef}
         className="transitionDiv pointer-events-auto w-[200px] h-[200px] fixed z-50
                    bottom-0 left-0 -translate-x-1/2 -translate-y-1/2
-                   rounded-full bg-white"
-      />
+                   rounded-full bg-[#cdcdcd]"
+      /> */}
     </section>
   );
 }

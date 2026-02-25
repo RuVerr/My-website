@@ -1,34 +1,58 @@
 "use client";
+
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+
+import { useRouter } from "next/navigation";
+
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 import AtomPortfolioCard from "../../Atoms/AtomPortofolioCard/AtomPortfolioCard";
 import AtomLink from "../../Atoms/AtomLink/AtomLink";
 import AtomParagraph from "../../Atoms/AtomParagraph/AtomParagraph";
 
 import { portfolioDBProp } from "@/Data/portfolioDB";
-// ============== Функция соберальщик Ref ==============
+
+// ============== Функция-сборщик Ref ==============
 import { setRefs } from "@/app/utils/SetElements/setRefs";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
-// Регистрируем плагин ScrollTrigger, иначе GSAP его просто не увидит
+import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
+
+// Регистрируем плагин ScrollTrigger,
+// иначе GSAP его просто не увидит
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesPortfolio() {
-  // ============== State ==============
+  // =================================
+  // Hooks
+  // =================================
+  const router = useRouter();
 
+  // =================================
+  // State
+  // =================================
   // Данные портфолио, которые приходят с API
   const [portfolioDB, setPortfolioDB] = useState<portfolioDBProp[]>([]);
 
-  // ============== Refs ==============
-  const cardRefs = useRef<HTMLElement[]>([]);
+  // =================================
+  // Refs
+  // =================================
   const headingRef = useRef<HTMLHeadingElement>(null);
+
+  const cardRefs = useRef<HTMLElement[]>([]);
   const cardImgRefs = useRef<HTMLDivElement[]>([]);
+
   const fakeScrollRef = useRef<HTMLDivElement | null>(null);
+
   const portfolioCardsHeightRef = useRef<HTMLDivElement | null>(null);
 
-  // ======= Загрузка данных =======
+  const transitionDivRef = useRef<HTMLDivElement | null>(null);
+
+  // =================================
+  // Загрузка данных
+  // =================================
   useEffect(() => {
     // Получаем данные портфолио с сервера
     fetch("/api/portfolio")
@@ -36,35 +60,47 @@ export default function MoleculesPortfolio() {
       .then((data) => setPortfolioDB(data));
   }, []);
 
-  // ======= GSAP анимации =======
+  // =================================
+  // GSAP анимации
+  // =================================
   useLayoutEffect(() => {
-    // ============ Ссылки на Ref-ы ============
+    // ----------- Ref-ы -----------
     const scrollEl = fakeScrollRef.current;
     const mainHeading = headingRef.current;
-    // ============ Все карты и картинки кроме первой ============
+    const transitionEl = transitionDivRef.current;
+
+    // ----------- Карточки -----------
+    // Все карты и картинки, кроме первой
     const everyCards = cardRefs.current.slice(1);
     const everyCardsImg = cardImgRefs.current.slice(1);
-    //==============Первая карта и его картинка===================
+
+    // Первая карта и её картинка
     const firstCard = cardRefs.current.at(0);
     const firstCardImg = cardImgRefs.current.at(0);
-    //==============Расчет высоты секции карт===================
+
+    // ----------- Размеры -----------
     const cardsSectionHeight = portfolioCardsHeightRef.current?.offsetHeight;
 
-    //==============Если чего-то нет не продолжаем===================
+    // ----------- Guard -----------
+    // Если чего-то нет — не продолжаем
     if (
       !scrollEl ||
       !everyCards.length ||
-      !cardsSectionHeight ||
       !everyCardsImg.length ||
+      !cardsSectionHeight ||
       !firstCard ||
       !firstCardImg ||
-      !mainHeading
+      !mainHeading ||
+      !transitionEl
     )
       return;
-    // GSAP context — нужен, чтобы корректно чистить анимации при размонтировании
+
+    // GSAP context — нужен,
+    // чтобы корректно чистить анимации при размонтировании
     const ctx = gsap.context(() => {
-      //==============Медиа настройки для gsap===================
+      // ----------- Media queries -----------
       const mm = gsap.matchMedia();
+
       mm.add(
         {
           desktop: "(min-width: 1024px)",
@@ -73,10 +109,12 @@ export default function MoleculesPortfolio() {
         },
         (context) => {
           if (!context.conditions) return;
+
           const { desktop, tablet, mobile } = context.conditions;
 
-          // ======= Анимация главного заголовка =======
-          // Заголовок появляется с сильным смещением и масштабом
+          // =================================
+          // Анимация главного заголовка
+          // =================================
           gsap.fromTo(
             mainHeading,
             {
@@ -93,12 +131,13 @@ export default function MoleculesPortfolio() {
             }
           );
 
-          // ======= Анимация первой карточки =======
-          // Все элементы карточки выезжают справа по очереди
+          // =================================
+          // Анимация первой карточки
+          // =================================
           gsap.from(firstCard.children, {
             x: 200,
-            duration: 2,
             autoAlpha: 0,
+            duration: 2,
             stagger: 0.3,
             delay: 1,
             ease: "circ.out",
@@ -106,28 +145,45 @@ export default function MoleculesPortfolio() {
             onComplete: () => animationActiveOverflowHidden(false)
           });
 
-          //==============Картинка первой карточки===================
+          // Картинка первой карточки
           gsap.from(firstCardImg, {
-            scale: 4,
             x: -2000,
+            scale: 4,
             duration: 2,
             ease: "expo.out"
           });
 
-          //==============Таймлайны картинок и текст в карточках===================
+          // =================================
+          // Таймлайны
+          // =================================
           const imagesTL = gsap.timeline({
             scrollTrigger: {
               trigger: scrollEl,
-              start: "top 20%",
+              start: "top top",
+              markers: true,
               end: () =>
                 desktop
-                  ? cardsSectionHeight * 0.6
+                  ? cardsSectionHeight
                   : tablet
-                    ? cardsSectionHeight * 1.1
+                    ? cardsSectionHeight * 1.5
                     : mobile
-                      ? cardsSectionHeight * 0.8
+                      ? cardsSectionHeight * 1.1
                       : window.innerHeight * 2,
-              scrub: 1
+              scrub: 1,
+              onLeave: () => {
+                transitionPagesInPage({
+                  transitionEl,
+                  router,
+                  routerPushNext: "/contacts"
+                });
+              },
+              onLeaveBack: () => {
+                transitionPagesBackPage({
+                  transitionEl,
+                  router,
+                  routerPushBack: "/aboutme"
+                });
+              }
             }
           });
 
@@ -147,25 +203,28 @@ export default function MoleculesPortfolio() {
             }
           });
 
-          // =======================
-          //Desktop Desktop esktop
-          // =======================
+          // =================================
+          // Desktop
+          // =================================
           if (desktop) {
-            //==============Анимация картинок===================
             imagesTL.from(everyCardsImg, {
               x: -600,
               stagger: 0.3
             });
-            //==============Анимация текста===================
+
             everyCards.forEach((card) => {
-              cardTextTL.from(card.children, { x: 600, duration: 10, stagger: 0.3 });
+              cardTextTL.from(card.children, {
+                x: 600,
+                duration: 10,
+                stagger: 0.3
+              });
             });
           }
-          // =======================
-          //Tablet Tablet Tablet
-          // =======================
+
+          // =================================
+          // Tablet
+          // =================================
           if (tablet) {
-            //==============Анимация картинок===================
             everyCardsImg.forEach((img) => {
               imagesTL.from(img, {
                 x: gsap.utils.random([-1900, 1900], true),
@@ -174,17 +233,21 @@ export default function MoleculesPortfolio() {
                 stagger: 0.3
               });
             });
-            //==============Анимация текста===================
+
             everyCards.forEach((card) => {
-              cardTextTL.from(card.children, { x: 600, duration: 2, stagger: 0.1, autoAlpha: 0 });
+              cardTextTL.from(card.children, {
+                x: 600,
+                duration: 2,
+                stagger: 0.1,
+                autoAlpha: 0
+              });
             });
           }
 
-          // =======================
-          //Mobile Mobile Mobile
-          // =======================
+          // =================================
+          // Mobile
+          // =================================
           if (mobile) {
-            //==============Анимация картинок===================
             everyCardsImg.forEach((img) => {
               imagesTL.from(img, {
                 x: gsap.utils.random([-900, 900], true),
@@ -193,7 +256,7 @@ export default function MoleculesPortfolio() {
                 autoAlpha: 0
               });
             });
-            //==============Анимация текста===================
+
             everyCards.forEach((card) => {
               cardTextTL.from(card.children, {
                 x: gsap.utils.random([-900, 900], true),
@@ -209,42 +272,51 @@ export default function MoleculesPortfolio() {
       );
     });
 
-    // При размонтировании компонента чистим все GSAP-анимации
+    // Чистим все GSAP-анимации при размонтировании
     return () => ctx.revert();
   }, [portfolioDB]);
+
+  // =================================
+  // JSX
+  // =================================
   return (
     <>
-      <div ref={fakeScrollRef} className="fakeScroll fixed inset-0 h-[400vh]"></div>
-      <AtomHeading children={"Portfolio"} level={1} className="text-black opacity-0" headingRef={headingRef} />
+      <AtomHeading headingRef={headingRef} level={1} className="text-black opacity-0">
+        Portfolio
+      </AtomHeading>
 
-      <div ref={portfolioCardsHeightRef} className="portfolio_card global-space-main-elements">
+      <div ref={fakeScrollRef} className="fakeScroll fixed inset-0 h-[400vh]" />
+
+      <div ref={portfolioCardsHeightRef} className="portfolio_card global-space-main-elements mb-[100px]">
         {portfolioDB.map((portfolioElement) => (
           <AtomPortfolioCard
+            key={portfolioElement.id}
             className="will-change-transform global-combining-classes-space-elements"
-            // Сохраняем ref каждой карточки в массив
+            // Сохраняем ref карточки
             cardRef={(el) => setRefs(el, cardRefs)}
             // Сохраняем ref картинки карточки
             cardImgRef={(el) => setRefs(el, cardImgRefs)}
-            key={portfolioElement.id}
             src={portfolioElement.img}
             heading={
-              <AtomHeading
-                children={portfolioElement.heading}
-                level={2}
-                className="base-mini-heading-combining-classes text-black"
-              />
+              <AtomHeading level={2} className="base-mini-heading-combining-classes text-black">
+                {portfolioElement.heading}
+              </AtomHeading>
             }
             onlineLink={<AtomLink href={portfolioElement.link} className="text-black" />}
             technologies={portfolioElement.technologies}
             paragraph={
-              <AtomParagraph
-                children={portfolioElement.paragraph}
-                className="text-[14px] text-black global-combining-classes-space-elements lowercase first-letter:uppercase"
-              />
+              <AtomParagraph className="text-[14px] text-black global-combining-classes-space-elements lowercase first-letter:uppercase">
+                {portfolioElement.paragraph}
+              </AtomParagraph>
             }
           />
         ))}
       </div>
+
+      <div
+        ref={(el) => setRefs(el, undefined, transitionDivRef)}
+        className="transitionDiv fixed top-20 left-[-900px] z-50 transitionDivPortfolio bg-black w-[500px] h-[500px]"
+      />
     </>
   );
 }

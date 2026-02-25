@@ -1,129 +1,167 @@
 "use client";
-import React, { useLayoutEffect, useRef } from "react";
-import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 
-import { setRefs } from "@/app/utils/SetElements/setRefs";
+import React, { useLayoutEffect, useRef } from "react";
+
+import { useRouter } from "next/navigation";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRouter } from "next/navigation";
+
+import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
+
+import { setRefs } from "@/app/utils/SetElements/setRefs";
 import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
+import { transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
 
 // Регистрируем плагин ScrollTrigger для GSAP
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesHome() {
+  // =================================
+  // Data
+  // =================================
   // Массив букв для заголовка
   const lettersName = ["R", "U", "B", "O"];
+
+  // =================================
+  // Refs
+  // =================================
   // Ссылки на все элементы <span> с буквами
   const letterRefs = useRef<HTMLSpanElement[]>([]);
+
+  // Заголовок
   const headingRef = useRef<HTMLHeadingElement | null>(null);
-  // const blackTransitionRef = useRef<HTMLDivElement | null>(null);
-  // Флаг для перехода на другую страницу после скролла
-  const navigationFlag = useRef<boolean | null>(false);
 
-  //Для переброса на нужную страницу
+  // Элемент для page transition
+  const transitionDivRef = useRef<HTMLDivElement | null>(null);
+
+  // =================================
+  // Router
+  // =================================
   const router = useRouter();
-
+  // =================================
+  // GSAP animations
+  // =================================
   useLayoutEffect(() => {
     const letters = letterRefs.current;
     const heading = headingRef.current;
-    // const transition = blackTransitionRef.current;
+    const transitionEl = transitionDivRef.current;
 
-    // Контекст GSAP для изоляции анимаций (очень удобно с React)
+    // GSAP context —
+    // изолирует анимации и упрощает cleanup
     const ctx = gsap.context(() => {
-      if (!letters?.length || !heading) return; // Если нет элементов, выходим
+      // Guard: если нет элементов — выходим
+      if (!letters?.length || !heading || !transitionEl) return;
+
+      // Скрываем transition-элемент на старте
+      gsap.set(transitionEl, {
+        autoAlpha: 0
+      });
+
+      // =================================
+      // Intro animation
+      // =================================
       gsap.from(letters, {
-        z: () => gsap.utils.random(-50, 100), // Случайная глубина при старте
-        y: () => gsap.utils.random(-300, 300), // Случайное вертикальное смещение
-        rotation: () => gsap.utils.random(-100, 30), // Случайный угол поворота
-        autoAlpha: 0, // Прозрачные в начале
+        z: () => gsap.utils.random(-50, 100),
+        y: () => gsap.utils.random(-300, 300),
+        rotation: () => gsap.utils.random(-100, 30),
+        autoAlpha: 0,
         duration: 3,
-        // Блок документа при анимации
+
+        // Блокируем скролл на время анимации
         onStart: () => {
           animationActiveOverflowHidden(true);
         },
-        // Разблок документа после анимации
+
+        // Возвращаем скролл обратно
         onComplete: () => {
           animationActiveOverflowHidden(false);
         }
       });
 
-      // ========================== Анимация букв при скролле ==========================
-      // Используем ScrollTrigger: буквы двигаются, увеличиваются и вращаются по мере скролла
+      // =================================
+      // Scroll animation
+      // =================================
       const tl = gsap.timeline({
-        defaults: { duration: 2, ease: "circ.inOut" },
+        defaults: {
+          duration: 2,
+          ease: "circ.inOut"
+        },
         scrollTrigger: {
-          trigger: heading, // Элемент, за которым следим
-          start: "top top+=200", // Начало триггера (через 200px после верха)
-          end: "+=1200", // Длина триггера (на сколько прокрутки)
+          trigger: heading,
+          start: "top top+=200",
+          end: () => window.innerHeight,
+          markers: true,
           pin: true,
           anticipatePin: 1,
-          scrub: true // Анимация синхронизирована с прокруткой // Фиксируем заголовок на месте
-          // onUpdate: (self) => {
-          //   // Когда прогресс ScrollTrigger между 0.81 и 0.91 — навигация на другую страницу
-          //   if (self.progress >= 0.81 && self.progress < 0.91) {
-          //     navigationFlag.current = true;
-          //     router.push("/aboutme");
-          //   }
-          // }
+          scrub: true,
+
+          // Переход на следующую страницу
+          onLeave: () => {
+            transitionPagesInPage({
+              transitionEl,
+              router,
+              routerPushNext: "/aboutme"
+            });
+          }
         }
       });
-      // Анимация движения букв при скролле
+
+      // Анимация букв при скролле
       tl.fromTo(
         letters,
         {
           x: 0,
-          z: 0,
           y: 0,
+          z: 0,
           rotation: 0,
           scale: 1
         },
         {
-          x: 0, // Центр по горизонтали
-          y: 600, // Двигаем вниз на 600px
-          z: 900, // Приближаем к камере на 900px
-          scale: 1.5, // Увеличиваем размер
-          rotation: () => gsap.utils.random(-200, 200), // Случайный поворот
-          stagger: { each: 0.2, from: "random" } // Рандомное смещение букв
+          x: 0,
+          y: 600,
+          z: 1000,
+          scale: 1.5,
+          rotation: () => gsap.utils.random(-200, 200),
+          stagger: {
+            each: 0.2,
+            from: "random"
+          }
         }
       );
-
-      // //Анимация перехода
-      // tl.fromTo(
-      //   transition,
-      //   { scale: 0, autoAlpha: 0 },
-      //   { scale: 20, duration: 1, autoAlpha: 1, delay: 1, ease: "sine.inOut" },
-      //   "<"
-      // );
     });
 
-    // Очищаем все анимации при размонтировании компонента
+    // Очищаем все GSAP-анимации
+    // при размонтировании компонента
     return () => ctx.revert();
   }, []);
 
+  // =================================
+  // JSX
+  // =================================
   return (
     <>
-      {/* Div для перехода */}
-      {/* <div
-        ref={blackTransitionRef}
-        className="black-transition w-[200px] h-[200px] bg-black fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-100 rounded-[50%]"
-      ></div> */}
-      <AtomHeading
-        className="perspective-[1000px]" // Перспектива для 3D эффекта
-        headingRef={(el) => setRefs(el, undefined, headingRef)}
-        children={lettersName.map((letter, letterIndex) => (
+      <AtomHeading className="perspective-[1000px]" headingRef={(el) => setRefs(el, undefined, headingRef)}>
+        {lettersName.map((letter, letterIndex) => (
           <span
-            ref={(el) => setRefs(el, letterRefs)}
             key={letterIndex}
+            ref={(el) => setRefs(el, letterRefs)}
             className="inline-block transform-3d text-black global-main-heading-classes"
           >
             {letter}
           </span>
         ))}
+      </AtomHeading>
+
+      {/* Фейковый скролл для ScrollTrigger */}
+      <div className="fakeScroll pointer-events-none h-[200vh]" />
+
+      <div
+        ref={transitionDivRef}
+        className="transitionDiv overflow-hidden pointer-events-auto w-[200px] h-[200px] fixed z-50
+                   bottom-0 left-0 -translate-x-1/2 -translate-y-1/2
+                   rounded-full bg-black"
       />
-      {/* Фейковый скролл, чтобы ScrollTrigger работал */}
-      <div className="fakeScroll pointer-events-none h-[200vh]"></div>
     </>
   );
 }

@@ -12,6 +12,8 @@ import { setRefs } from "@/app/utils/SetElements/setRefs";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
+import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
+import { useRouter } from "next/navigation";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesAboutMe() {
@@ -19,6 +21,9 @@ export default function MoleculesAboutMe() {
   const [aboutMeDB, setAboutMeDB] = useState<aboutMe | null>(null);
   //Заголовок
   const aboutMeMainHeading = "About me".split("");
+
+  //Router
+  const router = useRouter();
 
   // ========== Для работы с DOM напрямую и анимациями через GSAP ==========
   const paragraphRef = useRef<HTMLParagraphElement | null>(null);
@@ -29,6 +34,7 @@ export default function MoleculesAboutMe() {
   const fakeScrollRef = useRef<HTMLDivElement | null>(null);
   const avatarAndSkillsRef = useRef<HTMLDivElement | null>(null);
   const everyAvatarHeadingLiRefs = useRef<HTMLElement[]>([]);
+  const transitionDivRef = useRef<HTMLDivElement | null>(null);
 
   let animationFlagRef = useRef<boolean>(false);
 
@@ -63,6 +69,7 @@ export default function MoleculesAboutMe() {
     const mainHeading = mainHeadingRef.current;
     const mainSpans = mainHeadingSpans.current;
     const spans = spanRefs.current;
+    const transitionEl = transitionDivRef.current;
     // Если данных нет, ничего не делаем точнее вылетаем
     if (!aboutMeDB) return;
 
@@ -73,7 +80,7 @@ export default function MoleculesAboutMe() {
       const scrollEl = fakeScrollRef.current;
       const paragraphRefHeight = paragraphRef.current?.offsetHeight;
       const avatarAndSkillsRefHeight = avatarAndSkillsRef.current?.offsetHeight;
-      if (!paragraphRefHeight || !avatarAndSkillsRefHeight || !spans) return;
+      if (!paragraphRefHeight || !avatarAndSkillsRefHeight || !spans || !transitionEl) return;
       //gsap MatchMedia
       const mm = gsap.matchMedia();
       mm.add(
@@ -89,6 +96,8 @@ export default function MoleculesAboutMe() {
 
           ScrollTrigger.refresh(); // обновляем ScrollTrigger, чтобы корректно учитывалась высота элементов и скролл
 
+          gsap.set(transitionEl, { autoAlpha: 0 });
+
           // ===================================
           // Создаем GSAP timeline для анимаций
           // ===================================
@@ -97,24 +106,34 @@ export default function MoleculesAboutMe() {
             scrollTrigger: {
               trigger: scrollEl, // элемент, относительно которого будет запускаться анимация при скролле
               start: `top 10%`, // когда верхняя граница триггера достигнет 10% от высоты viewport, анимация стартует
+              markers: true,
               end: () =>
                 // вычисляем конец анимации в зависимости от устройства
                 desktop
-                  ? paragraphRefHeight // на десктопе — высота параграфа
+                  ? paragraphRefHeight * 1.1 // на десктопе — высота параграфа
                   : tablet
-                    ? paragraphRefHeight + avatarAndSkillsRefHeight // на планшете — параграф + аватар с навыками
+                    ? paragraphRefHeight + avatarAndSkillsRefHeight * 1.1 // на планшете — параграф + аватар с навыками
                     : mobile
-                      ? avatarAndSkillsRefHeight + paragraphRefHeight // на мобильных аналогично
+                      ? avatarAndSkillsRefHeight + paragraphRefHeight * 1.1 // на мобильных аналогично
                       : paragraphRefHeight + avatarAndSkillsRefHeight + 2 * window.innerHeight, // запас на прочие случаи
               scrub: 1, // синхронизируем timeline с прокруткой, 1.2 = плавная синхронизация
               anticipatePin: 1, // чуть раньше учитывает пины, чтобы скролл был более плавным
-              markers: true, // включаем визуальные маркеры start/end для отладки
               onUpdate: (self) => {
                 // вызываем функцию только один раз при прогрессе скролла между 0.51 и 0.61
                 if (self.progress >= 0.51 && self.progress <= 0.61 && animationFlagRef.current === false) {
                   animationFlagRef.current = true; // ставим флаг, чтобы не запускать повторно
                   startCounter(); // запускаем анимацию процентов навыков
                 }
+              },
+              onLeave: () => {
+                transitionPagesInPage({
+                  transitionEl,
+                  router,
+                  routerPushNext: "/portfolio"
+                });
+              },
+              onLeaveBack: () => {
+                transitionPagesBackPage({ transitionEl, router, routerPushBack: "/" });
               }
             }
           });
@@ -211,11 +230,11 @@ export default function MoleculesAboutMe() {
                 animationActiveOverflowHidden(false);
               }
             });
-            tl.from(every, { x: -500, duration: 1.5, autoAlpha: 0, stagger: 0.5 }).from(
+            tl.from(every, { x: -500, duration: 1, autoAlpha: 0, stagger: 0.5 }).from(
               spans,
               {
                 scale: () => gsap.utils.random(-4, 1),
-                duration: 1,
+                duration: 0.8,
                 autoAlpha: 0,
                 stagger: 0.1,
                 ease: "sine.inOut"
@@ -257,9 +276,7 @@ export default function MoleculesAboutMe() {
 
   return (
     <>
-      {/* Фейк скролл для gsap crub */}
       <div ref={fakeScrollRef} className="fakeScroll absolute inset-0 h-[400vh]"></div>
-      {/* Заголовок секции */}
       <AtomHeading
         headingRef={(el) => setRefs(el, undefined, mainHeadingRef)}
         children={aboutMeMainHeading.map((letter, letterIndex) => (
@@ -345,6 +362,12 @@ export default function MoleculesAboutMe() {
           ))}
         />
       </div>
+      <div
+        ref={(el) => setRefs(el, undefined, transitionDivRef)}
+        className="transitionDiv pointer-events-auto w-[200px] h-[200px] fixed z-50
+                   top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                   rounded-full bg-gray-50"
+      />
     </>
   );
 }

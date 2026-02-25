@@ -90,7 +90,7 @@ export default function MoleculesBackground({ scrollRef, backgroundSRC, classNam
           });
 
           if (desktop) {
-            tl.fromTo(background, { scale: 10 }, { scale: 1 });
+            tl.fromTo(background, { scale: 2 }, { scale: 1 });
           }
           if (tablet) {
             tl.fromTo(background, { scale: 3.5 }, { scale: 3 });

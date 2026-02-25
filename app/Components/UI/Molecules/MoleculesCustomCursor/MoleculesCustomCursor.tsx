@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { AtomCustomCursor } from "../../Atoms/AtomCustomCursor/AtomCustomCursor";
 import { usePathname } from "next/navigation";
 
@@ -7,17 +7,17 @@ export default function MoleculesCustomCursor() {
   const cursorRef = useRef<HTMLDivElement | null>(null);
   const location = usePathname();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!cursorRef.current) return;
     const cursor = cursorRef.current;
 
     location === "/"
       ? (cursor.style.borderColor = "black")
       : location === "/aboutme"
-      ? (cursor.style.borderColor = "white")
-      : location === "/portfolio"
-      ? (cursor.style.borderColor = "black")
-      : (cursor.style.borderColor = "white");
+        ? (cursor.style.borderColor = "white")
+        : location === "/portfolio"
+          ? (cursor.style.borderColor = "black")
+          : (cursor.style.borderColor = "white");
 
     const moveCursor = (e: MouseEvent) => {
       cursor.style.transform = `translate3d(${e.clientX - 20}px, ${e.clientY - 20}px,0)`;
