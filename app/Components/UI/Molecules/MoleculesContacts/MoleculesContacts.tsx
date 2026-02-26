@@ -13,6 +13,7 @@ import { setRefs } from "@/app/utils/SetElements/setRefs";
 import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 import { transitionPagesBackPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
 import { useRouter } from "next/navigation";
+import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
 
 // Регистрируем GSAP плагин
 gsap.registerPlugin(ScrollTrigger);
@@ -70,6 +71,8 @@ export default function MoleculesContacts() {
 
     // GSAP context — безопасная очистка анимаций
     const ctx = gsap.context(() => {
+      //FIXME - временно
+      gsap.set(transitionEl, { scale: 0 });
       // ===============================
       // Heading animation
       // ===============================
@@ -198,11 +201,9 @@ export default function MoleculesContacts() {
           link={contact.socHref}
         />
       ))}
-      <div
-        ref={transitionDivRef}
-        className="transitionDiv pointer-events-auto w-[200px] h-[200px] fixed z-50
-                   bottom-0 left-0 -translate-x-2/1 -translate-y-1/2
-                   rounded-full bg-[#cdcdcd]"
+      <AtomTransitionDiv
+        transitionDivRef={transitionDivRef}
+        className="-translate-x-1/2 -translate-y-1/2 top-1/2 left-10 bg-[#c0c0c0]"
       />
     </div>
   );

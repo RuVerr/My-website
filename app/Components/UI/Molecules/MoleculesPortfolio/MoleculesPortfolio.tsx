@@ -19,6 +19,7 @@ import { setRefs } from "@/app/utils/SetElements/setRefs";
 
 import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
+import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
 
 // Регистрируем плагин ScrollTrigger,
 // иначе GSAP его просто не увидит
@@ -111,6 +112,8 @@ export default function MoleculesPortfolio() {
           if (!context.conditions) return;
 
           const { desktop, tablet, mobile } = context.conditions;
+
+          gsap.set(transitionEl, { scale: 0 });
 
           // =================================
           // Анимация главного заголовка
@@ -313,9 +316,14 @@ export default function MoleculesPortfolio() {
         ))}
       </div>
 
-      <div
+      {/* <div
         ref={(el) => setRefs(el, undefined, transitionDivRef)}
         className="transitionDiv fixed top-20 left-[-900px] z-50 transitionDivPortfolio bg-black w-[500px] h-[500px]"
+      /> */}
+
+      <AtomTransitionDiv
+        transitionDivRef={transitionDivRef}
+        className=" bottom-[-300px] left-1/2 -translate-x-1/2 bg-black "
       />
     </>
   );

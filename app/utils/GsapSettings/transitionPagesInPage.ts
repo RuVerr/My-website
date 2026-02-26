@@ -13,7 +13,7 @@ export function transitionPagesInPage({ transitionEl, router, routerPushNext }: 
   if (!transitionEl) return;
 
   gsap.to(transitionEl, {
-    scale: 20,
+    scale: 1,
     duration: 1.5,
     ease: "power4.inOut",
     autoAlpha: 1,
@@ -25,7 +25,7 @@ export function transitionPagesInPage({ transitionEl, router, routerPushNext }: 
 
 export function transitionPagesBackPage({ transitionEl, router, routerPushBack }: transitionPagesProp) {
   gsap.to(transitionEl, {
-    scale: 20,
+    scale: 1,
     duration: 1.5,
     ease: "power4.inOut",
     autoAlpha: 1,

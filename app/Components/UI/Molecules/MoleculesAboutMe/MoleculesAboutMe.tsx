@@ -14,6 +14,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
 import { useRouter } from "next/navigation";
+import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesAboutMe() {
@@ -96,7 +97,7 @@ export default function MoleculesAboutMe() {
 
           ScrollTrigger.refresh(); // обновляем ScrollTrigger, чтобы корректно учитывалась высота элементов и скролл
 
-          gsap.set(transitionEl, { autoAlpha: 0 });
+          gsap.set(transitionEl, { scale: 0 });
 
           // ===================================
           // Создаем GSAP timeline для анимаций
@@ -105,7 +106,7 @@ export default function MoleculesAboutMe() {
             defaults: { ease: "sine.inOut" }, // плавное easing для всех анимаций в timeline по умолчанию
             scrollTrigger: {
               trigger: scrollEl, // элемент, относительно которого будет запускаться анимация при скролле
-              start: `top 10%`, // когда верхняя граница триггера достигнет 10% от высоты viewport, анимация стартует
+              start: `top top`, // когда верхняя граница триггера достигнет 10% от высоты viewport, анимация стартует
               markers: true,
               end: () =>
                 // вычисляем конец анимации в зависимости от устройства
@@ -143,7 +144,7 @@ export default function MoleculesAboutMe() {
               trigger: mainHeading,
               start: "top top",
               pin: true,
-              scrub: 1.2,
+              scrub: 1,
               anticipatePin: 1,
               onLeave: () => {
                 gsap.to(mainHeading, { xPercent: -15 });
@@ -362,11 +363,9 @@ export default function MoleculesAboutMe() {
           ))}
         />
       </div>
-      <div
-        ref={(el) => setRefs(el, undefined, transitionDivRef)}
-        className="transitionDiv pointer-events-auto w-[200px] h-[200px] fixed z-50
-                   top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                   rounded-full bg-gray-50"
+      <AtomTransitionDiv
+        transitionDivRef={transitionDivRef}
+        className=" -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 bg-[#c0c0c0]"
       />
     </>
   );
