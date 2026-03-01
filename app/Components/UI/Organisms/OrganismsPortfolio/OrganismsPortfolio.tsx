@@ -11,9 +11,7 @@ export default function OrganismsPortfolio() {
           backgroundSRC="/Images-and-video/Background/Video/white-lines.mp4"
         />
         <div className="container mx-auto">
-          <div className="portfolio_content relative z-[2]">
-            <MoleculesPortfolio />
-          </div>
+          <MoleculesPortfolio />
         </div>
       </section>
     </>

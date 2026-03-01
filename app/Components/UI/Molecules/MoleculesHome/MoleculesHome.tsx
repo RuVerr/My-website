@@ -1,17 +1,22 @@
 "use client";
-
+// ================= React ====================
 import React, { useLayoutEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+// ================= Atomic Components ====================
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
+import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
+
+// ================= Navigation ====================
+import { useRouter } from "next/navigation";
+
+// ================= Utils ====================
 import { setRefs } from "@/app/utils/SetElements/setRefs";
 import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 import { transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
-import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
 
-// Регистрируем плагин ScrollTrigger для GSAP
+// ================= GSAP ====================
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesHome() {
@@ -45,9 +50,9 @@ export default function MoleculesHome() {
 
       // ================= Intro Animation ====================
       gsap.from(letters, {
-        z: () => gsap.utils.random(-50, 100),
-        y: () => gsap.utils.random(-300, 300),
-        rotation: () => gsap.utils.random(-100, 30),
+        z: () => gsap.utils.random([-50, 100]),
+        y: () => gsap.utils.random([-300, 300]),
+        rotation: () => gsap.utils.random([-100, 30]),
         autoAlpha: 0,
         duration: 1.5,
         ease: "sine.out",

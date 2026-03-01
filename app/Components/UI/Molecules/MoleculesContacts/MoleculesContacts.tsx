@@ -1,62 +1,59 @@
 "use client";
-
+// ================= React ====================
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
+// ================= Atomic Components ====================
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 import AtomContactCards from "../../Atoms/AtomContactCards/AtomContactCards";
+import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
 
-import { contactsDBProp } from "@/Data/contactsDB";
+// ================= Utils ====================
 import { setRefs } from "@/app/utils/SetElements/setRefs";
 import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
 import { transitionPagesBackPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
-import { useRouter } from "next/navigation";
-import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
 
-// Регистрируем GSAP плагин
+// ================= Navigation ====================
+import { useRouter } from "next/navigation";
+
+// ================= Types ====================
+import { contactsDBProp } from "@/Data/contactsDB";
+
+// ================= GSAP ====================
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesContacts() {
-  // =================================
-  // Hooks
-  // =================================
+  // ================= Router ====================
   const router = useRouter();
-  // =================================
-  // State
-  // =================================
+
+  // ================= State ====================
   // Контакты, получаемые с API
   const [contactsDB, setContactsDB] = useState<contactsDBProp[]>([]);
 
-  // =================================
-  // Refs (DOM + GSAP)
-  // =================================
+  // ================= Refs (DOM + GSAP) ====================
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const cardRefs = useRef<HTMLAnchorElement[]>([]);
-  const contactsCardSectionRef = useRef<HTMLDivElement | null>(null);
+  const contactsContentRef = useRef<HTMLDivElement | null>(null);
   const transitionDivRef = useRef<HTMLDivElement | null>(null);
-  // =================================
-  // Fetch contacts data
-  // =================================
+
+  // ================= Fetch contacts data ====================
   useEffect(() => {
     fetch("/api/contacts")
       .then((res) => res.json())
       .then((data) => setContactsDB(data));
   }, []);
 
-  // =================================
-  // GSAP animations
-  // =================================
+  // ================= GSAP Animations ====================
   useLayoutEffect(() => {
     const heading = headingRef.current;
-    // Первые две карточки (анимируются сразу)
-    const firstTwoCards = cardRefs.current.slice(0, 2);
-    // Остальные карточки (анимация по скроллу)
-    const restCards = cardRefs.current.slice(2);
-    const sectionHeight = contactsCardSectionRef.current?.offsetHeight;
-    // Ссылка на Div переход
+    const firstTwoCards = cardRefs.current.slice(0, 2); // первые две карточки анимируются сразу
+    const restCards = cardRefs.current.slice(2); // остальные карточки анимация по скроллу
+    const scrollEl = contactsContentRef.current;
+    const sectionHeight = contactsContentRef.current?.offsetHeight;
     const transitionEl = transitionDivRef.current;
+
+    // ================= Guard ====================
     // Если данных или DOM нет — выходим
     if (
       !heading ||
@@ -64,56 +61,38 @@ export default function MoleculesContacts() {
       !restCards.length ||
       !sectionHeight ||
       !contactsDB.length ||
-      !transitionEl
+      !transitionEl ||
+      !scrollEl
     ) {
       return;
     }
 
-    // GSAP context — безопасная очистка анимаций
+    // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
-      //FIXME - временно
+      // ================= Transition Element ====================
+      // Изначально скрываем переходный div
       gsap.set(transitionEl, { scale: 0 });
-      // ===============================
-      // Heading animation
-      // ===============================
+
+      // ================= Heading Animation ====================
       gsap.fromTo(
         heading,
-        {
-          x: -400,
-          scale: 0.5,
-          autoAlpha: 0
-        },
-        {
-          x: 0,
-          scale: 1,
-          autoAlpha: 1,
-          duration: 2,
-          delay: 0.2,
-          ease: "power4.inOut"
-        }
+        { x: -400, scale: 0.5, autoAlpha: 0 }, // откуда
+        { x: 0, scale: 1, autoAlpha: 1, duration: 1, ease: "power4.inOut" } // куда
       );
 
-      // ===============================
-      // First two cards animation
-      // ===============================
+      // ================= First Two Cards Animation ====================
       gsap.from(firstTwoCards, {
         x: -500,
         scale: 0.1,
         autoAlpha: 0,
-        duration: 2,
+        duration: 1,
         stagger: 0.2,
         ease: "power4.inOut",
-        onStart: () => {
-          animationActiveOverflowHidden(true);
-        },
-        onComplete: () => {
-          animationActiveOverflowHidden(false);
-        }
+        onStart: () => animationActiveOverflowHidden(true),
+        onComplete: () => animationActiveOverflowHidden(false)
       });
 
-      // ===============================
-      // Scroll animations (rest cards)
-      // ===============================
+      // ================= Scroll Animations (rest cards) ====================
       const mm = gsap.matchMedia();
 
       mm.add(
@@ -128,12 +107,9 @@ export default function MoleculesContacts() {
           const { desktop, tablet, mobile } = context.conditions;
 
           const tl = gsap.timeline({
-            defaults: {
-              duration: 2,
-              ease: "power4.inOut"
-            },
+            defaults: { duration: 2, ease: "power4.inOut" },
             scrollTrigger: {
-              trigger: contactsCardSectionRef.current,
+              trigger: scrollEl,
               start: "top top",
               markers: true,
               end: () =>
@@ -145,7 +121,7 @@ export default function MoleculesContacts() {
             }
           });
 
-          // Универсальная анимация для всех устройств
+          // ================= Universal Animation ====================
           if (desktop || tablet || mobile) {
             tl.from(restCards, {
               x: gsap.utils.random([-900, 900], true),
@@ -158,42 +134,25 @@ export default function MoleculesContacts() {
       );
     });
 
-    // Очистка при размонтировании
+    // ================= Cleanup ====================
     return () => ctx.revert();
   }, [contactsDB]);
 
-  // =================================
-  // Render
-  // =================================
+  // ================= JSX ====================
   return (
-    <div
-      ref={contactsCardSectionRef}
-      className="
-        contacts_cards
-        global-space-main-elements
-        flex flex-col
-        gap-[30px]
-      "
-    >
+    <div ref={contactsContentRef} className="contacts_content">
+      {/* ================= Heading ==================== */}
       <AtomHeading headingRef={headingRef} level={1} className="text-white opacity-0">
         Contacts
       </AtomHeading>
 
+      {/* ================= Contact Cards ==================== */}
       {contactsDB.map((contact, index) => (
         <AtomContactCards
           key={index}
-          // Добавляем ref карточки в массив
-          cardRef={(el) => setRefs(el, cardRefs)}
+          cardRef={(el) => setRefs(el, cardRefs)} // сохраняем ref карточки
           heading={
-            <AtomHeading
-              level={3}
-              className="
-                text-center
-                text-[100px]
-                max-md:text-[60px]
-                max-lg:text-[70px]
-              "
-            >
+            <AtomHeading level={3} className="text-center text-[100px] max-md:text-[60px] max-lg:text-[70px]">
               {contact.socTitle}
             </AtomHeading>
           }
@@ -201,6 +160,8 @@ export default function MoleculesContacts() {
           link={contact.socHref}
         />
       ))}
+
+      {/* ================= Transition Div ==================== */}
       <AtomTransitionDiv
         transitionDivRef={transitionDivRef}
         className="-translate-x-1/2 -translate-y-1/2 top-1/2 left-10 bg-[#c0c0c0]"

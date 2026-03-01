@@ -11,9 +11,7 @@ export default function OrganismsContacts() {
         className=" backdrop: blur-[40px] "
       />
       <div className="container mx-auto">
-        <div className="contacts_content relative z-[2]">
-          <MoleculesContacts />
-        </div>
+        <MoleculesContacts />
       </div>
     </section>
   );

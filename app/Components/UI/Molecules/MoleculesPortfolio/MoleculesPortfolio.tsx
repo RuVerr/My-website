@@ -1,89 +1,74 @@
 "use client";
 
+// ================= React ====================
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+// ================= Navigation ====================
 import { useRouter } from "next/navigation";
 
+// ================= GSAP ====================
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+// ================= Atomic Components ====================
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
 import AtomPortfolioCard from "../../Atoms/AtomPortofolioCard/AtomPortfolioCard";
 import AtomLink from "../../Atoms/AtomLink/AtomLink";
 import AtomParagraph from "../../Atoms/AtomParagraph/AtomParagraph";
-
-import { portfolioDBProp } from "@/Data/portfolioDB";
-
-// ============== Функция-сборщик Ref ==============
-import { setRefs } from "@/app/utils/SetElements/setRefs";
-
-import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
-import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
 import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
 
-// Регистрируем плагин ScrollTrigger,
-// иначе GSAP его просто не увидит
+// ================= Types ====================
+import { portfolioDBProp } from "@/Data/portfolioDB";
+
+// ================= Utils ====================
+import { setRefs } from "@/app/utils/SetElements/setRefs";
+import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
+import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesPortfolio() {
-  // =================================
-  // Hooks
-  // =================================
+  // ================= Router ====================
   const router = useRouter();
 
-  // =================================
-  // State
-  // =================================
-  // Данные портфолио, которые приходят с API
+  // ================= State ====================
   const [portfolioDB, setPortfolioDB] = useState<portfolioDBProp[]>([]);
 
-  // =================================
-  // Refs
-  // =================================
+  // ================= Refs ====================
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   const cardRefs = useRef<HTMLElement[]>([]);
   const cardImgRefs = useRef<HTMLDivElement[]>([]);
 
-  const fakeScrollRef = useRef<HTMLDivElement | null>(null);
-
+  const portfolioContentRef = useRef<HTMLDivElement | null>(null);
   const portfolioCardsHeightRef = useRef<HTMLDivElement | null>(null);
-
   const transitionDivRef = useRef<HTMLDivElement | null>(null);
 
-  // =================================
-  // Загрузка данных
-  // =================================
+  // ================= Fetch Data ====================
   useEffect(() => {
-    // Получаем данные портфолио с сервера
     fetch("/api/portfolio")
       .then((res) => res.json())
       .then((data) => setPortfolioDB(data));
   }, []);
 
-  // =================================
-  // GSAP анимации
-  // =================================
+  // ================= GSAP Animations ====================
   useLayoutEffect(() => {
-    // ----------- Ref-ы -----------
-    const scrollEl = fakeScrollRef.current;
+    // ================= Elements ====================
+    const scrollEl = portfolioContentRef.current;
     const mainHeading = headingRef.current;
     const transitionEl = transitionDivRef.current;
 
-    // ----------- Карточки -----------
-    // Все карты и картинки, кроме первой
+    // ================= Cards ====================
     const everyCards = cardRefs.current.slice(1);
     const everyCardsImg = cardImgRefs.current.slice(1);
 
-    // Первая карта и её картинка
     const firstCard = cardRefs.current.at(0);
     const firstCardImg = cardImgRefs.current.at(0);
 
-    // ----------- Размеры -----------
+    // ================= Measurements ====================
     const cardsSectionHeight = portfolioCardsHeightRef.current?.offsetHeight;
 
-    // ----------- Guard -----------
-    // Если чего-то нет — не продолжаем
+    // ================= Guard ====================
     if (
       !scrollEl ||
       !everyCards.length ||
@@ -96,10 +81,8 @@ export default function MoleculesPortfolio() {
     )
       return;
 
-    // GSAP context — нужен,
-    // чтобы корректно чистить анимации при размонтировании
+    // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
-      // ----------- Media queries -----------
       const mm = gsap.matchMedia();
 
       mm.add(
@@ -113,80 +96,56 @@ export default function MoleculesPortfolio() {
 
           const { desktop, tablet, mobile } = context.conditions;
 
+          // ================= Transition Initial ====================
           gsap.set(transitionEl, { scale: 0 });
 
-          // =================================
-          // Анимация главного заголовка
-          // =================================
+          // ================= Heading Intro ====================
           gsap.fromTo(
             mainHeading,
-            {
-              x: -1200,
-              y: -400,
-              autoAlpha: 0
-            },
-            {
-              x: 0,
-              y: 0,
-              autoAlpha: 1,
-              duration: 2,
-              ease: "back.out"
-            }
+            { x: -1200, y: -400, autoAlpha: 0 },
+            { x: 0, y: 0, autoAlpha: 1, duration: 1, ease: "back.out" }
           );
 
-          // =================================
-          // Анимация первой карточки
-          // =================================
+          // ================= First Card Intro ====================
           gsap.from(firstCard.children, {
             x: 200,
             autoAlpha: 0,
-            duration: 2,
-            stagger: 0.3,
-            delay: 1,
+            duration: 1,
+            stagger: 0.2,
             ease: "circ.out",
             onStart: () => animationActiveOverflowHidden(true),
             onComplete: () => animationActiveOverflowHidden(false)
           });
 
-          // Картинка первой карточки
           gsap.from(firstCardImg, {
             x: -2000,
             scale: 4,
-            duration: 2,
+            duration: 1,
             ease: "expo.out"
           });
 
-          // =================================
-          // Таймлайны
-          // =================================
+          // ================= Scroll Timelines ====================
           const imagesTL = gsap.timeline({
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",
               markers: true,
-              end: () =>
-                desktop
-                  ? cardsSectionHeight
-                  : tablet
-                    ? cardsSectionHeight * 1.5
-                    : mobile
-                      ? cardsSectionHeight * 1.1
-                      : window.innerHeight * 2,
+              end: () => (desktop ? cardsSectionHeight : tablet ? cardsSectionHeight * 1.5 : cardsSectionHeight * 1.1),
               scrub: 1,
-              onLeave: () => {
+
+              onLeave: () =>
                 transitionPagesInPage({
                   transitionEl,
                   router,
                   routerPushNext: "/contacts"
-                });
-              },
-              onLeaveBack: () => {
+                }),
+
+              onLeaveBack: () =>
                 transitionPagesBackPage({
                   transitionEl,
                   router,
                   routerPushBack: "/aboutme"
-                });
-              }
+                })
             }
           });
 
@@ -195,20 +154,12 @@ export default function MoleculesPortfolio() {
               trigger: scrollEl,
               start: "top 20%",
               end: () =>
-                desktop
-                  ? cardsSectionHeight * 0.6
-                  : tablet
-                    ? cardsSectionHeight * 1.1
-                    : mobile
-                      ? cardsSectionHeight * 0.8
-                      : window.innerHeight * 2,
+                desktop ? cardsSectionHeight * 0.6 : tablet ? cardsSectionHeight * 1.1 : cardsSectionHeight * 0.8,
               scrub: 1
             }
           });
 
-          // =================================
-          // Desktop
-          // =================================
+          // ================= Desktop ====================
           if (desktop) {
             imagesTL.from(everyCardsImg, {
               x: -600,
@@ -224,16 +175,13 @@ export default function MoleculesPortfolio() {
             });
           }
 
-          // =================================
-          // Tablet
-          // =================================
+          // ================= Tablet ====================
           if (tablet) {
             everyCardsImg.forEach((img) => {
               imagesTL.from(img, {
                 x: gsap.utils.random([-1900, 1900], true),
                 scale: gsap.utils.random([0.1, 2], true),
-                rotate: gsap.utils.random([-80, 80], true),
-                stagger: 0.3
+                rotate: gsap.utils.random([-80, 80], true)
               });
             });
 
@@ -247,15 +195,12 @@ export default function MoleculesPortfolio() {
             });
           }
 
-          // =================================
-          // Mobile
-          // =================================
+          // ================= Mobile ====================
           if (mobile) {
             everyCardsImg.forEach((img) => {
               imagesTL.from(img, {
                 x: gsap.utils.random([-900, 900], true),
                 scale: gsap.utils.random(0.1, 2, true),
-                stagger: 0.2,
                 autoAlpha: 0
               });
             });
@@ -265,9 +210,7 @@ export default function MoleculesPortfolio() {
                 x: gsap.utils.random([-900, 900], true),
                 scale: gsap.utils.random(0.1, 2, true),
                 autoAlpha: 0,
-                duration: 2,
-                delay: 0.2,
-                stagger: 0.1
+                duration: 2
               });
             });
           }
@@ -275,29 +218,25 @@ export default function MoleculesPortfolio() {
       );
     });
 
-    // Чистим все GSAP-анимации при размонтировании
+    // ================= Cleanup ====================
     return () => ctx.revert();
   }, [portfolioDB]);
 
-  // =================================
-  // JSX
-  // =================================
+  // ================= JSX ====================
   return (
-    <>
+    <div ref={portfolioContentRef} className="portfolio_content min-h-screen">
+      {/* ================= Heading ==================== */}
       <AtomHeading headingRef={headingRef} level={1} className="text-black opacity-0">
         Portfolio
       </AtomHeading>
 
-      <div ref={fakeScrollRef} className="fakeScroll fixed inset-0 h-[400vh]" />
-
+      {/* ================= Portfolio Cards ==================== */}
       <div ref={portfolioCardsHeightRef} className="portfolio_card global-space-main-elements mb-[100px]">
         {portfolioDB.map((portfolioElement) => (
           <AtomPortfolioCard
             key={portfolioElement.id}
             className="will-change-transform global-combining-classes-space-elements"
-            // Сохраняем ref карточки
             cardRef={(el) => setRefs(el, cardRefs)}
-            // Сохраняем ref картинки карточки
             cardImgRef={(el) => setRefs(el, cardImgRefs)}
             src={portfolioElement.img}
             heading={
@@ -316,15 +255,11 @@ export default function MoleculesPortfolio() {
         ))}
       </div>
 
-      {/* <div
-        ref={(el) => setRefs(el, undefined, transitionDivRef)}
-        className="transitionDiv fixed top-20 left-[-900px] z-50 transitionDivPortfolio bg-black w-[500px] h-[500px]"
-      /> */}
-
+      {/* ================= Transition Layer ==================== */}
       <AtomTransitionDiv
         transitionDivRef={transitionDivRef}
-        className=" bottom-[-300px] left-1/2 -translate-x-1/2 bg-black "
+        className="bottom-[-300px] left-1/2 -translate-x-1/2 bg-black"
       />
-    </>
+    </div>
   );
 }

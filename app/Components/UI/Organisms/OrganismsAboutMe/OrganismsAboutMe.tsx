@@ -14,9 +14,7 @@ export default function OrganismsAboutMe() {
       />
       {/* ===== основной контент ===== */}
       <div className="container mx-auto">
-        <div className="about_me_content relative z-[2] w-full global-space-main-elements">
-          <MoleculesAboutMe />
-        </div>
+        <MoleculesAboutMe />
       </div>
     </section>
   );
