@@ -14,8 +14,9 @@ import { aboutMe } from "@/Data/aboutMeDB";
 
 // ================= Utils ====================
 import { setRefs } from "@/app/utils/SetElements/setRefs";
-import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
+import { animationActiveOverflowHidden } from "@/app/utils/WindowUtils/overflowHidden";
 import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
+import { autoScrollTop } from "@/app/utils/WindowUtils/autoScrollTop";
 
 // ================= GSAP ====================
 import gsap from "gsap";
@@ -27,6 +28,7 @@ import { useRouter } from "next/navigation";
 
 // ================= Transition Layer ====================
 import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
+import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithController";
 
 export default function MoleculesAboutMe() {
   // ================= State ====================
@@ -47,7 +49,12 @@ export default function MoleculesAboutMe() {
   const aboutMeContentRef = useRef<HTMLDivElement | null>(null);
   const avatarAndSkillsRef = useRef<HTMLDivElement | null>(null);
   const everyAvatarHeadingLiRefs = useRef<HTMLElement[]>([]);
+  const everyElementsForMobile = useRef<HTMLElement[]>([]);
   const transitionDivRef = useRef<HTMLDivElement | null>(null);
+
+  if (everyElementsForMobile) {
+    console.log(everyElementsForMobile.current, "every");
+  }
 
   // ================= Animation Flags ====================
   const animationFlagRef = useRef(false);
@@ -65,21 +72,18 @@ export default function MoleculesAboutMe() {
 
   // ================= Fetch Data ====================
   useEffect(() => {
-    const controller = new AbortController();
-
-    fetch("/api/aboutMe", { signal: controller.signal })
-      .then((res) => res.json())
-      .then((data) => setAboutMeDB(data))
-      .catch((err) => {
-        if (err.name !== "AbortError") console.error(err);
-      });
-
-    return () => controller.abort();
+    return fetchDataWithController({
+      fetchApi: "/api/aboutMe",
+      setData: setAboutMeDB
+    });
   }, []);
 
   // ================= GSAP Animations ====================
   useLayoutEffect(() => {
-    const every = everyAvatarHeadingLiRefs.current;
+    // ================= Auto scroll top ====================
+    autoScrollTop();
+    // ================= Elements ====================
+    const avatarHeadingAndLi = everyAvatarHeadingLiRefs.current;
     const mainHeading = mainHeadingRef.current;
     const mainSpans = mainHeadingSpans.current;
     const spans = spanRefs.current;
@@ -129,14 +133,6 @@ export default function MoleculesAboutMe() {
               scrub: 1,
               anticipatePin: 1,
 
-              // ================= Counter Trigger ====================
-              onUpdate: (self) => {
-                if (self.progress >= 0.51 && self.progress <= 0.61 && !animationFlagRef.current) {
-                  animationFlagRef.current = true;
-                  startCounter();
-                }
-              },
-
               // ================= Page Transitions ====================
               onLeave: () =>
                 transitionPagesInPage({
@@ -179,7 +175,11 @@ export default function MoleculesAboutMe() {
 
             tl.addLabel("oneTime");
 
-            tl.from(every, { x: -500, autoAlpha: 0, duration: 10, stagger: 0.3 }, "oneTime");
+            tl.from(
+              avatarHeadingAndLi,
+              { x: -500, autoAlpha: 0, duration: 5, stagger: 1, onStart: () => startCounter() },
+              "oneTime"
+            );
 
             tl.from(
               spans,
@@ -194,19 +194,32 @@ export default function MoleculesAboutMe() {
           }
 
           // ================= Tablet Animations ====================
-          if (tablet) {
+          if (tablet || mobile) {
             gsap.from(mainSpans, {
+              y: gsap.utils.random([-100, 200], true),
+              scale: gsap.utils.random([0.1, 2]),
+              duration: 0.5,
               autoAlpha: 0,
-              stagger: { each: 0.3, from: "random" }
+              stagger: { each: 0.2, from: "random" }
             });
-          }
 
-          // ================= Mobile Animations ====================
-          if (mobile) {
-            gsap.from(mainSpans, {
+            tl.from(avatarHeadingAndLi, {
+              x: -200,
               autoAlpha: 0,
-              stagger: { each: 0.3, from: "random" }
+              duration: 2,
+              stagger: 0.3,
+              onComplete: () => startCounter()
             });
+            tl.from(
+              spans,
+              {
+                scale: () => gsap.utils.random(-4, 1),
+                autoAlpha: 0,
+                stagger: 0.1,
+                duration: 2
+              },
+              ">"
+            );
           }
         }
       );
@@ -335,7 +348,7 @@ export default function MoleculesAboutMe() {
       {/* ================= Transition Layer ==================== */}
       <AtomTransitionDiv
         transitionDivRef={transitionDivRef}
-        className="-translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 bg-[#c0c0c0]"
+        className="-translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 bg-white"
       />
     </div>
   );

@@ -9,8 +9,9 @@ import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
 
 // ================= Utils ====================
 import { setRefs } from "@/app/utils/SetElements/setRefs";
-import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
+import { animationActiveOverflowHidden } from "@/app/utils/WindowUtils/overflowHidden";
 import { transitionPagesBackPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
+import { autoScrollTop } from "@/app/utils/WindowUtils/autoScrollTop";
 
 // ================= Navigation ====================
 import { useRouter } from "next/navigation";
@@ -21,6 +22,7 @@ import { contactsDBProp } from "@/Data/contactsDB";
 // ================= GSAP ====================
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithController";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesContacts() {
@@ -39,13 +41,17 @@ export default function MoleculesContacts() {
 
   // ================= Fetch contacts data ====================
   useEffect(() => {
-    fetch("/api/contacts")
-      .then((res) => res.json())
-      .then((data) => setContactsDB(data));
+    return fetchDataWithController({
+      fetchApi: "/api/contacts",
+      setData: setContactsDB
+    });
   }, []);
 
   // ================= GSAP Animations ====================
   useLayoutEffect(() => {
+    // ================= Auto scroll top ====================
+    autoScrollTop();
+    // ================= Elements ====================
     const heading = headingRef.current;
     const firstTwoCards = cardRefs.current.slice(0, 2); // первые две карточки анимируются сразу
     const restCards = cardRefs.current.slice(2); // остальные карточки анимация по скроллу
@@ -164,7 +170,7 @@ export default function MoleculesContacts() {
       {/* ================= Transition Div ==================== */}
       <AtomTransitionDiv
         transitionDivRef={transitionDivRef}
-        className="-translate-x-1/2 -translate-y-1/2 top-1/2 left-10 bg-[#c0c0c0]"
+        className="-translate-x-1/2 -translate-y-1/2 top-1/2 left-10 bg-white"
       />
     </div>
   );

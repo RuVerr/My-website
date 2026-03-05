@@ -22,8 +22,10 @@ import { portfolioDBProp } from "@/Data/portfolioDB";
 
 // ================= Utils ====================
 import { setRefs } from "@/app/utils/SetElements/setRefs";
-import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
+import { animationActiveOverflowHidden } from "@/app/utils/WindowUtils/overflowHidden";
 import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
+import { autoScrollTop } from "@/app/utils/WindowUtils/autoScrollTop";
+import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithController";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,13 +48,16 @@ export default function MoleculesPortfolio() {
 
   // ================= Fetch Data ====================
   useEffect(() => {
-    fetch("/api/portfolio")
-      .then((res) => res.json())
-      .then((data) => setPortfolioDB(data));
+    return fetchDataWithController({
+      fetchApi: "/api/portfolio",
+      setData: setPortfolioDB
+    });
   }, []);
 
   // ================= GSAP Animations ====================
   useLayoutEffect(() => {
+    // ================= Auto scroll top ====================
+    autoScrollTop();
     // ================= Elements ====================
     const scrollEl = portfolioContentRef.current;
     const mainHeading = headingRef.current;
@@ -130,7 +135,7 @@ export default function MoleculesPortfolio() {
               trigger: scrollEl,
               start: "top top",
               markers: true,
-              end: () => (desktop ? cardsSectionHeight : tablet ? cardsSectionHeight * 1.5 : cardsSectionHeight * 1.1),
+              end: () => (desktop ? cardsSectionHeight : tablet ? cardsSectionHeight : cardsSectionHeight),
               scrub: 1,
 
               onLeave: () =>

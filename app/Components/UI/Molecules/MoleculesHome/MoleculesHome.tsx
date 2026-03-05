@@ -11,8 +11,9 @@ import { useRouter } from "next/navigation";
 
 // ================= Utils ====================
 import { setRefs } from "@/app/utils/SetElements/setRefs";
-import { animationActiveOverflowHidden } from "@/app/utils/GsapSettings/overflowHidden";
+import { animationActiveOverflowHidden } from "@/app/utils/WindowUtils/overflowHidden";
 import { transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
+import { autoScrollTop } from "@/app/utils/WindowUtils/autoScrollTop";
 
 // ================= GSAP ====================
 import gsap from "gsap";
@@ -23,7 +24,7 @@ export default function MoleculesHome() {
   // ================= Data ====================
   const lettersName = ["R", "U", "B", "O"];
 
-  // ================= Refs ====================
+  // ================= Elements ====================
   const letterRefs = useRef<HTMLSpanElement[]>([]);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const transitionDivRef = useRef<HTMLDivElement | null>(null);
@@ -34,6 +35,9 @@ export default function MoleculesHome() {
 
   // ================= GSAP Animations ====================
   useLayoutEffect(() => {
+    // ================= Auto scroll top ====================
+    autoScrollTop();
+    // ================= Refs ====================
     const letters = letterRefs.current;
     const heading = headingRef.current;
     const transitionEl = transitionDivRef.current;
@@ -50,9 +54,9 @@ export default function MoleculesHome() {
 
       // ================= Intro Animation ====================
       gsap.from(letters, {
-        z: () => gsap.utils.random([-50, 100]),
-        y: () => gsap.utils.random([-300, 300]),
-        rotation: () => gsap.utils.random([-100, 30]),
+        z: gsap.utils.random([-50, 100], true),
+        y: gsap.utils.random(-1000, 300, true),
+        rotation: gsap.utils.random([-100, 100], true),
         autoAlpha: 0,
         duration: 1.5,
         ease: "sine.out",
@@ -66,7 +70,7 @@ export default function MoleculesHome() {
         scrollTrigger: {
           trigger: homeContent,
           start: "top top+=100",
-          end: "+=150%",
+          end: "+=100%",
           markers: true,
           pin: true,
           anticipatePin: 1,
@@ -91,8 +95,8 @@ export default function MoleculesHome() {
           y: 0,
           z: 1000,
           scale: 1.5,
-          rotation: () => gsap.utils.random(-200, 200),
-          stagger: { each: 0.2, from: "random" }
+          rotation: gsap.utils.random([-200, 100, 200, 400], true),
+          stagger: { each: 0.5, from: "random" }
         }
       );
     });
@@ -107,7 +111,7 @@ export default function MoleculesHome() {
   // ================= JSX ====================
   return (
     <div ref={homeContentRef} className="home_content min-h-screen">
-      <AtomHeading className="perspective-[600px]" headingRef={(el) => setRefs(el, undefined, headingRef)}>
+      <AtomHeading className="perspective-[1000px]" headingRef={(el) => setRefs(el, undefined, headingRef)}>
         {lettersName.map((letter, letterIndex) => (
           <span
             key={letterIndex}
