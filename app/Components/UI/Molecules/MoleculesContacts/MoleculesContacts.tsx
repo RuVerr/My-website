@@ -73,6 +73,10 @@ export default function MoleculesContacts() {
       return;
     }
 
+    // ========== GSAP constants settings ============
+    const FAST_DURATION = 1;
+    const MIDDLE_DURATION = 2;
+
     // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
       // ================= Transition Element ====================
@@ -83,7 +87,7 @@ export default function MoleculesContacts() {
       gsap.fromTo(
         heading,
         { x: -400, scale: 0.5, autoAlpha: 0 }, // откуда
-        { x: 0, scale: 1, autoAlpha: 1, duration: 1, ease: "power4.inOut" } // куда
+        { x: 0, scale: 1, autoAlpha: 1, duration: FAST_DURATION, ease: "power4.inOut" } // куда
       );
 
       // ================= First Two Cards Animation ====================
@@ -91,7 +95,7 @@ export default function MoleculesContacts() {
         x: -500,
         scale: 0.1,
         autoAlpha: 0,
-        duration: 1,
+        duration: FAST_DURATION,
         stagger: 0.2,
         ease: "power4.inOut",
         onStart: () => animationActiveOverflowHidden(true),
@@ -113,7 +117,7 @@ export default function MoleculesContacts() {
           const { desktop, tablet, mobile } = context.conditions;
 
           const tl = gsap.timeline({
-            defaults: { duration: 2, ease: "power4.inOut" },
+            defaults: { duration: MIDDLE_DURATION, ease: "power4.inOut" },
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",

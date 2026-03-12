@@ -23,7 +23,6 @@ gsap.registerPlugin(ScrollTrigger);
 export default function MoleculesHome() {
   // ================= Data ====================
   const lettersName = ["R", "U", "B", "O"];
-
   // ================= Elements ====================
   const letterRefs = useRef<HTMLSpanElement[]>([]);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
@@ -46,19 +45,21 @@ export default function MoleculesHome() {
     // ================= Guard ====================
     // Проверяем, что все refs существуют
     if (!letters?.length || !heading || !transitionEl || !homeContent) return;
+    // ========== GSAP constants settings ============
+    const FAST_DURATION = 1.5;
+    const MIDDLE_DURATION = 2;
 
     // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
       // ================= Transition Element ====================
-      gsap.set(transitionEl, { scale: 0 });
-
+      gsap.set(transitionEl, { scale: 0, autoAlpha: 0 });
       // ================= Intro Animation ====================
       gsap.from(letters, {
         z: gsap.utils.random([-50, 100], true),
         y: gsap.utils.random(-1000, 300, true),
         rotation: gsap.utils.random([-100, 100], true),
         autoAlpha: 0,
-        duration: 1.5,
+        duration: FAST_DURATION,
         ease: "sine.out",
         onStart: () => animationActiveOverflowHidden(true),
         onComplete: () => animationActiveOverflowHidden(false)
@@ -66,7 +67,7 @@ export default function MoleculesHome() {
 
       // ================= Scroll Animation ====================
       const tl = gsap.timeline({
-        defaults: { duration: 2, ease: "circ.inOut" },
+        defaults: { duration: MIDDLE_DURATION, ease: "circ.inOut" },
         scrollTrigger: {
           trigger: homeContent,
           start: "top top+=100",

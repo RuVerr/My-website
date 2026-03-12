@@ -86,6 +86,11 @@ export default function MoleculesPortfolio() {
     )
       return;
 
+    // ========== GSAP constants settings ============
+    const FAST_DURATION = 1;
+    const MIDDLE_DURATION = 2;
+    const SLOW_DURATION = 10;
+
     // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
@@ -108,14 +113,14 @@ export default function MoleculesPortfolio() {
           gsap.fromTo(
             mainHeading,
             { x: -1200, y: -400, autoAlpha: 0 },
-            { x: 0, y: 0, autoAlpha: 1, duration: 1, ease: "back.out" }
+            { x: 0, y: 0, autoAlpha: 1, duration: FAST_DURATION, ease: "back.out" }
           );
 
           // ================= First Card Intro ====================
           gsap.from(firstCard.children, {
             x: 200,
             autoAlpha: 0,
-            duration: 1,
+            duration: FAST_DURATION,
             stagger: 0.2,
             ease: "circ.out",
             onStart: () => animationActiveOverflowHidden(true),
@@ -125,7 +130,7 @@ export default function MoleculesPortfolio() {
           gsap.from(firstCardImg, {
             x: -2000,
             scale: 4,
-            duration: 1,
+            duration: FAST_DURATION,
             ease: "expo.out"
           });
 
@@ -174,7 +179,7 @@ export default function MoleculesPortfolio() {
             everyCards.forEach((card) => {
               cardTextTL.from(card.children, {
                 x: 600,
-                duration: 10,
+                duration: SLOW_DURATION,
                 stagger: 0.3
               });
             });
@@ -193,7 +198,7 @@ export default function MoleculesPortfolio() {
             everyCards.forEach((card) => {
               cardTextTL.from(card.children, {
                 x: 600,
-                duration: 2,
+                duration: MIDDLE_DURATION,
                 stagger: 0.1,
                 autoAlpha: 0
               });
@@ -215,7 +220,7 @@ export default function MoleculesPortfolio() {
                 x: gsap.utils.random([-900, 900], true),
                 scale: gsap.utils.random(0.1, 2, true),
                 autoAlpha: 0,
-                duration: 2
+                duration: MIDDLE_DURATION
               });
             });
           }

@@ -1,7 +1,7 @@
 "use client";
 
 // ================= React ====================
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 // ================= Atomic Components ====================
 import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
@@ -39,7 +39,6 @@ export default function MoleculesAboutMe() {
 
   // ================= Router ====================
   const router = useRouter();
-
   // ================= Refs ====================
   const paragraphRef = useRef<HTMLParagraphElement | null>(null);
   const mainHeadingRef = useRef<HTMLHeadingElement | null>(null);
@@ -49,26 +48,37 @@ export default function MoleculesAboutMe() {
   const aboutMeContentRef = useRef<HTMLDivElement | null>(null);
   const avatarAndSkillsRef = useRef<HTMLDivElement | null>(null);
   const everyAvatarHeadingLiRefs = useRef<HTMLElement[]>([]);
-  const everyElementsForMobile = useRef<HTMLElement[]>([]);
   const transitionDivRef = useRef<HTMLDivElement | null>(null);
 
-  if (everyElementsForMobile) {
-    console.log(everyElementsForMobile.current, "every");
-  }
-
-  // ================= Animation Flags ====================
-  const animationFlagRef = useRef(false);
+  //==================| useMemo and useCallback |=============================
 
   // ================= Skills Percentages ====================
-  const percentagesOfExperience = aboutMeDB?.categories.map((category) =>
-    category.skills.map((skill) => {
-      const match = skill.match(/\((\d+)%\)/);
-      return match ? Number(match[1]) : 0;
-    })
-  );
-
+  const percentagesOfExperience = useMemo(() => {
+    return aboutMeDB?.categories.map((category) =>
+      category.skills.map((skill) => {
+        const match = skill.match(/\((\d+)%\)/);
+        return match ? Number(match[1]) : 0;
+      })
+    );
+  }, [aboutMeDB]);
   // ================= Paragraph Words ====================
-  const words = aboutMeDB?.developerInfo[0].description.join("").replace(/\n+/g, " ").replace(/\s+/g, " ").split(" ");
+  const words = useMemo(() => {
+    return aboutMeDB?.developerInfo[0].description.join("").replace(/\n+/g, " ").replace(/\s+/g, " ").split(" ");
+  }, [aboutMeDB]);
+
+  // ================= Go in page =================
+  const goPage = useCallback(
+    (key: "GoNext" | "GoBack") => {
+      if (!transitionDivRef.current) return;
+      const config =
+        key === "GoNext"
+          ? { routerPushNext: "/portfolio", fn: transitionPagesInPage }
+          : { routerPushBack: "/", fn: transitionPagesBackPage };
+
+      config.fn({ transitionEl: transitionDivRef.current, router, ...config });
+    },
+    [router]
+  );
 
   // ================= Fetch Data ====================
   useEffect(() => {
@@ -99,10 +109,12 @@ export default function MoleculesAboutMe() {
       const avatarAndSkillsRefHeight = avatarAndSkillsRef.current?.offsetHeight;
 
       if (!paragraphRefHeight || !avatarAndSkillsRefHeight || !transitionEl) return;
-
+      // ========== GSAP constants settings ============
+      const FAST_DURATION = 0.5;
+      const MIDDLE_DURATION = 2;
+      const SLOW_DURATION = 5;
       // ================= MatchMedia ====================
       const mm = gsap.matchMedia();
-
       mm.add(
         {
           desktop: "(min-width: 1024px)",
@@ -134,19 +146,8 @@ export default function MoleculesAboutMe() {
               anticipatePin: 1,
 
               // ================= Page Transitions ====================
-              onLeave: () =>
-                transitionPagesInPage({
-                  transitionEl,
-                  router,
-                  routerPushNext: "/portfolio"
-                }),
-
-              onLeaveBack: () =>
-                transitionPagesBackPage({
-                  transitionEl,
-                  router,
-                  routerPushBack: "/"
-                })
+              onLeave: () => goPage("GoNext"),
+              onLeaveBack: () => goPage("GoBack")
             }
           });
 
@@ -167,7 +168,7 @@ export default function MoleculesAboutMe() {
               scale: () => gsap.utils.random(0.2, 1),
               y: () => gsap.utils.random(-200, 200),
               autoAlpha: 0,
-              duration: 0.5,
+              duration: FAST_DURATION,
               stagger: { each: 0.1, from: "random" },
               onStart: () => animationActiveOverflowHidden(true),
               onComplete: () => animationActiveOverflowHidden(false)
@@ -177,7 +178,7 @@ export default function MoleculesAboutMe() {
 
             tl.from(
               avatarHeadingAndLi,
-              { x: -500, autoAlpha: 0, duration: 5, stagger: 1, onStart: () => startCounter() },
+              { x: -500, autoAlpha: 0, duration: SLOW_DURATION, stagger: 1, onStart: () => startCounter() },
               "oneTime"
             );
 
@@ -187,7 +188,7 @@ export default function MoleculesAboutMe() {
                 scale: () => gsap.utils.random(-4, 1),
                 autoAlpha: 0,
                 stagger: 0.1,
-                duration: 2
+                duration: SLOW_DURATION
               },
               "oneTime"
             );
@@ -198,7 +199,7 @@ export default function MoleculesAboutMe() {
             gsap.from(mainSpans, {
               y: gsap.utils.random([-100, 200], true),
               scale: gsap.utils.random([0.1, 2]),
-              duration: 0.5,
+              duration: FAST_DURATION,
               autoAlpha: 0,
               stagger: { each: 0.2, from: "random" }
             });
@@ -206,7 +207,7 @@ export default function MoleculesAboutMe() {
             tl.from(avatarHeadingAndLi, {
               x: -200,
               autoAlpha: 0,
-              duration: 2,
+              duration: MIDDLE_DURATION,
               stagger: 0.3,
               onComplete: () => startCounter()
             });
@@ -216,7 +217,7 @@ export default function MoleculesAboutMe() {
                 scale: () => gsap.utils.random(-4, 1),
                 autoAlpha: 0,
                 stagger: 0.1,
-                duration: 2
+                duration: MIDDLE_DURATION
               },
               ">"
             );
@@ -236,7 +237,7 @@ export default function MoleculesAboutMe() {
 
           gsap.to(obj, {
             val: endValue,
-            duration: 2,
+            duration: MIDDLE_DURATION,
             delay: index * 0.2,
             onUpdate() {
               el.textContent = ` (${Math.floor(obj.val)}%)`;

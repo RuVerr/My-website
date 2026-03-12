@@ -61,7 +61,7 @@ html::-webkit-scrollbar {
 
   /* Коллекция классов для кнопок */
   .base-button-combining-classes {
-    @apply cursor-pointer text-amber-50 border-amber-50 pr-[50px] pl-[50px] h-[50px] border rounded-2xl;
+    @apply cursor-pointer text-amber-50 border-amber-50 px-[30px] h-[50px] border rounded-2xl uppercase;
   }
 
   /* Коллекция классов home текста */
