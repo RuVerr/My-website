@@ -40,14 +40,10 @@ html::-webkit-scrollbar {
 }
 
 @layer components {
-  /* Глобальные стили шрифта для ссылок и для главного заголовка в Home */
-  .global-links-fonts,
-  .global-main-title {
+  /* Глобальные стили шрифта*/
+  .global-font-family {
     font-family: var(--font);
-    font-size: 15px;
     text-transform: uppercase;
-    font-weight: 100;
-    text-align: center;
   }
 
   /* Глобальные стили шрифта для кнопок */
@@ -126,36 +122,27 @@ html::-webkit-scrollbar {
     }
   }
 
-  /* @keyframes transitionDivAnim {
+  @keyframes loading {
     0% {
-      border-radius: 40% 60% 50% 70%;
-    }
-    25% {
-      border-radius: 30% 50% 70% 80%;
+      transform: scale(1);
+      opacity: 0.3;
     }
     50% {
-      border-radius: 20% 30% 40% 50%;
-    }
-    70% {
-      border-radius: 40% 50% 80% 70%;
-    }
-    80% {
-      border-radius: 20% 40% 90% 30%;
-    }
-    90% {
-      border-radius: 30% 50% 70% 40%;
+      transform: scale(1.5);
+      opacity: 1;
     }
     100% {
-      border-radius: 40% 60% 50% 70%;
+      transform: scale(1);
+      opacity: 0.3;
     }
-  } */
+  }
 
-  /* .transitionDiv {
-    animation: transitionDivAnim 10s infinite alternate ease-in-out;
-  } */
+  .loading-animate {
+    animation: loading 5s infinite ease-in-out;
+  }
 
   .link-glow-active {
-    animation: link-glow-active 2s infinite ease-in-out;
+    animation: link-glow-active 2s infinite ease-in-out alternate;
   }
 
   .global-text-shadow-hover {

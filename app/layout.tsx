@@ -5,6 +5,7 @@ import NavigationMenuDesk from "./Components/Navigation/NavigationMenuDesk/Navig
 import Provider from "./Redux/Providers/provider";
 import TemplateCustomCursor from "./Components/UI/Templates/TemplateCustomCursor/TemplateCustomCursor";
 import MoleculesBackgroundAudio from "./Components/UI/Molecules/MoleculesBackgroundAudio/MoleculesBackgroundAudio";
+import TemplateNavigation from "./Components/UI/Templates/TemplateNavigation/TemplateNavigation";
 
 export default function RootLayout({
   children
@@ -16,10 +17,9 @@ export default function RootLayout({
       <body>
         <Provider>
           <TemplateCustomCursor />
-          {/* <StartPage /> */}
-          {/* <AudioBackground /> */}
           <MoleculesBackgroundAudio />
-          <NavigationMenuDesk />
+          {/* <NavigationMenuDesk /> */}
+          <TemplateNavigation />
           <main className="main">{children}</main>
         </Provider>
       </body>

@@ -52,7 +52,7 @@ export default function MoleculesHome() {
     // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
       // ================= Transition Element ====================
-      gsap.set(transitionEl, { scale: 0, autoAlpha: 0 });
+      gsap.set(transitionEl, { scale: 0});
       // ================= Intro Animation ====================
       gsap.from(letters, {
         z: gsap.utils.random([-50, 100], true),

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { useAppSelector } from "@/app/Redux/Store/hooks";
 
 export default function NavigationMenuDesk() {
   //Заголовки ссылок
@@ -21,8 +20,6 @@ export default function NavigationMenuDesk() {
   const gsapLiRef = useRef<(HTMLLIElement | null)[]>([]);
   //Флажок анимации
   const [isAnimate, setIsAnimate] = useState(false);
-
-  const activeStartPage = useAppSelector((state) => state.StartPage.active);
 
   //Получаем текущий путь для проверки и изменения стилей
   const location = usePathname();
@@ -60,37 +57,40 @@ export default function NavigationMenuDesk() {
     //Счетчик для интервала
     let currentInterval = 0;
     //Интервал
-    const intervalID = window.setInterval(() => {
-      //Делаем больше при каждой итерации
-      currentInterval++;
-      // Состояние куда мы передали наши заголовки
-      setLinkTexts((prev) => {
-        //Копируем содержимое в newText
-        const newText = [...prev];
-        //Перемешиваем тот текст который получили по клику из originalNavText и передаем в newText
-        newText[index] = shuffArray(originalNavText.split("")).join("");
-        return newText;
-      });
-
-      // Рандомный стоп для интервала
-      if (currentInterval >= randomTimeInterval(5, 9)) {
-        //Очищаем интервал после своей работы
-        window.clearInterval(intervalID);
-        //Выключаем верхний регистр
-        setDisableUppercase({ index: index, active: true });
-        //Возвращаем буквы на место после кроткой анимации
+    const intervalID = window.setInterval(
+      () => {
+        //Делаем больше при каждой итерации
+        currentInterval++;
+        // Состояние куда мы передали наши заголовки
         setLinkTexts((prev) => {
-          //Получаем что есть на данный момент в состоянии
+          //Копируем содержимое в newText
           const newText = [...prev];
-          //Перезаписываем и вернем оригинал
-          newText[index] = originalNavText;
-          //После завершения всей анимации ставим false что бы сработало снова
-          setIsAnimate(false);
-          //Исходный текст
+          //Перемешиваем тот текст который получили по клику из originalNavText и передаем в newText
+          newText[index] = shuffArray(originalNavText.split("")).join("");
           return newText;
         });
-      }
-    }, randomTimeInterval(100, 150));
+
+        // Рандомный стоп для интервала
+        if (currentInterval >= randomTimeInterval(5, 9)) {
+          //Очищаем интервал после своей работы
+          window.clearInterval(intervalID);
+          //Выключаем верхний регистр
+          setDisableUppercase({ index: index, active: true });
+          //Возвращаем буквы на место после кроткой анимации
+          setLinkTexts((prev) => {
+            //Получаем что есть на данный момент в состоянии
+            const newText = [...prev];
+            //Перезаписываем и вернем оригинал
+            newText[index] = originalNavText;
+            //После завершения всей анимации ставим false что бы сработало снова
+            setIsAnimate(false);
+            //Исходный текст
+            return newText;
+          });
+        }
+      },
+      randomTimeInterval(100, 150)
+    );
   };
 
   //Эффект для тогоч то бы каждый раз когда мы телепортируемся срабатывала анимация тосковки и была активной все в одном эффекте так как у них одна задача
@@ -103,9 +103,6 @@ export default function NavigationMenuDesk() {
       //Если href ровно тому что на данный момент где мы возвращаем его
       return href === location;
     });
-
-    //Если стартовая страница true то анимация блокируется
-    if (activeStartPage) return;
 
     //Если Если стартовая страниц false то запускается анимация навигации
     if (index !== -1) {
@@ -126,7 +123,7 @@ export default function NavigationMenuDesk() {
         }
       );
     }
-  }, [location, activeStartPage]);
+  }, [location]);
 
   return (
     <nav className="nav sticky top-0 z-[100]">
@@ -146,7 +143,7 @@ export default function NavigationMenuDesk() {
                 <Link
                   href={href}
                   onClick={(e) => handleNavLinkActive(e, index)}
-                  className={`global-links-fonts inline-block min-w-[10ch] global-text-shadow-hover transition duration-200 ease-in will-change-transform ${
+                  className={`global-font-family inline-block min-w-[10ch] global-text-shadow-hover transition duration-200 ease-in will-change-transform ${
                     activeLink === index ? "link-glow-active" : ""
                   } ${
                     disableUppercase.index === index && disableUppercase.active === false ? "normal-case" : "uppercase"
