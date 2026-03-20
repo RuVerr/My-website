@@ -4,9 +4,9 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 // ================= Atomic Components ====================
-import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
-import AtomParagraph from "../../Atoms/AtomParagraph/AtomParagraph";
-import AtomAvatar from "../../Atoms/AtomAvatar/AtomAvatar";
+import AtomHeading from "../../Atoms/GROUP-AtomTypography/AtomHeading/AtomHeading";
+import AtomParagraph from "../../Atoms/GROUP-AtomTypography/AtomParagraph/AtomParagraph";
+import AtomAvatar from "../../Atoms/AtomImages/GROUP-AtomAvatar/AtomAvatar";
 import AtomSkillsList from "../../Atoms/AtomInfoList/AtomSkillsList";
 
 // ================= Types ====================
@@ -27,8 +27,9 @@ gsap.registerPlugin(ScrollTrigger);
 import { useRouter } from "next/navigation";
 
 // ================= Transition Layer ====================
-import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
+import AtomTransitionDiv from "../../Atoms/GROUP-AtomCustomEffects/AtomTransitionDiv/AtomTransitionDiv";
 import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithController";
+import { AtomList } from "../../Atoms/GROUP-AtomTypography/AtomList/AtomList";
 
 export default function MoleculesAboutMe() {
   // ================= State ====================
@@ -281,10 +282,12 @@ export default function MoleculesAboutMe() {
           <div className="avatar_and_skill">
             {/* ================= Avatar Info ==================== */}
             <div className="avatar_and_info grid gap-2 pb-[20px] md: place-content-center">
-              <AtomAvatar
-                imgSRC="/Images-and-video/Avatar/Ruben.png"
-                avatarRef={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
-              />
+              <div className="w-[300px] grayscale will-change-transform">
+                <AtomAvatar
+                  imgSRC="/Images-and-video/Avatar/Ruben.png"
+                  avatarRef={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
+                />
+              </div>
 
               {[dev.developerName, dev.rank, dev.location].map((devEl, devElIndex) => (
                 <AtomHeading
@@ -307,9 +310,9 @@ export default function MoleculesAboutMe() {
                     level={2}
                     className="base-mini-heading-combining-classes global-combining-classes-space-elements text-start max-lg:text-center max-sm:text-start"
                   />
-
-                  <ul className="list w-[300px] grid gap-2">
-                    {cat.skills.map((skill, skillIndex) => (
+                  <AtomList
+                    className="list w-[300px] grid gap-2"
+                    children={cat.skills.map((skill, skillIndex) => (
                       <AtomSkillsList
                         key={skillIndex}
                         refPercentages={(el) => setRefs(el, percentagesRefs)}
@@ -318,7 +321,7 @@ export default function MoleculesAboutMe() {
                         classNameLI="max-lg:text-center max-sm:text-start"
                       />
                     ))}
-                  </ul>
+                  />
                 </div>
               ))}
             </div>
@@ -328,7 +331,7 @@ export default function MoleculesAboutMe() {
         {/* ================= Description Paragraph ==================== */}
         <AtomParagraph
           paragraphRef={(el) => setRefs(el, undefined, paragraphRef)}
-          className="global-combining-classes-space-elements"
+          className="global-combining-classes-space-elements base-paragraph-combining-classes global-user-no-select whitespace-pre-line will-change-transform align-middle"
           children={words?.map((word, wordIndex) => (
             <React.Fragment key={wordIndex}>
               <span ref={(el) => setRefs(el, spanRefs)} className="inline-block word_span will-change-transform mr-3">

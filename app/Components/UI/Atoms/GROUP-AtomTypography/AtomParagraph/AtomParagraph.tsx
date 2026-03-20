@@ -10,7 +10,7 @@ export default function AtomParagraph({ children, className, paragraphRef }: Ato
   return (
     <p
       ref={paragraphRef}
-      className={`base-paragraph-combining-classes global-user-no-select whitespace-pre-line will-change-transform align-middle ${className}`}
+      className={`${className}`}
     >
       {children}
     </p>

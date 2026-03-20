@@ -27,7 +27,12 @@ export default function AtomLink({
   switch (type) {
     case "next":
       return (
-        <Link onClick={onClickChildren} ref={linkNextRef} className={`global-font-family ${className}`} href={href}>
+        <Link
+          onClick={onClickChildren}
+          ref={linkNextRef}
+          className={`global-font-family decoration-none ${className}`}
+          href={href}
+        >
           {linkTitle}
         </Link>
       );
@@ -39,7 +44,7 @@ export default function AtomLink({
       );
     default:
       return (
-        <a href={href} className={`global-font-family ${className}`}>
+        <a href={href} className={`global-font-family decoration-none ${className}`}>
           {linkTitle}
         </a>
       );

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import AtomBackgroundAudio from "../../Atoms/AtomBackgroundAudio/AtomBackgroundAudio";
+import AtomBackgroundAudio from "../../Atoms/GROUP-AtomBackgrounds/AtomBackgroundAudio/AtomBackgroundAudio";
 
 export default function MoleculesBackgroundAudio() {
   const audioRef = useRef<HTMLAudioElement | null>(null);

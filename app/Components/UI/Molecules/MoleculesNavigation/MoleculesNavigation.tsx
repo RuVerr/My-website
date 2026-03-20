@@ -1,20 +1,13 @@
 "use client";
 import React, { useCallback, useRef } from "react";
-import { AtomNavigation } from "../../Atoms/AtomNavigation/AtomNavigation";
-import AtomLink from "../../Atoms/AtomLink/AtomLink";
+import { AtomList } from "../../Atoms/GROUP-AtomTypography/AtomList/AtomList";
+import AtomLink from "../../Atoms/GROUP-AtomTypography/AtomLink/AtomLink";
 import { usePathname } from "next/navigation";
 
 export const MoleculesNavigation = () => {
   const navigationItem = ["Home", "About me", "Portfolio", "Contacts"];
   const linkNextRef = useRef<HTMLAnchorElement | null>(null);
   const pathname = usePathname();
-
-  const navigationTheme: Record<string, string> = {
-    "/": "text-black",
-    "/aboutme": "text-white",
-    "/patfolio": "text-black",
-    "/contacts": "text-white"
-  };
 
   const handleShuffle = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     const el = e.currentTarget;
@@ -39,13 +32,21 @@ export const MoleculesNavigation = () => {
     }, 1000);
   }, []);
 
+  const navigationTheme: Record<string, string> = {
+    "/": "text-black",
+    "/aboutme": "text-white",
+    "/patfolio": "text-black",
+    "/contacts": "text-white"
+  };
+
   const itemColor = navigationTheme[pathname] ?? "text-gray-600";
 
   return (
     <>
-      <AtomNavigation
+      <AtomList
+        className="navigation_list w-full flex justify-evenly align-middle py-[20px]"
         children={navigationItem.map((item, itemIndex) => (
-          <li key={itemIndex} className="navigation_item">
+          <li key={itemIndex} className="navigation_item w-full text-center">
             <AtomLink
               onClickChildren={(e) => handleShuffle(e)}
               linkNextRef={linkNextRef}

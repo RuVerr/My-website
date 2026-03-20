@@ -1,5 +1,5 @@
 import React from "react";
-import { AtomLoading } from "../../Atoms/AtomLoading/AtomLoading";
+import { AtomLoading } from "../../Atoms/GROUP-AtomBackgrounds/AtomLoading/AtomLoading";
 
 export const MoleculesLoading = () => {
   const loadingHeading = "Loading";

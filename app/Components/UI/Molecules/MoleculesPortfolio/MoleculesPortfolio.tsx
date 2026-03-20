@@ -11,11 +11,11 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // ================= Atomic Components ====================
-import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
-import AtomPortfolioCard from "../../Atoms/AtomPortofolioCard/AtomPortfolioCard";
-import AtomLink from "../../Atoms/AtomLink/AtomLink";
-import AtomParagraph from "../../Atoms/AtomParagraph/AtomParagraph";
-import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
+import AtomHeading from "../../Atoms/GROUP-AtomTypography/AtomHeading/AtomHeading";
+import AtomPortfolioCard from "../../Atoms/GROUP-AtomPortofolioCard/AtomPortfolioCard";
+import AtomLink from "../../Atoms/GROUP-AtomTypography/AtomLink/AtomLink";
+import AtomParagraph from "../../Atoms/GROUP-AtomTypography/AtomParagraph/AtomParagraph";
+import AtomTransitionDiv from "../../Atoms/GROUP-AtomCustomEffects/AtomTransitionDiv/AtomTransitionDiv";
 
 // ================= Types ====================
 import { portfolioDBProp } from "@/Data/portfolioDB";

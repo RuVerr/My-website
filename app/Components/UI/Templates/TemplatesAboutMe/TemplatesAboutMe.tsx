@@ -1,9 +1,9 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import { AtomLoading } from "../../Atoms/AtomLoading/AtomLoading";
+import { AtomLoading } from "../../Atoms/GROUP-AtomBackgrounds/AtomLoading/AtomLoading";
 
 const OrganismsAboutMe = dynamic(() => import("@/app/Components/UI/Organisms/OrganismsAboutMe/OrganismsAboutMe"), {
-  loading: () => <AtomLoading className="bg-black" spanClassName="text-white"/>
+  loading: () => <AtomLoading className="bg-black" spanClassName="text-white" />
 });
 
 export default function TemplatesAboutMe() {

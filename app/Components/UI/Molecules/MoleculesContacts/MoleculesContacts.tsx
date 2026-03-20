@@ -3,9 +3,9 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 // ================= Atomic Components ====================
-import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
-import AtomContactCards from "../../Atoms/AtomContactCards/AtomContactCards";
-import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
+import AtomHeading from "../../Atoms/GROUP-AtomTypography/AtomHeading/AtomHeading";
+import AtomContactCards from "../../Atoms/GROUP-AtomCards/AtomContactCards/AtomContactCards";
+import AtomTransitionDiv from "../../Atoms/GROUP-AtomCustomEffects/AtomTransitionDiv/AtomTransitionDiv";
 
 // ================= Utils ====================
 import { setRefs } from "@/app/utils/SetElements/setRefs";

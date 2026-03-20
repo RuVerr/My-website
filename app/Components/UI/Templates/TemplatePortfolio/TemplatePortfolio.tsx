@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import React from "react";
-import { AtomLoading } from "../../Atoms/AtomLoading/AtomLoading";
+import { AtomLoading } from "../../Atoms/GROUP-AtomBackgrounds/AtomLoading/AtomLoading";
 // import OrganismsPortfolio from "../../Organisms/OrganismsPortfolio/OrganismsPortfolio";
 
 const OrganismsPortfolio = dynamic(

@@ -1,6 +1,6 @@
 "use client";
 import React, { useLayoutEffect, useRef } from "react";
-import { AtomCustomCursor } from "../../Atoms/AtomCustomCursor/AtomCustomCursor";
+import { AtomCustomCursor } from "../../Atoms/GROUP-AtomCustomEffects/AtomCustomCursor/AtomCustomCursor";
 import { usePathname } from "next/navigation";
 
 export default function MoleculesCustomCursor() {

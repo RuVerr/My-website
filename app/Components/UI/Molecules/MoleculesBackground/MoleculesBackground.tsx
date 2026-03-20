@@ -1,6 +1,6 @@
 "use client";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import AtomBackground from "../../Atoms/AtomBackground/AtomBackground";
+import AtomBackground from "../../Atoms/GROUP-AtomBackgrounds/AtomBackground/AtomBackground";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";

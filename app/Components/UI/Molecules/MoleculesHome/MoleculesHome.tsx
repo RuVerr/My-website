@@ -3,8 +3,8 @@
 import React, { useLayoutEffect, useRef } from "react";
 
 // ================= Atomic Components ====================
-import AtomHeading from "../../Atoms/AtomHeading/AtomHeading";
-import AtomTransitionDiv from "../../Atoms/AtomTransitionDiv/AtomTransitionDiv";
+import AtomHeading from "../../Atoms/GROUP-AtomTypography/AtomHeading/AtomHeading";
+import AtomTransitionDiv from "../../Atoms/GROUP-AtomCustomEffects/AtomTransitionDiv/AtomTransitionDiv";
 
 // ================= Navigation ====================
 import { useRouter } from "next/navigation";
@@ -52,7 +52,7 @@ export default function MoleculesHome() {
     // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
       // ================= Transition Element ====================
-      gsap.set(transitionEl, { scale: 0});
+      gsap.set(transitionEl, { scale: 0 });
       // ================= Intro Animation ====================
       gsap.from(letters, {
         z: gsap.utils.random([-50, 100], true),
