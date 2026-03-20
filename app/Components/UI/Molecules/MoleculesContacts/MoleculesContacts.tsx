@@ -121,7 +121,6 @@ export default function MoleculesContacts() {
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",
-              markers: true,
               end: () =>
                 desktop || mobile ? sectionHeight * 0.6 : tablet ? sectionHeight * 0.2 : window.innerHeight * 2,
               scrub: true,

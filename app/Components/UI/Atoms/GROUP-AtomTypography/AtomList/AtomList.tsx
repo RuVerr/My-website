@@ -6,6 +6,6 @@ interface AtomListProp {
   className: string;
 }
 
-export const AtomList = ({ children, className = "" }: AtomListProp) => {
+export default function AtomList({ children, className = "" }: AtomListProp) {
   return <ul className={`${className}`}>{children}</ul>;
-};
+}

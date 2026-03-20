@@ -6,8 +6,10 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 // ================= Atomic Components ====================
 import AtomHeading from "../../Atoms/GROUP-AtomTypography/AtomHeading/AtomHeading";
 import AtomParagraph from "../../Atoms/GROUP-AtomTypography/AtomParagraph/AtomParagraph";
-import AtomAvatar from "../../Atoms/AtomImages/GROUP-AtomAvatar/AtomAvatar";
-import AtomSkillsList from "../../Atoms/AtomInfoList/AtomSkillsList";
+import AtomAvatar from "../../Atoms/GROUP-AtomImages/AtomImages/AtomAvatar";
+import AtomList from "../../Atoms/GROUP-AtomTypography/AtomList/AtomList";
+import AtomLi from "../../Atoms/GROUP-AtomTypography/AtomLi/AtomLi";
+import AtomSpan from "../../Atoms/GROUP-AtomTypography/AtomSpan/AtomSpan";
 
 // ================= Types ====================
 import { aboutMe } from "@/Data/aboutMeDB";
@@ -29,7 +31,6 @@ import { useRouter } from "next/navigation";
 // ================= Transition Layer ====================
 import AtomTransitionDiv from "../../Atoms/GROUP-AtomCustomEffects/AtomTransitionDiv/AtomTransitionDiv";
 import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithController";
-import { AtomList } from "../../Atoms/GROUP-AtomTypography/AtomList/AtomList";
 
 export default function MoleculesAboutMe() {
   // ================= State ====================
@@ -136,7 +137,6 @@ export default function MoleculesAboutMe() {
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",
-              markers: true,
               end: () =>
                 desktop
                   ? paragraphRefHeight * 1.1
@@ -313,12 +313,20 @@ export default function MoleculesAboutMe() {
                   <AtomList
                     className="list w-[300px] grid gap-2"
                     children={cat.skills.map((skill, skillIndex) => (
-                      <AtomSkillsList
+                      <AtomLi
                         key={skillIndex}
-                        refPercentages={(el) => setRefs(el, percentagesRefs)}
+                        className="w-full will-change-transform"
                         refLi={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
-                        children={skill.replace(/\s*\(\d+%\)/, "")}
-                        classNameLI="max-lg:text-center max-sm:text-start"
+                        children={
+                          <>
+                            {skill.replace(/\s*\(\d+%\)/, "")}{" "}
+                            <AtomSpan
+                              className="whitespace-pre-wrap text-red-700 will-change-transform"
+                              refPercentages={(el) => setRefs(el, percentagesRefs)}
+                              children={"  (0%)"}
+                            />
+                          </>
+                        }
                       />
                     ))}
                   />
@@ -356,4 +364,14 @@ export default function MoleculesAboutMe() {
       />
     </div>
   );
+}
+
+{
+  /* <AtomSkillsList
+                        key={skillIndex}
+                        refPercentages={(el) => setRefs(el, percentagesRefs)}
+                        refLi={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
+                        children={skill.replace(/\s*\(\d+%\)/, "")}
+                        classNameLI="max-lg:text-center max-sm:text-start"
+                      /> */
 }

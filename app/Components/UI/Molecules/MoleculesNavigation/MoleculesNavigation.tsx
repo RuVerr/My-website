@@ -1,6 +1,6 @@
 "use client";
 import React, { useCallback, useRef } from "react";
-import { AtomList } from "../../Atoms/GROUP-AtomTypography/AtomList/AtomList";
+import AtomList from "../../Atoms/GROUP-AtomTypography/AtomList/AtomList";
 import AtomLink from "../../Atoms/GROUP-AtomTypography/AtomLink/AtomLink";
 import { usePathname } from "next/navigation";
 

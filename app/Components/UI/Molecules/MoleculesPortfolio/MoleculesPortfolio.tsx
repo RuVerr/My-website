@@ -26,6 +26,7 @@ import { animationActiveOverflowHidden } from "@/app/utils/WindowUtils/overflowH
 import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
 import { autoScrollTop } from "@/app/utils/WindowUtils/autoScrollTop";
 import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithController";
+import AtomSpan from "../../Atoms/GROUP-AtomTypography/AtomSpan/AtomSpan";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -139,10 +140,8 @@ export default function MoleculesPortfolio() {
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",
-              markers: true,
-              end: () => (desktop ? cardsSectionHeight : tablet ? cardsSectionHeight : cardsSectionHeight),
+              end: () => (desktop ? cardsSectionHeight * 0.7 : tablet ? cardsSectionHeight : cardsSectionHeight),
               scrub: 1,
-
               onLeave: () =>
                 transitionPagesInPage({
                   transitionEl,
@@ -250,16 +249,26 @@ export default function MoleculesPortfolio() {
             cardImgRef={(el) => setRefs(el, cardImgRefs)}
             src={portfolioElement.img}
             heading={
-              <AtomHeading level={2} className="base-mini-heading-combining-classes text-black">
-                {portfolioElement.heading}
-              </AtomHeading>
+              <AtomHeading
+                level={2}
+                children={portfolioElement.heading}
+                className="base-mini-heading-combining-classes text-black"
+              />
             }
-            onlineLink={<AtomLink href={portfolioElement.link} className="text-black" />}
+            onlineLink={
+              <AtomLink
+                type="blank"
+                linkTitle={"Go Live"}
+                href={portfolioElement.link}
+                className=" global-font-family border-1 border-black rounded-2xl w-1/2 py-[5px] text-center text-black uppercase"
+              />
+            }
             technologies={portfolioElement.technologies}
             paragraph={
-              <AtomParagraph className="text-[14px] text-black global-combining-classes-space-elements lowercase first-letter:uppercase">
-                {portfolioElement.paragraph}
-              </AtomParagraph>
+              <AtomParagraph
+                className=" global-font-family text-[14px] text-black global-combining-classes-space-elements lowercase first-letter:uppercase"
+                children={portfolioElement.paragraph}
+              />
             }
           />
         ))}

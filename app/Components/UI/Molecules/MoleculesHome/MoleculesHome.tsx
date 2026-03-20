@@ -72,7 +72,6 @@ export default function MoleculesHome() {
           trigger: homeContent,
           start: "top top+=100",
           end: "+=100%",
-          markers: true,
           pin: true,
           anticipatePin: 1,
           pinSpacing: true,
