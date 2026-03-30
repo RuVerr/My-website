@@ -151,9 +151,7 @@ export default function MoleculesContacts() {
   return (
     <div ref={contactsContentRef} className="contacts_content">
       {/* ================= Heading ==================== */}
-      <AtomHeading headingRef={headingRef} level={1} className="text-white opacity-0">
-        Contacts
-      </AtomHeading>
+      <AtomHeading headingRef={headingRef} children={"Contacts"} level={1} className="text-white opacity-0" />
 
       {/* ================= Contact Cards ==================== */}
       {contactsDB.map((contact, index) => (

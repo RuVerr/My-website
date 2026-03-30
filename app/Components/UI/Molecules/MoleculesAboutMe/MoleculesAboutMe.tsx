@@ -95,7 +95,7 @@ export default function MoleculesAboutMe() {
     // ================= Auto scroll top ====================
     autoScrollTop();
     // ================= Elements ====================
-    const avatarHeadingAndLi = everyAvatarHeadingLiRefs.current;
+    const profileInfo = everyAvatarHeadingLiRefs.current;
     const mainHeading = mainHeadingRef.current;
     const mainSpans = mainHeadingSpans.current;
     const spans = spanRefs.current;
@@ -110,11 +110,15 @@ export default function MoleculesAboutMe() {
       const paragraphRefHeight = paragraphRef.current?.offsetHeight;
       const avatarAndSkillsRefHeight = avatarAndSkillsRef.current?.offsetHeight;
 
-      if (!paragraphRefHeight || !avatarAndSkillsRefHeight || !transitionEl) return;
+      if (!paragraphRefHeight || !scrollEl || !avatarAndSkillsRefHeight || !transitionEl) return;
       // ========== GSAP constants settings ============
       const FAST_DURATION = 0.5;
       const MIDDLE_DURATION = 2;
       const SLOW_DURATION = 5;
+
+      const maxScroll = scrollEl.scrollHeight - window.innerHeight;
+      const endValue = Math.min(scrollEl.offsetHeight, maxScroll);
+
       // ================= MatchMedia ====================
       const mm = gsap.matchMedia();
       mm.add(
@@ -131,36 +135,53 @@ export default function MoleculesAboutMe() {
           // ================= Transition Initial State ====================
           gsap.set(transitionEl, { scale: 0 });
 
-          // ================= Main Scroll Timeline ====================
-          const tl = gsap.timeline({
+          // ================= Heading Pin ====================
+
+          const spansTL = gsap.timeline({
+            defaults: { ease: "sine.inOut" },
+            scrollTrigger: {
+              trigger: scrollEl,
+              start: desktop ? "top top" : tablet ? "top top" : "",
+              end: desktop ? `bottom 90%` : tablet || mobile ? `+=${endValue + 200}` : `+=${endValue}`,
+              scrub: desktop ? 0.5 : tablet ? 1.1 : 1
+            }
+          });
+
+          const profileInfoTL = gsap.timeline({
+            defaults: { ease: "expo.inOut" },
+            scrollTrigger: {
+              trigger: scrollEl,
+              start: desktop ? "top top" : tablet ? "top top" : "",
+              end: desktop ? `bottom 90%` : tablet || mobile ? `+=${endValue}` : `+=${endValue}`,
+              scrub: desktop ? 0.5 : tablet ? 1.1 : 1
+            }
+          });
+
+          const masterTL = gsap.timeline({
             defaults: { ease: "sine.inOut" },
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",
-              end: () =>
-                desktop
-                  ? paragraphRefHeight * 1.1
-                  : tablet
-                    ? paragraphRefHeight + avatarAndSkillsRefHeight * 1.1
-                    : avatarAndSkillsRefHeight + paragraphRefHeight * 1.1,
-              scrub: 1,
-              anticipatePin: 1,
-
-              // ================= Page Transitions ====================
-              onLeave: () => goPage("GoNext"),
-              onLeaveBack: () => goPage("GoBack")
+              end: `+=${endValue}`,
+              scrub: 1.2
             }
           });
 
-          // ================= Heading Pin ====================
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: mainHeading,
-              start: "top top",
-              pin: true,
-              scrub: 1,
-              anticipatePin: 1
-            }
+          ScrollTrigger.create({
+            trigger: mainHeading,
+            start: "top top",
+            pin: true,
+            anticipatePin: 1
+          });
+
+          // ================= Transition Scroll Effect ====================
+          ScrollTrigger.create({
+            trigger: scrollEl,
+            start: "top top",
+            end: `+=${endValue + 200}`,
+            // ================= Page Transitions ====================
+            onLeave: () => goPage("GoNext"),
+            onLeaveBack: () => goPage("GoBack")
           });
 
           // ================= Desktop Animations ====================
@@ -175,49 +196,76 @@ export default function MoleculesAboutMe() {
               onComplete: () => animationActiveOverflowHidden(false)
             });
 
-            tl.addLabel("oneTime");
+            spansTL.from(spans, {
+              scale: () => gsap.utils.random([-4, 1]),
+              autoAlpha: 0,
+              duration: SLOW_DURATION,
+              stagger: 0.2
+            });
 
-            tl.from(
-              avatarHeadingAndLi,
-              { x: -500, autoAlpha: 0, duration: SLOW_DURATION, stagger: 1, onStart: () => startCounter() },
-              "oneTime"
-            );
-
-            tl.from(
-              spans,
-              {
-                scale: () => gsap.utils.random(-4, 1),
-                autoAlpha: 0,
-                stagger: 0.1,
-                duration: SLOW_DURATION
-              },
-              "oneTime"
-            );
+            profileInfoTL.from(profileInfo, {
+              x: -300,
+              duration: MIDDLE_DURATION,
+              autoAlpha: 0,
+              stagger: 0.2,
+              onStart: () => startCounter()
+            });
           }
-
           // ================= Tablet Animations ====================
-          if (tablet || mobile) {
+          if (tablet) {
             gsap.from(mainSpans, {
               y: gsap.utils.random([-100, 200], true),
               scale: gsap.utils.random([0.1, 2]),
               duration: FAST_DURATION,
               autoAlpha: 0,
-              stagger: { each: 0.2, from: "random" }
+              stagger: { each: 0.2, from: "random" },
+              onStart: () => animationActiveOverflowHidden(true),
+              onComplete: () => animationActiveOverflowHidden(false)
             });
 
-            tl.from(avatarHeadingAndLi, {
+            profileInfoTL.from(profileInfo, {
               x: -200,
               autoAlpha: 0,
               duration: MIDDLE_DURATION,
-              stagger: 0.3,
-              onComplete: () => startCounter()
+              stagger: 0.2,
+              onStart: () => startCounter()
             });
-            tl.from(
+
+            gsap.set(spans, { autoAlpha: 1 });
+            spansTL.from(spans, {
+              scale: () => gsap.utils.random(-4, 1),
+              autoAlpha: 0,
+              stagger: 0.2,
+              delay: 0.2,
+              duration: MIDDLE_DURATION
+            });
+          }
+
+          if (mobile) {
+            gsap.from(mainSpans, {
+              y: gsap.utils.random([-100, 200], true),
+              scale: gsap.utils.random([0.1, 2]),
+              duration: FAST_DURATION,
+              autoAlpha: 0,
+              stagger: { each: 0.2, from: "random" },
+              onStart: () => animationActiveOverflowHidden(true),
+              onComplete: () => animationActiveOverflowHidden(false)
+            });
+
+            masterTL.from(profileInfo, {
+              x: -200,
+              autoAlpha: 0,
+              duration: SLOW_DURATION,
+              stagger: 1,
+              onStart: () => startCounter()
+            });
+
+            masterTL.from(
               spans,
               {
                 scale: () => gsap.utils.random(-4, 1),
                 autoAlpha: 0,
-                stagger: 0.1,
+                stagger: 0.2,
                 duration: MIDDLE_DURATION
               },
               ">"
@@ -239,7 +287,7 @@ export default function MoleculesAboutMe() {
           gsap.to(obj, {
             val: endValue,
             duration: MIDDLE_DURATION,
-            delay: index * 0.2,
+            delay: index * 0.4,
             onUpdate() {
               el.textContent = ` (${Math.floor(obj.val)}%)`;
             }
@@ -258,7 +306,7 @@ export default function MoleculesAboutMe() {
 
   // ================= JSX ====================
   return (
-    <div ref={aboutMeContentRef} className="about_me_content min-h-screen">
+    <div ref={aboutMeContentRef} className="about_me_content pb-[500px]">
       {/* ================= Main Heading ==================== */}
       <AtomHeading
         headingRef={(el) => setRefs(el, undefined, mainHeadingRef)}
@@ -364,14 +412,4 @@ export default function MoleculesAboutMe() {
       />
     </div>
   );
-}
-
-{
-  /* <AtomSkillsList
-                        key={skillIndex}
-                        refPercentages={(el) => setRefs(el, percentagesRefs)}
-                        refLi={(el) => setRefs(el, everyAvatarHeadingLiRefs)}
-                        children={skill.replace(/\s*\(\d+%\)/, "")}
-                        classNameLI="max-lg:text-center max-sm:text-start"
-                      /> */
 }
