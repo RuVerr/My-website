@@ -2,8 +2,8 @@ import React from "react";
 
 interface AtomLoadingProp {
   children?: React.ReactNode;
-  className: string;
-  spanClassName: string;
+  className?: string;
+  spanClassName?: string;
 }
 
 export const AtomLoading = ({ children = "Loading", className = "", spanClassName = "" }: AtomLoadingProp) => {

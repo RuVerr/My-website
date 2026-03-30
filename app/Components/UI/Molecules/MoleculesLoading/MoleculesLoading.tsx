@@ -3,5 +3,5 @@ import { AtomLoading } from "../../Atoms/GROUP-AtomBackgrounds/AtomLoading/AtomL
 
 export const MoleculesLoading = () => {
   const loadingHeading = "Loading";
-  return <AtomLoading children={loadingHeading} />;
+  return <AtomLoading children={loadingHeading} className="" spanClassName="" />;
 };
