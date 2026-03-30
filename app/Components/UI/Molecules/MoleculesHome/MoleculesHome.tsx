@@ -1,4 +1,5 @@
 "use client";
+
 // ================= React ====================
 import React, { useLayoutEffect, useRef } from "react";
 
@@ -21,9 +22,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function MoleculesHome() {
-  // ================= Data ====================
-  const lettersName = ["R", "U", "B", "O"];
-  // ================= Elements ====================
+  // ================= Static Data ====================
+  // Letters used for main animated heading
+  const lettersName = "Ruben";
+
+  // ================= Refs ====================
   const letterRefs = useRef<HTMLSpanElement[]>([]);
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const transitionDivRef = useRef<HTMLDivElement | null>(null);
@@ -34,30 +37,31 @@ export default function MoleculesHome() {
 
   // ================= GSAP Animations ====================
   useLayoutEffect(() => {
-    // ================= Auto scroll top ====================
+    // ================= Auto Scroll Reset ====================
     autoScrollTop();
-    // ================= Refs ====================
+
+    // ================= Extract Refs ====================
     const letters = letterRefs.current;
     const heading = headingRef.current;
     const transitionEl = transitionDivRef.current;
-    const homeContent = homeContentRef.current;
+    const scrollEl = homeContentRef.current;
 
     // ================= Guard ====================
-    // Проверяем, что все refs существуют
-    if (!letters?.length || !heading || !transitionEl || !homeContent) return;
-    // ========== GSAP constants settings ============
+    if (!letters?.length || !heading || !transitionEl || !scrollEl) return;
+
+    // ================= Animation Constants ====================
     const FAST_DURATION = 1.5;
     const MIDDLE_DURATION = 2;
 
     // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
-      // ================= Transition Element ====================
+      // ================= Transition Initial State ====================
       gsap.set(transitionEl, { scale: 0 });
-      // ================= Intro Animation ====================
+
       gsap.from(letters, {
-        z: gsap.utils.random([-50, 100], true),
-        y: gsap.utils.random(-1000, 300, true),
-        rotation: gsap.utils.random([-100, 100], true),
+        scale: gsap.utils.random([0.1, 2], true),
+        y: gsap.utils.random(-1000, 1000, true),
+        rotation: gsap.utils.random([-180, 180], true),
         autoAlpha: 0,
         duration: FAST_DURATION,
         ease: "sine.out",
@@ -65,17 +69,19 @@ export default function MoleculesHome() {
         onComplete: () => animationActiveOverflowHidden(false)
       });
 
-      // ================= Scroll Animation ====================
+      // ================= Scroll Timeline ====================
       const tl = gsap.timeline({
         defaults: { duration: MIDDLE_DURATION, ease: "circ.inOut" },
         scrollTrigger: {
-          trigger: homeContent,
+          trigger: scrollEl,
           start: "top top+=100",
-          end: "+=100%",
+          end: "+=1000",
           pin: true,
           anticipatePin: 1,
           pinSpacing: true,
           scrub: true,
+
+          // ================= Page Transition ====================
           onLeave: () => {
             transitionPagesInPage({
               transitionEl,
@@ -111,18 +117,23 @@ export default function MoleculesHome() {
   // ================= JSX ====================
   return (
     <div ref={homeContentRef} className="home_content min-h-screen">
+      {/* ================= Main Heading ==================== */}
       <AtomHeading className="perspective-[1000px]" headingRef={(el) => setRefs(el, undefined, headingRef)}>
-        {lettersName.map((letter, letterIndex) => (
-          <span
-            key={letterIndex}
-            ref={(el) => setRefs(el, letterRefs)}
-            className="inline-block transform-3d text-black global-main-heading-classes"
-          >
-            {letter}
-          </span>
-        ))}
+        {lettersName
+          .toLowerCase()
+          .split("")
+          .map((letter, letterIndex) => (
+            <span
+              key={letterIndex}
+              ref={(el) => setRefs(el, letterRefs)}
+              className="inline-block transform-3d text-black global-main-heading-classes"
+            >
+              {letter}
+            </span>
+          ))}
       </AtomHeading>
-      {/* ================= Transition Div ==================== */}
+
+      {/* ================= Transition Layer ==================== */}
       <AtomTransitionDiv
         transitionDivRef={transitionDivRef}
         className="-translate-x-1/2 -translate-y-1/2 top-0 left-0 bg-black"

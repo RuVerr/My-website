@@ -26,7 +26,6 @@ import { animationActiveOverflowHidden } from "@/app/utils/WindowUtils/overflowH
 import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
 import { autoScrollTop } from "@/app/utils/WindowUtils/autoScrollTop";
 import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithController";
-import AtomSpan from "../../Atoms/GROUP-AtomTypography/AtomSpan/AtomSpan";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -39,16 +38,15 @@ export default function MoleculesPortfolio() {
 
   // ================= Refs ====================
   const headingRef = useRef<HTMLHeadingElement>(null);
-
   const cardRefs = useRef<HTMLElement[]>([]);
   const cardImgRefs = useRef<HTMLDivElement[]>([]);
-
   const portfolioContentRef = useRef<HTMLDivElement | null>(null);
   const portfolioCardsHeightRef = useRef<HTMLDivElement | null>(null);
   const transitionDivRef = useRef<HTMLDivElement | null>(null);
 
-  // ================= Fetch Data ====================
+  // ================= Fetch Portfolio Data ====================
   useEffect(() => {
+    // Fetch portfolio items with abort controller safety
     return fetchDataWithController({
       fetchApi: "/api/portfolio",
       setData: setPortfolioDB
@@ -57,29 +55,26 @@ export default function MoleculesPortfolio() {
 
   // ================= GSAP Animations ====================
   useLayoutEffect(() => {
-    // ================= Auto scroll top ====================
+    // ================= Scroll Reset ====================
     autoScrollTop();
-    // ================= Elements ====================
+
+    // ================= Extract Elements ====================
     const scrollEl = portfolioContentRef.current;
     const mainHeading = headingRef.current;
     const transitionEl = transitionDivRef.current;
 
-    // ================= Cards ====================
+    // ================= Cards Separation ====================
     const everyCards = cardRefs.current.slice(1);
     const everyCardsImg = cardImgRefs.current.slice(1);
 
     const firstCard = cardRefs.current.at(0);
     const firstCardImg = cardImgRefs.current.at(0);
 
-    // ================= Measurements ====================
-    const cardsSectionHeight = portfolioCardsHeightRef.current?.offsetHeight;
-
     // ================= Guard ====================
     if (
       !scrollEl ||
       !everyCards.length ||
       !everyCardsImg.length ||
-      !cardsSectionHeight ||
       !firstCard ||
       !firstCardImg ||
       !mainHeading ||
@@ -87,15 +82,17 @@ export default function MoleculesPortfolio() {
     )
       return;
 
-    // ========== GSAP constants settings ============
+    // ================= Animation Constants ====================
     const FAST_DURATION = 1;
     const MIDDLE_DURATION = 2;
     const SLOW_DURATION = 10;
 
     // ================= GSAP Context ====================
+    // Scope animations to component lifecycle
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
+      // ================= Responsive Animations ====================
       mm.add(
         {
           desktop: "(min-width: 1024px)",
@@ -107,14 +104,20 @@ export default function MoleculesPortfolio() {
 
           const { desktop, tablet, mobile } = context.conditions;
 
-          // ================= Transition Initial ====================
+          // ================= Transition Initial State ====================
           gsap.set(transitionEl, { scale: 0 });
 
-          // ================= Heading Intro ====================
+          // ================= Heading Intro Animation ====================
           gsap.fromTo(
             mainHeading,
             { x: -1200, y: -400, autoAlpha: 0 },
-            { x: 0, y: 0, autoAlpha: 1, duration: FAST_DURATION, ease: "back.out" }
+            {
+              x: 0,
+              y: 0,
+              autoAlpha: 1,
+              duration: FAST_DURATION,
+              ease: "back.out"
+            }
           );
 
           // ================= First Card Intro ====================
@@ -139,72 +142,92 @@ export default function MoleculesPortfolio() {
           const imagesTL = gsap.timeline({
             scrollTrigger: {
               trigger: scrollEl,
-              start: "top top",
-              end: () => (desktop ? cardsSectionHeight * 0.7 : tablet ? cardsSectionHeight : cardsSectionHeight),
-              scrub: 1,
-              onLeave: () =>
-                transitionPagesInPage({
-                  transitionEl,
-                  router,
-                  routerPushNext: "/contacts"
-                }),
-
-              onLeaveBack: () =>
-                transitionPagesBackPage({
-                  transitionEl,
-                  router,
-                  routerPushBack: "/aboutme"
-                })
+              start: desktop ? "top 30%" : tablet || mobile ? "top center" : "top top",
+              end: () => {
+                const maxScroll = scrollEl.scrollHeight - window.innerHeight;
+                const endValue = Math.min(scrollEl.scrollHeight, maxScroll);
+                return `+=${endValue}`;
+              },
+              scrub: 1.1
             }
           });
-
           const cardTextTL = gsap.timeline({
             scrollTrigger: {
               trigger: scrollEl,
-              start: "top 20%",
-              end: () =>
-                desktop ? cardsSectionHeight * 0.6 : tablet ? cardsSectionHeight * 1.1 : cardsSectionHeight * 0.8,
-              scrub: 1
+              start: desktop ? "top top" : tablet || mobile ? "top 20%" : "top top",
+              end: () => {
+                const maxScroll = scrollEl.scrollHeight - window.innerHeight;
+                const endValue = Math.min(scrollEl.scrollHeight, maxScroll);
+                return `+=${endValue}`;
+              },
+              scrub: 1.1
             }
           });
 
-          // ================= Desktop ====================
+          // ================= Page Transition Triggers ====================
+          ScrollTrigger.create({
+            trigger: scrollEl,
+            start: desktop || tablet ? "top top" : "top 20%",
+            end: () => {
+              const maxScroll = scrollEl.scrollHeight - window.innerHeight;
+              const endValue = Math.min(scrollEl.scrollHeight, maxScroll);
+              return `+=${endValue}`;
+            },
+            onLeave: () =>
+              transitionPagesInPage({
+                transitionEl,
+                router,
+                routerPushNext: "/contacts"
+              }),
+            onLeaveBack: () =>
+              transitionPagesBackPage({
+                transitionEl,
+                router,
+                routerPushBack: "/aboutme"
+              })
+          });
+
+          // ================= Desktop Animations ====================
           if (desktop) {
             imagesTL.from(everyCardsImg, {
               x: -600,
-              stagger: 0.3
+              stagger: 2,
+              autoAlpha: 0,
+              duration: FAST_DURATION
             });
 
             everyCards.forEach((card) => {
               cardTextTL.from(card.children, {
                 x: 600,
                 duration: SLOW_DURATION,
-                stagger: 0.3
+                stagger: 0.2,
+                autoAlpha: 0
               });
             });
           }
 
-          // ================= Tablet ====================
+          // ================= Tablet Animations ====================
           if (tablet) {
             everyCardsImg.forEach((img) => {
               imagesTL.from(img, {
                 x: gsap.utils.random([-1900, 1900], true),
                 scale: gsap.utils.random([0.1, 2], true),
-                rotate: gsap.utils.random([-80, 80], true)
+                rotate: gsap.utils.random([-100, 100], true),
+                duration: MIDDLE_DURATION
               });
             });
 
             everyCards.forEach((card) => {
               cardTextTL.from(card.children, {
                 x: 600,
-                duration: MIDDLE_DURATION,
+                duration: FAST_DURATION,
                 stagger: 0.1,
                 autoAlpha: 0
               });
             });
           }
 
-          // ================= Mobile ====================
+          // ================= Mobile Animations ====================
           if (mobile) {
             everyCardsImg.forEach((img) => {
               imagesTL.from(img, {
@@ -216,10 +239,11 @@ export default function MoleculesPortfolio() {
 
             everyCards.forEach((card) => {
               cardTextTL.from(card.children, {
-                x: gsap.utils.random([-900, 900], true),
+                x: 900,
                 scale: gsap.utils.random(0.1, 2, true),
                 autoAlpha: 0,
-                duration: MIDDLE_DURATION
+                duration: FAST_DURATION,
+                stagger: 0.2
               });
             });
           }
@@ -233,8 +257,8 @@ export default function MoleculesPortfolio() {
 
   // ================= JSX ====================
   return (
-    <div ref={portfolioContentRef} className="portfolio_content min-h-screen">
-      {/* ================= Heading ==================== */}
+    <div ref={portfolioContentRef} className="portfolio_content pb-[200px]">
+      {/* ================= Page Heading ==================== */}
       <AtomHeading headingRef={headingRef} level={1} className="text-black opacity-0">
         Portfolio
       </AtomHeading>
@@ -260,13 +284,13 @@ export default function MoleculesPortfolio() {
                 type="blank"
                 linkTitle={"Go Live"}
                 href={portfolioElement.link}
-                className=" global-font-family border-1 border-black rounded-2xl w-1/2 py-[5px] text-center text-black uppercase"
+                className="global-font-family border-1 border-black rounded-2xl w-1/2 py-[5px] text-center text-black uppercase"
               />
             }
             technologies={portfolioElement.technologies}
             paragraph={
               <AtomParagraph
-                className=" global-font-family text-[14px] text-black global-combining-classes-space-elements lowercase first-letter:uppercase"
+                className="global-font-family text-[14px] text-black global-combining-classes-space-elements lowercase first-letter:uppercase"
                 children={portfolioElement.paragraph}
               />
             }

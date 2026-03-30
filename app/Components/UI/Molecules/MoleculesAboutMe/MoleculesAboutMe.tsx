@@ -1,9 +1,9 @@
 "use client";
 
-// ================= React ====================
+// ================= React Hooks ====================
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-// ================= Atomic Components ====================
+// ================= Atomic Design — Atoms ====================
 import AtomHeading from "../../Atoms/GROUP-AtomTypography/AtomHeading/AtomHeading";
 import AtomParagraph from "../../Atoms/GROUP-AtomTypography/AtomParagraph/AtomParagraph";
 import AtomAvatar from "../../Atoms/GROUP-AtomImages/AtomImages/AtomAvatar";
@@ -14,13 +14,13 @@ import AtomSpan from "../../Atoms/GROUP-AtomTypography/AtomSpan/AtomSpan";
 // ================= Types ====================
 import { aboutMe } from "@/Data/aboutMeDB";
 
-// ================= Utils ====================
+// ================= Utilities ====================
 import { setRefs } from "@/app/utils/SetElements/setRefs";
 import { animationActiveOverflowHidden } from "@/app/utils/WindowUtils/overflowHidden";
 import { transitionPagesBackPage, transitionPagesInPage } from "@/app/utils/GsapSettings/transitionPagesInPage";
 import { autoScrollTop } from "@/app/utils/WindowUtils/autoScrollTop";
 
-// ================= GSAP ====================
+// ================= GSAP Setup ====================
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
@@ -33,15 +33,16 @@ import AtomTransitionDiv from "../../Atoms/GROUP-AtomCustomEffects/AtomTransitio
 import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithController";
 
 export default function MoleculesAboutMe() {
-  // ================= State ====================
+  // ================= Component State ====================
   const [aboutMeDB, setAboutMeDB] = useState<aboutMe | null>(null);
 
-  // ================= Data ====================
+  // ================= Static UI Data ====================
   const aboutMeMainHeading = "About me".split("");
 
-  // ================= Router ====================
+  // ================= Router Instance ====================
   const router = useRouter();
-  // ================= Refs ====================
+
+  // ================= DOM References ====================
   const paragraphRef = useRef<HTMLParagraphElement | null>(null);
   const mainHeadingRef = useRef<HTMLHeadingElement | null>(null);
   const mainHeadingSpans = useRef<HTMLSpanElement[]>([]);
@@ -52,9 +53,9 @@ export default function MoleculesAboutMe() {
   const everyAvatarHeadingLiRefs = useRef<HTMLElement[]>([]);
   const transitionDivRef = useRef<HTMLDivElement | null>(null);
 
-  //==================| useMemo and useCallback |=============================
+  // ================= Memoized Derived Data ====================
 
-  // ================= Skills Percentages ====================
+  // Extract numeric percentage values from skills strings
   const percentagesOfExperience = useMemo(() => {
     return aboutMeDB?.categories.map((category) =>
       category.skills.map((skill) => {
@@ -63,15 +64,17 @@ export default function MoleculesAboutMe() {
       })
     );
   }, [aboutMeDB]);
-  // ================= Paragraph Words ====================
+
+  // Normalize description text into words array for animation usage
   const words = useMemo(() => {
     return aboutMeDB?.developerInfo[0].description.join("").replace(/\n+/g, " ").replace(/\s+/g, " ").split(" ");
   }, [aboutMeDB]);
 
-  // ================= Go in page =================
+  // ================= Page Navigation Handler =================
   const goPage = useCallback(
     (key: "GoNext" | "GoBack") => {
       if (!transitionDivRef.current) return;
+
       const config =
         key === "GoNext"
           ? { routerPushNext: "/portfolio", fn: transitionPagesInPage }
@@ -82,7 +85,7 @@ export default function MoleculesAboutMe() {
     [router]
   );
 
-  // ================= Fetch Data ====================
+  // ================= Data Fetching ====================
   useEffect(() => {
     return fetchDataWithController({
       fetchApi: "/api/aboutMe",
@@ -90,37 +93,41 @@ export default function MoleculesAboutMe() {
     });
   }, []);
 
-  // ================= GSAP Animations ====================
+  // ================= GSAP Animation System ====================
   useLayoutEffect(() => {
-    // ================= Auto scroll top ====================
+    // Reset scroll position on page enter
     autoScrollTop();
-    // ================= Elements ====================
+
+    // Cache frequently accessed elements
     const profileInfo = everyAvatarHeadingLiRefs.current;
     const mainHeading = mainHeadingRef.current;
     const mainSpans = mainHeadingSpans.current;
     const spans = spanRefs.current;
     const transitionEl = transitionDivRef.current;
 
-    // ================= Guard ====================
+    // Prevent animation initialization until data is ready
     if (!aboutMeDB) return;
 
-    // ================= GSAP Context ====================
+    // Scope GSAP animations to component lifecycle
     const ctx = gsap.context(() => {
       const scrollEl = aboutMeContentRef.current;
       const paragraphRefHeight = paragraphRef.current?.offsetHeight;
       const avatarAndSkillsRefHeight = avatarAndSkillsRef.current?.offsetHeight;
 
       if (!paragraphRefHeight || !scrollEl || !avatarAndSkillsRefHeight || !transitionEl) return;
-      // ========== GSAP constants settings ============
+
+      // ================= Animation Timing Constants ====================
       const FAST_DURATION = 0.5;
       const MIDDLE_DURATION = 2;
       const SLOW_DURATION = 5;
 
+      // Calculate scrollable animation distance
       const maxScroll = scrollEl.scrollHeight - window.innerHeight;
       const endValue = Math.min(scrollEl.offsetHeight, maxScroll);
 
-      // ================= MatchMedia ====================
+      // ================= Responsive Animation Context ====================
       const mm = gsap.matchMedia();
+
       mm.add(
         {
           desktop: "(min-width: 1024px)",
@@ -132,10 +139,10 @@ export default function MoleculesAboutMe() {
 
           const { desktop, tablet, mobile } = context.conditions;
 
-          // ================= Transition Initial State ====================
+          // Initial transition layer state
           gsap.set(transitionEl, { scale: 0 });
 
-          // ================= Heading Pin ====================
+          // ================= Scroll Timelines ====================
 
           const spansTL = gsap.timeline({
             defaults: { ease: "sine.inOut" },
@@ -167,6 +174,7 @@ export default function MoleculesAboutMe() {
             }
           });
 
+          // Pin main heading during scroll
           ScrollTrigger.create({
             trigger: mainHeading,
             start: "top top",
@@ -174,12 +182,11 @@ export default function MoleculesAboutMe() {
             anticipatePin: 1
           });
 
-          // ================= Transition Scroll Effect ====================
+          // ================= Page Transition Trigger ====================
           ScrollTrigger.create({
             trigger: scrollEl,
             start: "top top",
             end: `+=${endValue + 200}`,
-            // ================= Page Transitions ====================
             onLeave: () => goPage("GoNext"),
             onLeaveBack: () => goPage("GoBack")
           });
@@ -211,6 +218,7 @@ export default function MoleculesAboutMe() {
               onStart: () => startCounter()
             });
           }
+
           // ================= Tablet Animations ====================
           if (tablet) {
             gsap.from(mainSpans, {
@@ -232,6 +240,7 @@ export default function MoleculesAboutMe() {
             });
 
             gsap.set(spans, { autoAlpha: 1 });
+
             spansTL.from(spans, {
               scale: () => gsap.utils.random(-4, 1),
               autoAlpha: 0,
@@ -241,6 +250,7 @@ export default function MoleculesAboutMe() {
             });
           }
 
+          // ================= Mobile Animations ====================
           if (mobile) {
             gsap.from(mainSpans, {
               y: gsap.utils.random([-100, 200], true),
@@ -274,7 +284,7 @@ export default function MoleculesAboutMe() {
         }
       );
 
-      // ================= Skills Counter ====================
+      // ================= Skills Counter Animation ====================
       const endValues = percentagesOfExperience?.flat();
 
       function startCounter() {
@@ -296,15 +306,15 @@ export default function MoleculesAboutMe() {
       }
     });
 
-    // ================= Cleanup ====================
+    // Cleanup GSAP context on unmount
     return () => ctx.revert();
   }, [aboutMeDB]);
 
-  if (!aboutMeDB) return null; // пока данных нет — ничего не рендерим
+  if (!aboutMeDB) return null;
 
   const dev = aboutMeDB.developerInfo[0];
 
-  // ================= JSX ====================
+  // ================= Component Markup ====================
   return (
     <div ref={aboutMeContentRef} className="about_me_content pb-[500px]">
       {/* ================= Main Heading ==================== */}

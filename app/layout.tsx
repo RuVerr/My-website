@@ -1,8 +1,5 @@
 import "./globals.css";
-// import StartPage from "./Components/StartPage/StartPage";
-// import AudioBackground from "./Components/AudioBackground/AudioBackground";
 import NavigationMenuDesk from "./Components/Navigation/NavigationMenuDesk/NavigationMenuDesk";
-import Provider from "./Redux/Providers/provider";
 import TemplateCustomCursor from "./Components/UI/Templates/TemplateCustomCursor/TemplateCustomCursor";
 import MoleculesBackgroundAudio from "./Components/UI/Molecules/MoleculesBackgroundAudio/MoleculesBackgroundAudio";
 import TemplateNavigation from "./Components/UI/Templates/TemplateNavigation/TemplateNavigation";
@@ -15,13 +12,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Provider>
-          <TemplateCustomCursor />
-          <MoleculesBackgroundAudio />
-          {/* <NavigationMenuDesk /> */}
-          <TemplateNavigation />
-          <main className="main">{children}</main>
-        </Provider>
+        <TemplateCustomCursor />
+        <MoleculesBackgroundAudio />
+        <TemplateNavigation />
+        <main className="main">{children}</main>
       </body>
     </html>
   );

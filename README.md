@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌐 My Portfolio Website
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=gsap&logoColor=black)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
-First, run the development server:
+![VSCode](https://img.shields.io/badge/VSCode-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+![Mac](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**📅 Project Started:** Nov 15, 2025
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Project Overview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This is my **personal portfolio website** built with **Next.js** and **React**, focusing on **fluid animations and interactive UI elements**.  
+All effects, including animated headings, project cards, and page transitions, are **handcrafted using GSAP**, with **no external animation generators**.  
 
-## Learn More
+The **idea, concept, and design are entirely my own**, and the project grew organically — every day I deliberately **challenged myself** by adding more complex animations and creative effects to elevate the interface.  
 
-To learn more about Next.js, take a look at the following resources:
+The project strictly follows **Atomic Design principles**, ensuring **reusable, modular components**, and a **clean, scalable architecture**. Every interface element — from atoms to molecules — is designed for **maximum reusability**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**🎯 Main Goal:** Showcase **advanced frontend skills**, **dynamic interfaces**, and **maintainable, professional code**.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ✨ Key Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **🎬 Handcrafted Animations**  
+  Smooth reveals, scroll-triggered card animations, and page transitions powered by **GSAP**.  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **🧩 Atomic UI Design**  
+  Components built modularly for **reusability**, maintainability, and scalability.  
+
+- **🎨 Custom Design & Concept**  
+  Every effect, layout, and interaction is **my original idea**, with increasing complexity day by day.  
+
+- **📱 Responsive & Adaptive**  
+  Optimized for **mobile, tablet, and desktop**.  
+
+- **🧑‍💻 Clean Code Practices**  
+  Built with **TypeScript** and **ESLint** for **type safety**, readability, and reliability.  
+
+- **🌌 Custom Visual Effects**  
+  Backgrounds, transitions, and animations crafted **from scratch**, highlighting frontend creativity.  
+
+- **⚡ User Experience Focus**  
+  Each interaction and animation designed to **engage users** and provide **smooth UX**.
+
+---
+
+## 🛠 Technologies Used
+
+| 🛠 Technology       | ✨ Purpose                                      |
+|--------------------|-----------------------------------------------|
+| **Next.js**         | Routing & server-side rendering               |
+| **React**           | Component-based UI                            |
+| **GSAP**            | Advanced animations & scroll triggers        |
+| **TailwindCSS**     | Modular and fast styling                      |
+| **TypeScript**      | Type safety & code reliability               |
+| **Atomic Design**   | Scalable and maintainable component structure |
+
+---
+
+## 🖼 Screenshots & Visuals
+
+> *(Add GIFs or screenshots here to highlight the animations, transitions, and interactive UI)*
+
+---
+
+## 💡 Highlights
+
+- Designed entirely from scratch — **idea, concept, and implementation** are my creation.  
+- **Daily iterative improvements** pushed the complexity of animations and UI interactions.  
+- Focused on **high-quality, professional frontend code** suitable for a portfolio or production.  
+- Demonstrates strong **creativity**, **problem-solving**, and **expertise in modern frontend development**.
+
+---
+
+This project represents **my skills in crafting dynamic, visually engaging web interfaces**, combining **technical mastery** and **creative design**.

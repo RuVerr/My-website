@@ -7,6 +7,7 @@ interface AtomLinkProp {
   href: string;
   className?: string;
   linkTitle?: string;
+  children?: React.ReactNode
   type?: LinkType;
   onClickChildren?: React.MouseEventHandler<HTMLAnchorElement>;
   aBlankRef?: React.RefObject<HTMLAnchorElement | null>;
@@ -17,6 +18,7 @@ export default function AtomLink({
   href,
   aBlankRef,
   linkTitle,
+  children,
   className = "",
   type,
   onClickChildren,
@@ -31,19 +33,19 @@ export default function AtomLink({
           className={`global-font-family decoration-none ${className}`}
           href={href}
         >
-          {linkTitle}
+          {linkTitle || children}
         </Link>
       );
     case "blank":
       return (
         <a href={href} ref={aBlankRef} target="_blank" className={`block decoration-none text-amber-50 ${className}`}>
-          {linkTitle}
+          {linkTitle || children}
         </a>
       );
     default:
       return (
         <a href={href} className={`global-font-family decoration-none ${className}`}>
-          {linkTitle}
+          {linkTitle || children}
         </a>
       );
       break;
