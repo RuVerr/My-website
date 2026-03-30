@@ -56,15 +56,16 @@ export default function MoleculesHome() {
     // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
       // ================= Transition Initial State ====================
-      gsap.set(transitionEl, { scale: 0 });
+      gsap.set(transitionEl, { scale: 0, ease: "power4.inOut" });
 
       gsap.from(letters, {
-        scale: gsap.utils.random([0.1, 2], true),
+        scale: gsap.utils.random([-4, 4], true),
         y: gsap.utils.random(-1000, 1000, true),
         rotation: gsap.utils.random([-180, 180], true),
-        autoAlpha: 0,
         duration: FAST_DURATION,
-        ease: "sine.out",
+        ease: "power4.inOut",
+        autoAlpha: 0,
+        stagger: { each: 0.2, from: "random" },
         onStart: () => animationActiveOverflowHidden(true),
         onComplete: () => animationActiveOverflowHidden(false)
       });

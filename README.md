@@ -69,7 +69,7 @@ The project strictly follows **Atomic Design principles**, ensuring **reusable, 
 
 ## 🖼 Screenshots & Visuals
 
-> *(Add GIFs or screenshots here to highlight the animations, transitions, and interactive UI)*
+> *(Soon)*
 
 ---
 
