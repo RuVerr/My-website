@@ -26,7 +26,7 @@ html::-webkit-scrollbar {
 }
 
 @font-face {
-  font-family: "Orbitron-Regular";
+  font-family: "orbitron-regular";
   src: url("/fonts/orbitron/static/orbitron-regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
@@ -34,7 +34,7 @@ html::-webkit-scrollbar {
 }
 
 :root {
-  --font: "Orbitron-Regular";
+  --font: "orbitron-regular";
 }
 
 @layer components {
