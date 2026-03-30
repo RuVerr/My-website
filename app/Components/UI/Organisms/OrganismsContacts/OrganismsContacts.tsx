@@ -8,7 +8,7 @@ export default function OrganismsContacts() {
     <section className="contacts">
       <MoleculesBackground
         backgroundSRC="/Images-and-video/Background/Video/circle-red.mp4"
-        className=" backdrop: blur-[40px] "
+        className=" backdrop: blur-[10px] "
       />
       <div className="container mx-auto">
         <MoleculesContacts />

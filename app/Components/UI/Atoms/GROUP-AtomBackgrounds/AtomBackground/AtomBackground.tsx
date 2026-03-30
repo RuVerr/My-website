@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 interface AtomBackgroundCanvasProp {
   backgroundRef?: React.Ref<HTMLDivElement>;

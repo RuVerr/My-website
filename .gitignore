@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+Images-and-video/Background/Video/rotating-riangles-hh.mp4
+Images-and-video/Background/Video/circle-red-hh.mp4
+Images-and-video/Background/Video/rotating-riangles.webm
+Images-and-video/Background/Video/whistling-circles-hh.mp4
+Images-and-video/Background/Video/white-lines-hh.mp4

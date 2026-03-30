@@ -1,5 +1,7 @@
 import React from "react";
 
+import Image from "next/image";
+
 interface AtomPortfolioCardProp {
   src?: string;
   heading: React.ReactNode;
@@ -13,7 +15,7 @@ interface AtomPortfolioCardProp {
 }
 
 export default function AtomPortfolioCard({
-  src,
+  src = "",
   heading,
   onlineLink,
   paragraph,
@@ -26,7 +28,7 @@ export default function AtomPortfolioCard({
     <div className={`card ${className}`}>
       <div className="card_and_paragraph flex max-lg:flex-col items-start">
         <div ref={cardImgRef} className="card_img rounded-4xl overflow-hidden">
-          <img src={src} alt="Projects" className="w-[600px]" />
+          <Image src={src} width={600} height={300} alt={`${heading} project`} />
         </div>
         <div ref={cardRef} className="paragraph_and_pre flex-1 pl-[20px] flex-col">
           {heading}

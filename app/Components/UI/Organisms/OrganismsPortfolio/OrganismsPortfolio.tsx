@@ -7,7 +7,7 @@ export default function OrganismsPortfolio() {
     <>
       <section className="portfolio w-full bg-gray-500 overflow-hidden">
         <MoleculesBackground
-          className="bg-amber-50 "
+          className=" backdrop: blur-[5px] "
           backgroundSRC="/Images-and-video/Background/Video/white-lines.mp4"
         />
         <div className="container mx-auto">
