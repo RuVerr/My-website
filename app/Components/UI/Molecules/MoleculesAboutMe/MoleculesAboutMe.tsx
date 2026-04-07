@@ -156,9 +156,9 @@ export default function MoleculesAboutMe() {
 
           // Pin main heading during scroll
           ScrollTrigger.create({
-            trigger: scrollEl,
+            trigger: mainHeading,
             start: "top top",
-            pin: mainHeading,
+            pin: true,
             anticipatePin: 1
           });
 
