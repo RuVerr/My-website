@@ -144,49 +144,33 @@ export default function MoleculesAboutMe() {
 
           // ================= Scroll Timelines ====================
 
-          const spansTL = gsap.timeline({
-            defaults: { ease: "sine.inOut" },
-            scrollTrigger: {
-              trigger: scrollEl,
-              start: desktop ? "top top" : tablet ? "top top" : "",
-              end: desktop ? `bottom 90%` : tablet || mobile ? `+=${endValue + 200}` : `+=${endValue}`,
-              scrub: desktop ? 0.5 : tablet ? 1.1 : 1
-            }
-          });
-
-          const profileInfoTL = gsap.timeline({
-            defaults: { ease: "expo.inOut" },
-            scrollTrigger: {
-              trigger: scrollEl,
-              start: desktop ? "top top" : tablet ? "top top" : "",
-              end: desktop ? `bottom 90%` : tablet || mobile ? `+=${endValue}` : `+=${endValue}`,
-              scrub: desktop ? 0.5 : tablet ? 1.1 : 1
-            }
-          });
-
           const masterTL = gsap.timeline({
             defaults: { ease: "sine.inOut" },
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",
-              end: `+=${endValue}`,
-              scrub: 1.2
+              end: desktop ? `+=${endValue + 100}` : tablet ? `+=${endValue}` : mobile ? `+=${endValue - 200}` : "",
+              scrub: desktop ? 1 : tablet || mobile ? 1.2 : 1
             }
           });
 
           // Pin main heading during scroll
           ScrollTrigger.create({
-            trigger: mainHeading,
+            trigger: scrollEl,
             start: "top top",
-            pin: true,
+            pin: mainHeading,
             anticipatePin: 1
           });
 
           // ================= Page Transition Trigger ====================
           ScrollTrigger.create({
             trigger: scrollEl,
-            start: "top top",
-            end: `+=${endValue + 200}`,
+            start: "top bottom",
+            end: desktop
+              ? `+=${endValue + window.innerHeight * 1.3}`
+              : tablet || mobile
+                ? `+=${endValue + window.innerHeight}`
+                : `+=${endValue + window.innerHeight}`,
             onLeave: () => goPage("GoNext"),
             onLeaveBack: () => goPage("GoBack")
           });
@@ -203,20 +187,30 @@ export default function MoleculesAboutMe() {
               onComplete: () => animationActiveOverflowHidden(false)
             });
 
-            spansTL.from(spans, {
-              scale: () => gsap.utils.random([-4, 1]),
-              autoAlpha: 0,
-              duration: SLOW_DURATION,
-              stagger: 0.2
-            });
+            masterTL.addLabel("oneTime");
 
-            profileInfoTL.from(profileInfo, {
-              x: -300,
-              duration: MIDDLE_DURATION,
-              autoAlpha: 0,
-              stagger: 0.2,
-              onStart: () => startCounter()
-            });
+            masterTL.from(
+              profileInfo,
+              {
+                x: -300,
+                duration: SLOW_DURATION,
+                autoAlpha: 0,
+                stagger: 2,
+                onStart: () => startCounter()
+              },
+              "oneTime"
+            );
+
+            masterTL.from(
+              spans,
+              {
+                scale: () => gsap.utils.random([-4, 1]),
+                autoAlpha: 0,
+                duration: SLOW_DURATION,
+                stagger: 0.2
+              },
+              "oneTime"
+            );
           }
 
           // ================= Tablet Animations ====================
@@ -231,23 +225,27 @@ export default function MoleculesAboutMe() {
               onComplete: () => animationActiveOverflowHidden(false)
             });
 
-            profileInfoTL.from(profileInfo, {
+            masterTL.from(profileInfo, {
               x: -200,
               autoAlpha: 0,
-              duration: MIDDLE_DURATION,
+              duration: SLOW_DURATION,
               stagger: 0.2,
               onStart: () => startCounter()
             });
 
             gsap.set(spans, { autoAlpha: 1 });
 
-            spansTL.from(spans, {
-              scale: () => gsap.utils.random(-4, 1),
-              autoAlpha: 0,
-              stagger: 0.2,
-              delay: 0.2,
-              duration: MIDDLE_DURATION
-            });
+            masterTL.from(
+              spans,
+              {
+                scale: () => gsap.utils.random(-4, 1),
+                autoAlpha: 0,
+                stagger: 0.2,
+                delay: 0.2,
+                duration: SLOW_DURATION
+              },
+              ">"
+            );
           }
 
           // ================= Mobile Animations ====================
@@ -265,8 +263,8 @@ export default function MoleculesAboutMe() {
             masterTL.from(profileInfo, {
               x: -200,
               autoAlpha: 0,
-              duration: SLOW_DURATION,
-              stagger: 1,
+              duration: MIDDLE_DURATION,
+              stagger: 0.4,
               onStart: () => startCounter()
             });
 
@@ -316,7 +314,7 @@ export default function MoleculesAboutMe() {
 
   // ================= Component Markup ====================
   return (
-    <div ref={aboutMeContentRef} className="about_me_content pb-[500px]">
+    <div ref={aboutMeContentRef} className="about_me_content pb-[400px]">
       {/* ================= Main Heading ==================== */}
       <AtomHeading
         headingRef={(el) => setRefs(el, undefined, mainHeadingRef)}
