@@ -30,7 +30,7 @@ export default function AtomLink({
         <Link
           onClick={onClickChildren}
           ref={linkNextRef}
-          className={`global-font-family decoration-none ${className}`}
+          className={`decoration-none ${className}`}
           href={href}
         >
           {linkTitle || children}

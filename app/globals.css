@@ -44,6 +44,12 @@ html::-webkit-scrollbar {
     text-transform: uppercase;
   }
 
+  .navigation-font-family {
+    font-family: var(--font);
+    text-transform: uppercase;
+    font-size: clamp(31px, 7vw, 100px);
+  }
+
   /* Глобальные стили шрифта для кнопок */
   .global-base-button-font {
     font-family: var(--font);

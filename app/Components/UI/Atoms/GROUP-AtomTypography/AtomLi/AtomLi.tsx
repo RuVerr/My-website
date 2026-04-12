@@ -1,12 +1,13 @@
-import React, { Children } from "react";
+"use client";
+import React from "react";
 
 interface AtomLiProp {
   children: React.ReactNode;
-  className: string;
-  refLi: React.Ref<HTMLLIElement>;
+  className?: string;
+  refLi?: React.Ref<HTMLLIElement>;
 }
 
-export default function AtomLi({ children, className = "", refLi }: AtomLiProp){
+export default function AtomLi({ children, className = "", refLi }: AtomLiProp) {
   return (
     <li
       ref={refLi}
@@ -15,4 +16,4 @@ export default function AtomLi({ children, className = "", refLi }: AtomLiProp){
       {children}
     </li>
   );
-};
+}
