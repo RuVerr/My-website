@@ -130,7 +130,7 @@ export const MoleculesNavigation = () => {
                 href={item === "Home" ? "/" : item.trim().toLowerCase().replace(/\s+/g, "")}
                 linkTitle={item}
                 type="next"
-                className={"text-black navigation-font-family w-[700px]"}
+                className={"text-black navigation-font-family"}
               ></AtomLink>
             </li>
           ))}
