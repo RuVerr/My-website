@@ -21,6 +21,8 @@ export const MoleculesNavigation = () => {
   const liRefs = useRef<HTMLLIElement[]>([]);
   const listRef = useRef<HTMLUListElement | null>(null);
   const pathname = usePathname() || "/";
+  const masterTL = useRef<gsap.core.Timeline | null>(null);
+  const burgerMenuLines = useRef<HTMLSpanElement[]>([]);
 
   const handleShuffle = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     const el = e.currentTarget;
@@ -66,52 +68,77 @@ export const MoleculesNavigation = () => {
   }, []);
 
   useLayoutEffect(() => {
-    const navigationContent = navigationContentRef.current;
     const li = liRefs.current;
     const underList = listRef.current;
+    const burgerLines = burgerMenuLines.current;
 
-    if (!navigationContent || !li.length || !underList) return;
+    if (!li.length || !underList || masterTL.current) return;
+
+    console.log(burgerMenuLines);
+
+    gsap.set(li, { xPercent: 100 });
+
     const ctx = gsap.context(() => {
-      const masterTl = gsap.timeline({ defaults: { ease: "power4.inOut" } });
-      masterTl.fromTo(
-        li,
-        { xPercent: showMenu ? 100 : 0 },
-        {
-          xPercent: showMenu ? 0 : 100,
+      masterTL.current = gsap.timeline({ paused: true, defaults: { ease: "power4.inOut" } });
+      masterTL.current
+        .to(li, {
+          xPercent: 0,
           duration: 0.5,
-          stagger: { each: 0.1, from: showMenu ? "start" : "start" },
-          onComplete: () => {
-            if (showMenu) {
-              animationActiveOverflowHidden(true);
-            } else {
-              animationActiveOverflowHidden(false);
-            }
-          }
-        }
-      );
-
-      if (showMenu) {
-        masterTl.from(underList, { yPercent: -200, autoAlpha: 0, duration: 0.5, ease: "circ.inOut" });
-      } else {
-        masterTl.to(underList, { yPercent: 200, autoAlpha: 0, duration: 0.5 });
-      }
+          autoAlpha: 1,
+          stagger: { each: 0.1, from: showMenu ? "start" : "start" }
+        })
+        .from(underList, { yPercent: -200, autoAlpha: 0, duration: 0.2 }, "-=0.3")
+        .to(
+          burgerLines,
+          {
+            scale: (el) => {
+              const value = [0.4, 0.6, 0.8];
+              return value[el];
+            },
+            stagger: 0.1
+          },
+          "<"
+        );
     });
 
     return () => {
       ctx.revert();
     };
+  }, []);
+
+  useEffect(() => {
+    if (showMenu) {
+      masterTL.current?.play();
+      animationActiveOverflowHidden(true);
+    } else {
+      masterTL.current?.reverse();
+      animationActiveOverflowHidden(false);
+    }
   }, [showMenu]);
 
   return (
     <>
       <div
         onClick={() => handleShowMenu()}
-        className={`bg_hidden fixed inset-0 bg-black/50 pointer-events-auto ${showMenu ? "opacity-100" : "opacity-0"}`}
+        className={`bg_hidden fixed inset-0 bg-black/50 pointer-events-auto ${showMenu ? "opacity-100, visible: visible" : "opacity-0, visible: hidden"}`}
       />
       <button
         onClick={handleShowMenu}
-        className=" absolute z-[400] right-0 bg-amber-700 w-[50px] h-[40px] rounded-tl-2xl rounded-bl-2xl"
-      />
+        className=" absolute right-5 top-[10px] flex flex-col justify-center gap-[5px] z-[400] bg-black mix-blend-difference w-[50px] h-[40px] px-[5px] cursor-pointer"
+      >
+        <span
+          ref={(el) => setRefs(el, burgerMenuLines)}
+          className="block w-full h-[4px] bg-white border-1 border-white"
+        />
+        <span
+          ref={(el) => setRefs(el, burgerMenuLines)}
+          className="block w-full h-[4px] bg-white border-1 border-white"
+        />
+        <span
+          ref={(el) => setRefs(el, burgerMenuLines)}
+          className="block w-full h-[4px] bg-white border-1 border-white"
+        />
+      </button>
 
       <div ref={navigationContentRef} className="navigation-content fixed right-0 flex flex-col z-[200]">
         <AtomList className={`flex flex-col justify-between h-screen`}>
@@ -130,7 +157,7 @@ export const MoleculesNavigation = () => {
                 href={item === "Home" ? "/" : item.trim().toLowerCase().replace(/\s+/g, "")}
                 linkTitle={item}
                 type="next"
-                className={"text-black navigation-font-family"}
+                className={"text-black navigation-font-family w-full"}
               ></AtomLink>
             </li>
           ))}
