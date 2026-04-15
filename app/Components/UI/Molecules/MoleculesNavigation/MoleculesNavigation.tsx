@@ -11,6 +11,7 @@ import { fetchDataWithController } from "@/app/utils/FetchUtils/fetchDataWithCon
 import AtomLi from "../../Atoms/GROUP-AtomTypography/AtomLi/AtomLi";
 
 import { contactsDBProp } from "@/Data/contactsDB";
+import MoleculesBackgroundAudio from "../MoleculesBackgroundAudio/MoleculesBackgroundAudio";
 
 export const MoleculesNavigation = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -20,6 +21,7 @@ export const MoleculesNavigation = () => {
   const navigationContentRef = useRef<HTMLDivElement | null>(null);
   const liRefs = useRef<HTMLLIElement[]>([]);
   const listRef = useRef<HTMLUListElement | null>(null);
+  const bgHidden = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname() || "/";
   const masterTL = useRef<gsap.core.Timeline | null>(null);
   const burgerMenuLines = useRef<HTMLSpanElement[]>([]);
@@ -47,13 +49,6 @@ export const MoleculesNavigation = () => {
     }, 1000);
   }, []);
 
-  // const navigationTheme: Record<string, string> = {
-  //   "/": "text-black",
-  //   "/aboutme": "text-white",
-  //   "/portfolio": "text-black",
-  //   "/contacts": "text-white"
-  // };
-
   const handleShowMenu = () => {
     setShowMenu((prev) => !prev);
   };
@@ -71,15 +66,15 @@ export const MoleculesNavigation = () => {
     const li = liRefs.current;
     const underList = listRef.current;
     const burgerLines = burgerMenuLines.current;
+    const bgHiddenScreen = bgHidden.current;
 
     if (!li.length || !underList || masterTL.current) return;
-
-    console.log(burgerMenuLines);
 
     gsap.set(li, { xPercent: 100 });
 
     const ctx = gsap.context(() => {
       masterTL.current = gsap.timeline({ paused: true, defaults: { ease: "power4.inOut" } });
+
       masterTL.current
         .to(li, {
           xPercent: 0,
@@ -87,6 +82,7 @@ export const MoleculesNavigation = () => {
           autoAlpha: 1,
           stagger: { each: 0.1, from: showMenu ? "start" : "start" }
         })
+        .from(bgHiddenScreen, { scale: 0.1, duration: 0.5, autoAlpha: 0 }, "<")
         .from(underList, { yPercent: -200, autoAlpha: 0, duration: 0.2 }, "-=0.3")
         .to(
           burgerLines,
@@ -120,24 +116,20 @@ export const MoleculesNavigation = () => {
     <>
       <div
         onClick={() => handleShowMenu()}
-        className={`bg_hidden fixed inset-0 bg-black/50 pointer-events-auto ${showMenu ? "opacity-100, visible: visible" : "opacity-0, visible: hidden"}`}
+        className={`bg_hidden fixed inset-0 z-[20] bg-black/50 pointer-events-auto `}
+        ref={bgHidden}
       />
       <button
         onClick={handleShowMenu}
         className=" absolute right-5 top-[10px] flex flex-col justify-center gap-[5px] z-[400] bg-black mix-blend-difference w-[50px] h-[40px] px-[5px] cursor-pointer"
       >
-        <span
-          ref={(el) => setRefs(el, burgerMenuLines)}
-          className="block w-full h-[4px] bg-white border-1 border-white"
-        />
-        <span
-          ref={(el) => setRefs(el, burgerMenuLines)}
-          className="block w-full h-[4px] bg-white border-1 border-white"
-        />
-        <span
-          ref={(el) => setRefs(el, burgerMenuLines)}
-          className="block w-full h-[4px] bg-white border-1 border-white"
-        />
+        {[1, 2, 3].map((__, spanIndex) => (
+          <span
+            key={spanIndex}
+            ref={(el) => setRefs(el, burgerMenuLines)}
+            className="block w-full h-[4px] bg-white border-1 border-white"
+          />
+        ))}
       </button>
 
       <div ref={navigationContentRef} className="navigation-content fixed right-0 flex flex-col z-[200]">
@@ -146,7 +138,7 @@ export const MoleculesNavigation = () => {
             <li
               ref={(el) => setRefs(el, liRefs)}
               key={itemIndex}
-              className="navigation_item flex items-center justify-start flex-1 pl-[20px] bg-gray-100"
+              className="navigation_item flex z-[20] items-center justify-start flex-1 pl-[20px] bg-gray-100"
             >
               <AtomLink
                 onClickChildren={(e) => {
@@ -161,10 +153,7 @@ export const MoleculesNavigation = () => {
               ></AtomLink>
             </li>
           ))}
-          <AtomList
-            listRef={listRef}
-            className="grid grid-cols-3 justify-items-center z-[-10] bg-black gap-4 py-[10px]"
-          >
+          <AtomList listRef={listRef} className="grid grid-cols-3 justify-items-center z-[10] bg-black gap-4 py-[10px]">
             {contactsDB.map((item) => (
               <AtomLi key={item.socHref}>
                 <AtomLink className="text-[14px] text-white" type="blank" href={item.socHref}>
@@ -172,6 +161,7 @@ export const MoleculesNavigation = () => {
                 </AtomLink>
               </AtomLi>
             ))}
+            <MoleculesBackgroundAudio />
           </AtomList>
         </AtomList>
       </div>

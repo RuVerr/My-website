@@ -6,7 +6,7 @@ import MoleculesBackground from "../../Molecules/MoleculesBackground/MoleculesBa
 
 export default function OrganismsAboutMe() {
   return (
-    <section className="about_me global-space-main-elements">
+    <section className="about_me global-space-main-elements overflow-hidden">
       {/* ===== фоновое видео ===== */}
       <MoleculesBackground
         className="backdrop: blur-[30px] max-lg:blur-[5px]"

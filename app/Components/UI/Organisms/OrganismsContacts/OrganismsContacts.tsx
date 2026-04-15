@@ -5,7 +5,7 @@ import MoleculesBackground from "../../Molecules/MoleculesBackground/MoleculesBa
 
 export default function OrganismsContacts() {
   return (
-    <section className="contacts">
+    <section className="contacts overflow-hidden">
       <MoleculesBackground
         backgroundSRC="/Images-and-video/Background/Video/circle-red.mp4"
         className=" backdrop: blur-[10px] "

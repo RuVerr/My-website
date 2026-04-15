@@ -13,7 +13,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <TemplateCustomCursor />
-        <MoleculesBackgroundAudio />
+        {/* <MoleculesBackgroundAudio /> */}
         <TemplateNavigation />
         <main className="main">{children}</main>
       </body>

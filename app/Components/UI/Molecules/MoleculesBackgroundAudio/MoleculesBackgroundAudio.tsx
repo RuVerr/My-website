@@ -71,10 +71,10 @@ export default function MoleculesBackgroundAudio() {
   };
 
   return (
-    <div className="background_audio_content fixed bottom-0 right-0 z-[9999] pointer-events-auto group">
+    <div className="background_audio_content px-[10px] w-full pointer-events-auto group col-start-1 col-span-full">
       <button
         onClick={() => handlePlayAudio()}
-        className={`  base-button-combining-classes mr-[10px] mb-[10px] transition duration-300 ${isActive ? "bg-white text-black" : "bg-black text-white"}`}
+        className={`  base-button-combining-classes transition duration-300 w-full ${isActive ? "bg-white text-black" : "bg-black text-white"}`}
       >
         Sound
       </button>
