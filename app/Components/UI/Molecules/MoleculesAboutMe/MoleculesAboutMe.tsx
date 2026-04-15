@@ -166,7 +166,6 @@ export default function MoleculesAboutMe() {
           ScrollTrigger.create({
             trigger: scrollEl,
             start: "top top",
-            markers: true,
             end: desktop ? `+=${endValue}` : tablet || mobile ? `+=${endValue}` : `+=${endValue}`,
             onLeave: () => goPage("GoNext"),
             onLeaveBack: () => goPage("GoBack")
