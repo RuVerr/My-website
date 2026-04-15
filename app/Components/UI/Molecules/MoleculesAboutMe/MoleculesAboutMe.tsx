@@ -165,12 +165,9 @@ export default function MoleculesAboutMe() {
           // ================= Page Transition Trigger ====================
           ScrollTrigger.create({
             trigger: scrollEl,
-            start: "top bottom",
-            end: desktop
-              ? `+=${endValue + window.innerHeight * 1.3}`
-              : tablet || mobile
-                ? `+=${endValue + window.innerHeight}`
-                : `+=${endValue + window.innerHeight}`,
+            start: "top top",
+            markers: true,
+            end: desktop ? `+=${endValue}` : tablet || mobile ? `+=${endValue}` : `+=${endValue}`,
             onLeave: () => goPage("GoNext"),
             onLeaveBack: () => goPage("GoBack")
           });
