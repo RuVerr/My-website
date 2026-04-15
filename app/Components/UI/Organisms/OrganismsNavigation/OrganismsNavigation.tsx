@@ -5,7 +5,7 @@ import MoleculesBackgroundAudio from "../../Molecules/MoleculesBackgroundAudio/M
 
 export default function OrganismsNavigation() {
   return (
-    <nav className="">
+    <nav className="fixed top-0 right-0 z-50">
       <div className="container mx-auto">
         <MoleculesNavigation />
       </div>
