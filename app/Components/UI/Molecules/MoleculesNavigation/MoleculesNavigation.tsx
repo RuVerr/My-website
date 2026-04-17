@@ -116,7 +116,7 @@ export const MoleculesNavigation = () => {
     <>
       <div
         onClick={() => handleShowMenu()}
-        className={`bg_hidden fixed inset-0 z-[20] bg-black/50 pointer-events-auto `}
+        className={`bg_hidden fixed inset-0 z-[20] h-dvh bg-black/50 pointer-events-auto `}
         ref={bgHidden}
       />
       <button
@@ -133,7 +133,7 @@ export const MoleculesNavigation = () => {
       </button>
 
       <div ref={navigationContentRef} className="navigation-content fixed right-0 flex flex-col z-[200]">
-        <AtomList className={`flex flex-col justify-between h-screen`}>
+        <AtomList className={`flex flex-col justify-between h-dvh`}>
           {navigationItem.map((item, itemIndex) => (
             <li
               ref={(el) => setRefs(el, liRefs)}
