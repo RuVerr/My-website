@@ -66,6 +66,11 @@ export default function MoleculesContacts() {
     const FAST_DURATION = 1;
     const MIDDLE_DURATION = 2;
 
+    const maxScroll = scrollEl.scrollHeight - window.innerHeight;
+    const endValue = Math.min(scrollEl.scrollHeight, maxScroll);
+
+    console.log(endValue, scrollEl.scrollHeight);
+
     // ================= GSAP Context ====================
     const ctx = gsap.context(() => {
       // ================= Transition Element ====================
@@ -104,15 +109,11 @@ export default function MoleculesContacts() {
           const { desktop, tablet, mobile } = context.conditions;
 
           const tl = gsap.timeline({
-            defaults: { duration: MIDDLE_DURATION, ease: "sine.inOut" },
+            defaults: { ease: "sine.inOut" },
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",
-              end: () => {
-                const maxScroll = scrollEl.scrollHeight - window.innerHeight;
-                const endValue = Math.min(scrollEl.scrollHeight, maxScroll);
-                return `+=${endValue}`;
-              },
+              end: () => (desktop || tablet ? `+=${endValue}` : mobile ? `+=${endValue + 533}` : `+=${endValue}`),
               scrub: 1.5,
               onLeaveBack: () => transitionPagesBackPage({ transitionEl, router, routerPushBack: "/portfolio" })
             }
@@ -124,7 +125,8 @@ export default function MoleculesContacts() {
               x: gsap.utils.random([-900, 900], true),
               scale: 0.1,
               autoAlpha: 0,
-              stagger: 0.2
+              stagger: 1,
+              duration: MIDDLE_DURATION
             });
           }
         }
