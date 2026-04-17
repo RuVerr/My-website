@@ -113,7 +113,7 @@ export default function MoleculesContacts() {
             scrollTrigger: {
               trigger: scrollEl,
               start: "top top",
-              end: () => (desktop || tablet ? `+=${endValue}` : mobile ? `+=${endValue + 580}` : `+=${endValue}`),
+              end: () => desktop || tablet ? `+=${endValue}` : mobile ? `+=${endValue + 480}` : `+=${endValue}`,
               scrub: 1.5,
               onLeaveBack: () => transitionPagesBackPage({ transitionEl, router, routerPushBack: "/portfolio" })
             }
