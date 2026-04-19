@@ -1,8 +1,37 @@
 import "./globals.css";
-import NavigationMenuDesk from "./Components/Navigation/NavigationMenuDesk/NavigationMenuDesk";
 import TemplateCustomCursor from "./Components/UI/Templates/TemplateCustomCursor/TemplateCustomCursor";
-import MoleculesBackgroundAudio from "./Components/UI/Molecules/MoleculesBackgroundAudio/MoleculesBackgroundAudio";
 import TemplateNavigation from "./Components/UI/Templates/TemplateNavigation/TemplateNavigation";
+
+export const metadata = {
+  title: "Ruver.dev | Frontend Developer Portfolio",
+
+  description:
+    "Animated portfolio website by Ruben (ruver) featuring modern frontend interactions and GSAP animations.",
+
+  keywords: ["Frontend Developer", "Next.js", "React", "GSAP", "Motion Design", "Web Animations"],
+
+  authors: [{ name: "Ruben Vermishyan (ruver)" }],
+
+  metadataBase: new URL("https://ruver.dev"),
+
+  openGraph: {
+    title: "ruver.dev | Frontend Developer Portfolio",
+
+    description: "Motion-driven frontend experience built with Next.js + GSAP",
+
+    url: "https://ruver.dev",
+
+    siteName: "ruver.dev",
+
+    images: [
+      {
+        url: "/Images-and-video/Icon/soc-icon/og-image.png"
+      }
+    ],
+
+    type: "website"
+  }
+};
 
 export default function RootLayout({
   children
@@ -11,9 +40,29 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>Ruver.dev | Frontend Developer Portfolio</title>
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/Images-and-video/Icon/soc-icon/favicon/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/Images-and-video/Icon/soc-icon/favicon/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/Images-and-video/Icon/soc-icon/favicon/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/Images-and-video/Icon/soc-icon/favicon/site.webmanifest" />
+      </head>
       <body>
         <TemplateCustomCursor />
-        {/* <MoleculesBackgroundAudio /> */}
         <TemplateNavigation />
         <main className="main">{children}</main>
       </body>
