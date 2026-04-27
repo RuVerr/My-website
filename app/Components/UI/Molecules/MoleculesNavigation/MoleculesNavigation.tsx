@@ -22,7 +22,6 @@ export const MoleculesNavigation = () => {
   const liRefs = useRef<HTMLLIElement[]>([]);
   const listRef = useRef<HTMLUListElement | null>(null);
   const bgHidden = useRef<HTMLDivElement | null>(null);
-  const pathname = usePathname() || "/";
   const masterTL = useRef<gsap.core.Timeline | null>(null);
   const burgerMenuLines = useRef<HTMLSpanElement[]>([]);
 
@@ -132,7 +131,10 @@ export const MoleculesNavigation = () => {
         ))}
       </button>
 
-      <div ref={navigationContentRef} className="navigation-content fixed right-0 flex flex-col z-[200]">
+      <div
+        ref={navigationContentRef}
+        className={`navigation-content fixed right-0 flex flex-col z-[200] ${showMenu ? "pointer-events-auto" : "pointer-events-none"}`}
+      >
         <AtomList className={` h-dvh flex flex-col justify-between`}>
           {navigationItem.map((item, itemIndex) => (
             <li
