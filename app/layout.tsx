@@ -3,10 +3,13 @@ import TemplateCustomCursor from "./Components/UI/Templates/TemplateCustomCursor
 import TemplateNavigation from "./Components/UI/Templates/TemplateNavigation/TemplateNavigation";
 
 export const metadata = {
-  title: "Ruver.dev | Frontend Developer Portfolio",
+  title: {
+    default: "Ruver.dev",
+    template: "%s | Ruver.dev"
+  },
 
   description:
-    "Animated portfolio website by Ruben (ruver) featuring modern frontend interactions and GSAP animations.",
+    "Frontend Developer Ruben (ruver). Portfolio with GSAP animations, modern UI and interactive web experiences.",
 
   keywords: ["Frontend Developer", "Next.js", "React", "GSAP", "Motion Design", "Web Animations"],
 
@@ -15,7 +18,7 @@ export const metadata = {
   metadataBase: new URL("https://ruver.dev"),
 
   openGraph: {
-    title: "ruver.dev | Frontend Developer Portfolio",
+    title: "Ruver.dev | Frontend Developer Portfolio",
 
     description: "Motion-driven frontend experience built with Next.js + GSAP",
 
@@ -41,7 +44,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Ruver.dev | Frontend Developer Portfolio</title>
         <link
           rel="apple-touch-icon"
           sizes="180x180"
